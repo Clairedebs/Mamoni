@@ -5,7 +5,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import webpush from 'web-push'
 import { createClient, requireUser } from './supabase/server'
-import { PALETTE, type CategoryKind, type PaletteKey, type ReminderFrequency, type Repeat, type TransactionKind } from './types'
+import { PALETTE, type CategoryKind, type PaletteKey, type ReminderFrequency, type TransactionKind } from './types'
 import { ICON_NAMES } from '@/components/icon-names'
 
 type Result<T = null> = { ok: true; data: T } | { ok: false; error: string }
@@ -130,15 +130,12 @@ export async function savePot(input: {
   initialAmount: number
   startedOn: string
   goalAmount?: number | null
-  dueDate?: string | null
-  repeat?: Repeat
 }): Promise<Result<{ id: string }>> {
   const { supabase } = await requireUser()
   const name = clean(input.name, 32)
   if (!name) return fail('Give your pot a name.')
   if (!Number.isInteger(input.initialAmount) || input.initialAmount < 0) return fail('Starting balance must be 0 or more.')
   if (!ISO.test(input.startedOn)) return fail('Pick a valid start date.')
-  if (input.dueDate && !ISO.test(input.dueDate)) return fail('Pick a valid due date.')
   const row = {
     category_id: input.categoryId,
     name,
@@ -146,8 +143,6 @@ export async function savePot(input: {
     initial_amount: input.initialAmount,
     started_on: input.startedOn,
     goal_amount: input.goalAmount && input.goalAmount > 0 ? input.goalAmount : null,
-    due_date: input.dueDate || null,
-    repeat: input.repeat ?? 'monthly',
   }
   const q = input.id
     ? supabase.from('pots').update(row).eq('id', input.id).select('id').single()
@@ -161,15 +156,6 @@ export async function savePot(input: {
 export async function deletePot(id: string): Promise<Result> {
   const { supabase } = await requireUser()
   const { error } = await supabase.from('pots').delete().eq('id', id)
-  if (error) return fail(dbError(error))
-  refresh()
-  return { ok: true, data: null }
-}
-
-export async function updatePotSchedule(id: string, patch: { due_date?: string | null; repeat?: Repeat }): Promise<Result> {
-  const { supabase } = await requireUser()
-  if (patch.due_date && !ISO.test(patch.due_date)) return fail('Pick a valid date.')
-  const { error } = await supabase.from('pots').update(patch).eq('id', id)
   if (error) return fail(dbError(error))
   refresh()
   return { ok: true, data: null }

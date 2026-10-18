@@ -7,7 +7,7 @@ import { usePickers } from './Pickers'
 import { useToast } from './Toast'
 import { deletePot, savePot } from '@/lib/actions'
 import { fmt, shortDate, tint } from '@/lib/format'
-import type { Category, Pot, Repeat } from '@/lib/types'
+import type { Category, Pot } from '@/lib/types'
 
 const digits = (s: string) => s.replace(/\D/g, '').slice(0, 10)
 
@@ -22,9 +22,6 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
   const [initial, setInitial] = useState(pot ? String(pot.initial_amount) : '')
   const [startedOn, setStartedOn] = useState(pot?.started_on ?? today)
   const [goal, setGoal] = useState(pot?.goal_amount ? String(pot.goal_amount) : '')
-  const [schedule, setSchedule] = useState(Boolean(pot?.due_date))
-  const [due, setDue] = useState(pot?.due_date ?? today)
-  const [repeat, setRepeat] = useState<Repeat>(pot?.repeat ?? 'monthly')
   const [err, setErr] = useState('')
 
   const submit = () =>
@@ -38,8 +35,6 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
         initialAmount: Number(initial || 0),
         startedOn,
         goalAmount: goal ? Number(goal) : null,
-        dueDate: schedule ? due : null,
-        repeat,
       })
       if (!res.ok) return setErr(res.error)
       toast(pot ? 'Changes saved' : `Pot “${name.trim()}” created`)
@@ -113,42 +108,6 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
             <span>FCFA</span>
           </div>
         </div>
-      </div>
-
-      <div className="section-h">
-        <h2>Contribution schedule</h2>
-      </div>
-      <div className="set-group">
-        <div className="set-row">
-          <span className="tile" style={tint('amber')}>
-            <Icon name="calendar-clock" />
-          </span>
-          <div className="mid">
-            <b>Remind me when it&apos;s due</b>
-            <small>For tontines and regular contributions</small>
-          </div>
-          <button type="button" className="switch" role="switch" aria-checked={schedule} aria-label="Remind me when it's due" onClick={() => setSchedule(!schedule)} />
-        </div>
-        {schedule && (
-          <div className="sub-opts">
-            <div className="sub-row">
-              <div className="mid">
-                <b>Next due date</b>
-              </div>
-              <button type="button" className="time" aria-haspopup="dialog" onClick={(e) => openDate({ anchor: e.currentTarget, value: due, today, min: today, title: 'Next due date', onPick: setDue })}>
-                <Icon name="calendar" />
-                {shortDate(due)}
-              </button>
-              <div className="mini-chips" role="group" aria-label="Repeats">
-                {(['weekly', 'monthly', 'once'] as const).map((r) => (
-                  <button key={r} type="button" className="chipsel" aria-pressed={repeat === r} onClick={() => setRepeat(r)}>
-                    {r[0].toUpperCase() + r.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {err && (

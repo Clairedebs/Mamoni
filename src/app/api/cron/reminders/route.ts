@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import webpush from 'web-push'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { addDays, shortDate } from '@/lib/format'
+import { addDays } from '@/lib/format'
 
 /**
  * Sends reminder pushes. Call it every 15 minutes with `Authorization: Bearer $CRON_SECRET`
@@ -59,26 +59,6 @@ export async function GET(request: NextRequest) {
         await push(p.id, { title: 'Time for a quick check-in?', body: 'Take 30 seconds to log today’s spending.', url: '/', tag: `daily-${today}` })
       }
 
-      // Roll recurring due dates forward, then announce the ones coming up.
-      const { data: pots } = await db.from('pots').select('id, name, due_date, repeat').eq('user_id', p.id).not('due_date', 'is', null)
-      for (const pot of pots ?? []) {
-        let due = pot.due_date as string
-        if (pot.repeat !== 'once') {
-          while (due < today) {
-            if (pot.repeat === 'weekly') due = addDays(due, 7)
-            else {
-              const d = new Date(`${due}T12:00:00`)
-              d.setMonth(d.getMonth() + 1)
-              due = d.toISOString().slice(0, 10)
-            }
-          }
-          if (due !== pot.due_date) await db.from('pots').update({ due_date: due }).eq('id', pot.id)
-        }
-        if (p.contribution_enabled && due === addDays(today, p.contribution_lead_days)) {
-          const when = p.contribution_lead_days === 0 ? 'today' : p.contribution_lead_days === 1 ? 'tomorrow' : `on ${shortDate(due)}`
-          await push(p.id, { title: `${pot.name} is due ${when}`, body: 'Get your contribution ready. Tap to log it when it’s paid.', url: `/savings/${pot.id}`, tag: `due-${pot.id}-${due}` })
-        }
-      }
       await db.from('profiles').update({ last_reminded_on: today }).eq('id', p.id)
     }
 

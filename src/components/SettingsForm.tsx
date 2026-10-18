@@ -8,29 +8,26 @@ import { PushToggle } from './PushToggle'
 import { useToast } from './Toast'
 import { applyTheme, readTheme, type ThemeChoice } from './theme'
 import { useClientValue } from './useClientValue'
-import { signOut, updatePotSchedule, updateSettings } from '@/lib/actions'
-import { dueIn, shortDate, tint } from '@/lib/format'
-import type { Pot, Profile, ReminderFrequency, Repeat } from '@/lib/types'
+import { signOut, updateSettings } from '@/lib/actions'
+import type { Profile, ReminderFrequency } from '@/lib/types'
 
-type Props = { profile: Profile; contributionPots: Pot[]; counts: { expense: number; income: number; saving: number }; today: string; email: string | null }
+type Props = { profile: Profile; counts: { expense: number; income: number; saving: number }; email: string | null }
 
 const FREQ: [ReminderFrequency, string][] = [
   ['daily', 'Every day'],
   ['thrice_weekly', '3 times a week'],
   ['weekly', 'Every Sunday'],
 ]
-const LEAD = ['On the day', '1 day before', '2 days before']
 
 function Switch({ on, label, onChange }: { on: boolean; label: string; onChange: (v: boolean) => void }) {
   return <button className="switch" role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)} />
 }
 
-export function SettingsForm({ profile, contributionPots, counts, today, email }: Props) {
+export function SettingsForm({ profile, counts, email }: Props) {
   const toast = useToast()
-  const { openDate, openTime } = usePickers()
+  const { openTime } = usePickers()
   const [, start] = useTransition()
   const [p, setP] = useState(profile)
-  const [pots, setPots] = useState(contributionPots)
   const theme = useClientValue<ThemeChoice>(readTheme, 'system', subscribeTheme)
   const [name, setName] = useState(profile.display_name ?? '')
   const deviceTz = typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : profile.timezone
@@ -43,13 +40,6 @@ export function SettingsForm({ profile, contributionPots, counts, today, email }
         toast(res.error)
         setP(profile)
       }
-    })
-  }
-  const schedule = (id: string, u: { due_date?: string; repeat?: Repeat }) => {
-    setPots((cur) => cur.map((x) => (x.id === id ? { ...x, ...u } : x)))
-    start(async () => {
-      const res = await updatePotSchedule(id, u)
-      if (!res.ok) toast(res.error)
     })
   }
   const themeIdx = ['system', 'light', 'dark'].indexOf(theme)
@@ -109,60 +99,6 @@ export function SettingsForm({ profile, contributionPots, counts, today, email }
           </div>
           <Switch on={p.nudge_enabled} label="Nudge when nothing is logged" onChange={(v) => patch({ nudge_enabled: v })} />
         </div>
-        <div className="set-row">
-          <span className="tile" style={tint('amber')}>
-            <Icon name="hand-coins" />
-          </span>
-          <div className="mid">
-            <b>Contribution day</b>
-            <small>Get reminded before each tontine is due</small>
-          </div>
-          <Switch on={p.contribution_enabled} label="Contribution day" onChange={(v) => patch({ contribution_enabled: v })} />
-        </div>
-        {p.contribution_enabled && (
-          <div className="sub-opts">
-            {pots.length === 0 && (
-              <p className="hint" style={{ padding: '12px 0' }}>
-                No pots with a due date yet. Turn on “Remind me when it’s due” when you <Link className="link" href="/savings/pots/new">create a pot</Link>.
-              </p>
-            )}
-            {pots.map((x) => {
-              const due = x.due_date ?? today
-              return (
-                <div key={x.id} className="sub-row">
-                  <div className="mid">
-                    <b>{x.name}</b>
-                    <small>{x.due_date ? dueIn(due, today) : 'No due date yet'}</small>
-                  </div>
-                  <button
-                    className="time"
-                    aria-haspopup="dialog"
-                    aria-label={`Next due date for ${x.name}, ${shortDate(due)}`}
-                    onClick={(e) => openDate({ anchor: e.currentTarget, value: due < today ? today : due, today, min: today, title: `${x.name} · next due`, onPick: (v) => schedule(x.id, { due_date: v }) })}
-                  >
-                    <Icon name="calendar" />
-                    {shortDate(due)}
-                  </button>
-                  <div className="mini-chips" role="group" aria-label="Repeats">
-                    {(['weekly', 'monthly', 'once'] as const).map((r) => (
-                      <button key={r} className="chipsel" aria-pressed={x.repeat === r} onClick={() => schedule(x.id, { repeat: r })}>
-                        {r[0].toUpperCase() + r.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
-            <div className="sub-lbl">Remind me</div>
-            <div className="chips" role="group" aria-label="Remind me">
-              {LEAD.map((l, i) => (
-                <button key={l} className="chipsel" aria-pressed={p.contribution_lead_days === i} onClick={() => patch({ contribution_lead_days: i })}>
-                  {l}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       <div className="section-h">

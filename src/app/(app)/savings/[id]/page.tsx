@@ -5,7 +5,7 @@ import { AddButton } from '@/components/AppShell'
 import { Icon } from '@/components/Icon'
 import { Money, Skeleton, TxRow } from '@/components/ui'
 import { getCategories, getPots, getToday, getTransactions } from '@/lib/data'
-import { dayLabel, dueIn, fmt, shortDate, sinceLabel, tint } from '@/lib/format'
+import { dayLabel, fmt, sinceLabel, tint } from '@/lib/format'
 
 export default function PotPage({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -87,11 +87,6 @@ async function Pot({ params }: { params: Promise<{ id: string }> }) {
             </div>
           </div>
         ) : null}
-        {p.due_date && (
-          <p className="hint" style={{ marginTop: 12 }}>
-            Next contribution {shortDate(p.due_date)} · {dueIn(p.due_date, today).toLowerCase()} · repeats {p.repeat}
-          </p>
-        )}
         <div className="actions">
           <AddButton className="btn" kind="deposit" potId={p.id}>
             <Icon name="plus" />
