@@ -15,6 +15,7 @@ export type Category = {
   description: string | null
   is_default: boolean
   position: number
+  role: 'tontine' | 'tontine_payout' | null
 }
 
 export type Pot = {
@@ -39,6 +40,7 @@ export type Transaction = {
   occurred_on: string
   note: string | null
   created_at: string
+  group_id: string | null
 }
 
 export type Profile = {
@@ -53,4 +55,35 @@ export type Profile = {
   nudge_enabled: boolean
   contribution_enabled: boolean
   contribution_lead_days: number
+}
+
+export type TontineFrequency = 'weekly' | 'monthly'
+
+export type TontineGroup = {
+  id: string
+  name: string
+  amount_per_name: number
+  names_total: number
+  names_held: number
+  frequency: TontineFrequency
+  deadline_time: string
+  cycle_start: string
+  cycle_end: string
+  first_due: string
+  anchor_day: number
+  opening_credit: number
+  payments_offset: number
+  reminders_enabled: boolean
+  status: 'active' | 'ended'
+  ended_on: string | null
+  created_at: string
+}
+
+export type TontineTurn = {
+  id: string
+  group_id: string
+  turn_on: string
+  expected_amount: number
+  status: 'upcoming' | 'collected' | 'before_app'
+  transaction_id: string | null
 }

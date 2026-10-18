@@ -22,7 +22,7 @@ export const getCategories = cache(async (): Promise<Category[]> => {
   const { supabase } = await requireUser()
   const { data, error } = await supabase
     .from('categories')
-    .select('id, kind, name, icon, color, description, is_default, position')
+    .select('id, kind, name, icon, color, description, is_default, position, role')
     .order('position')
     .order('created_at')
   if (error) throw error
@@ -43,7 +43,7 @@ export async function getTransactions(opts: { from?: string; to?: string; limit?
   const { supabase } = await requireUser()
   let q = supabase
     .from('transactions')
-    .select('id, kind, amount, category_id, pot_id, occurred_on, note, created_at')
+    .select('id, kind, amount, category_id, pot_id, occurred_on, note, created_at, group_id')
     .order('occurred_on', { ascending: false })
     .order('created_at', { ascending: false })
   if (opts.from) q = q.gte('occurred_on', opts.from)
