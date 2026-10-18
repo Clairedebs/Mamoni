@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { AddButton } from '@/components/AppShell'
 import { BalanceCard } from '@/components/BalanceCard'
 import { Icon } from '@/components/Icon'
+import { Greeting } from '@/components/Greeting'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { FlowChart, Money, SavingsBar, Skeleton, Tile, TxRow } from '@/components/ui'
 import {
@@ -55,7 +56,9 @@ async function Home() {
           {name[0]?.toUpperCase()}
         </div>
         <div className="grow">
-          <div className="sub">{greeting(profile.timezone)}</div>
+          <div className="sub">
+            <Greeting initial={greeting(profile.timezone)} />
+          </div>
           <h1>{name}</h1>
         </div>
         <span className="m-only">

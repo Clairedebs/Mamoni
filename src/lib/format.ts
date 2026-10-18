@@ -67,9 +67,12 @@ export const tint = (k: PaletteKey) => ({
   background: `color-mix(in oklab, var(--pal-${k}) 14%, transparent)`,
 })
 
-export function greeting(timeZone: string) {
-  const h = Number(new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', hour12: false }).format(new Date()))
-  if (h < 12) return 'Good morning,'
-  if (h < 18) return 'Good afternoon,'
+export function greetingFor(hour: number) {
+  if (hour >= 5 && hour < 12) return 'Good morning,'
+  if (hour >= 12 && hour < 18) return 'Good afternoon,'
   return 'Good evening,'
+}
+
+export function greeting(timeZone: string) {
+  return greetingFor(Number(new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', hourCycle: 'h23' }).format(new Date())))
 }
