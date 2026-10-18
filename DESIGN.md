@@ -582,12 +582,19 @@ Inverted: ink background, page-color text, 14px radius, overlay shadow, centered
 ### Push Notification Preview
 An iOS-style banner: 380px max, 22px radius, 82% surface glass, overlay shadow, slides down from the top on the drawer curve (520ms). 40px app icon, a header line with the app name and "now" in 12px uppercase ink-3 (mirroring OS notification chrome), title "Time for a quick check-in?" at 14.5px, body "Nothing logged for 2 days. Take 30 seconds to update your spending."
 
+### Tontines
+- **Status line:** a row with a 42px hand-coins tile tinted by state (teal *covered*, amber *due soon*, red *late*, violet *your turn*, slate *done*), the group name at 560, and one status sentence ("Covered until Fri, Nov 14", "5,000 FCFA due tomorrow", "1 week late · 5,000 FCFA due", "Your turn today"); late text in error red, turn text in violet ink. Used on Home and in the Tontines list.
+- **Group page:** a pd-head card with a chip ("5,000 FCFA per week"), the group name, "2 of 20 names · dates", the status sentence as the large line (error red when late), two facts (Next due · Amount or Credit) and a full-width "Log payment" primary that opens the add sheet prefilled. Then "Your turns" rows (tile per state, date and payout, "Collect" small primary when due), "Payments", a Reminders switch, and "End cycle" in the danger zone with an inline confirmation. Past cycles are read-only with Paid / Collected facts and "Start a new round".
+- **Group form:** grouped panels for amounts (live summary notice "You pay 5,000 FCFA every Friday · Payout 50,000 FCFA per turn"), a "Names I hold" stepper (34px buttons on soft grey), schedule rows with date/time value buttons, and one row per turn with "Upcoming / Already collected" mini-chips.
+- **Collect payout sheet:** the add-sheet frame with amount, a date value button, and a "Move to savings" switch revealing pot chips and an amount; primary "Collect 50,000 FCFA".
+- **Add sheet:** when the Tontine category is picked, group chips (if several) and amount shortcut chips ("1 week · 5,000", "4 weeks · 20,000") appear above the note.
+
 ### Reminder Banner
 Amber banner (16px radius) with a bell-ring icon, bold line "2 days without an entry", supporting text, and an inverted small button "Update now".
 
 ### Settings Rows, Switch, Chips
 - **Settings group:** surface card, 22px radius, clipped; rows at least 58px, 14px 16px padding, hairline dividers, 34px tile (10px radius), title at 540 with an optional 13px ink-3 line, a trailing value, value button or chevron.
-- **Revealed options:** a switch can reveal a sub-panel beneath its row (hairline top, surface mixed with 40% soft grey, 16px sides). "Contribution day" reveals one row per tontine: name, a due line ("Due in 8 days"), a due-date value button, and mini-chips "Weekly", "Monthly", "Once" (28px, 12.5px), then a "Remind me" label with chips "On the day", "1 day before", "2 days before".
+- **Revealed options:** a switch can reveal a sub-panel beneath its row (hairline top, surface mixed with 40% soft grey, 16px sides), e.g. "Move to savings" in the payout sheet revealing pot chips and an amount.
 - **Switch:** 50 by 30px pill, line-strong when off, violet when on; a 24px white knob slides 20px on `ease-out` (240ms).
 - **Chips:** 34px pills on soft lilac grey, 13px/560 ink-2 ("Every day", "3 times a week", "Every Sunday"); selected chips take the lilac wash, violet ink and a 1.5px inset violet ring; press scales to 0.96.
 - **Badges:** 11px/650 pills; "Soon" in violet ink on lilac wash, "Custom" in ink-3 on soft lilac grey.

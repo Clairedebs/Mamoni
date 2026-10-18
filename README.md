@@ -6,17 +6,19 @@ A personal finance PWA for spending, income and savings, with tontines included.
 
 - **Home**: net worth, available cash, income and spending this month, a 6-month chart, top spending categories, a savings breakdown, and recent activity.
 - **Activity**: browse by month, filter by spending, income or savings, and search.
-- **Savings**: categories (Contributions, Bank, Family, plus your own) that hold *pots*. Each pot has a starting balance, an optional goal and an optional due date for contributions.
+- **Savings**: categories (Contributions, Bank, Family, plus your own) that hold *pots*. Each pot has a starting balance and an optional goal.
+- **Tontines**: track rotating contribution groups. Set the amount per name, number of names, names you hold, weekly or monthly deadline, and your turns. Ma moni shows "covered until" as you pay ahead, flags late weeks, and on your turn records the payout as income and can move part of it into savings. Contributions count as spending.
 - **Add sheet**: a keypad, a custom date picker (defaults to today), expenses, income, and savings deposits or withdrawals. Saving shows an Undo toast.
 - **Categories**: create or edit spending, income and savings categories with an icon and a colour from a fixed palette.
-- **Reminders**: a daily or weekly check-in at the time you choose, a nudge after 2 days with no entries, and an alert before each tontine is due. These are sent as web push notifications.
+- **Reminders** (web push): a daily or weekly check-in at the time you choose, a nudge after 2 days with no entries, and for each tontine: the evening before an unpaid deadline, once if a payment is missed, and on your turn.
 - **PWA**: installable, works with light and dark mode, and shows an offline fallback page. Full offline entry with sync is planned for v2.
 
 ## 1. Create the database
 
 1. Create a free project at [supabase.com](https://supabase.com).
-2. In **SQL Editor**, paste and run `supabase/migrations/20261018000000_init.sql`.
-   It creates the tables, row-level security (each user only sees their own rows) and the default categories for every new account.
+2. In **SQL Editor**, run the migrations in order:
+   1. `supabase/migrations/20261018000000_init.sql`: tables, row-level security (each user only sees their own rows) and default categories.
+   2. `supabase/migrations/20261019000000_tontine_groups.sql`: tontine groups and turns, the Tontine / Tontine payout categories, and the payout function.
 3. In **Authentication › URL Configuration**:
    - set **Site URL** to `http://localhost:3000` (later, your production URL);
    - add `http://localhost:3000/auth/callback` to **Redirect URLs** (and the production equivalent).
@@ -40,6 +42,8 @@ npm install
 npm run dev
 ```
 
+Run the unit tests (tontine maths and reminder rules) with `npm test`.
+
 Open http://localhost:3000, create an account, then enter your starting balances.
 
 Push notifications need HTTPS. To test them locally, run `npx next dev --experimental-https`, then go to **Settings › Notifications on this device**.
@@ -58,11 +62,12 @@ Deploy to Vercel (or any Node host) and set the same environment variables there
 ## Project map
 
 ```
-src/app/(app)/        signed-in screens (home, activity, savings, settings, categories)
+src/app/(app)/        signed-in screens (home, activity, savings, tontines, settings, categories)
 src/app/login/        sign in / sign up
 src/app/api/cron/     reminder job
 src/components/       shell, add sheet, pickers, forms, charts
 src/lib/              Supabase clients, data queries, server actions, formatting
+src/lib/tontine.ts    tontine coverage maths and reminder rules (unit-tested)
 src/proxy.ts          session refresh + auth redirect (Next 16 "proxy", formerly middleware)
 public/sw.js          service worker (caching, push, notification clicks)
 supabase/             SQL migration and cron schedule
