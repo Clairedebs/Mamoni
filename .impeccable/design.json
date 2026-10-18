@@ -1,0 +1,1373 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-17T15:30:00+01:00",
+  "title": "Design System: Ma moni",
+  "extensions": {
+    "colorMeta": {
+      "brand": {
+        "role": "primary",
+        "displayName": "Ma moni Violet",
+        "canonical": "oklch(49.5% 0.222 320.1)",
+        "tonalRamp": [
+          "#1c0025",
+          "#40004d",
+          "#67007a",
+          "#900ea8",
+          "#b743d0",
+          "#d777ed",
+          "#f4aaff",
+          "#ffd8ff"
+        ]
+      },
+      "brand-press": {
+        "role": "primary",
+        "displayName": "Pressed Violet",
+        "canonical": "oklch(44.1% 0.196 320.3)",
+        "tonalRamp": [
+          "#1b0023",
+          "#3e0049",
+          "#640b74",
+          "#8b25a0",
+          "#b24ec7",
+          "#d37de6",
+          "#f1aeff",
+          "#ffdaff"
+        ]
+      },
+      "brand-ink": {
+        "role": "primary",
+        "displayName": "Violet Ink",
+        "canonical": "oklch(42.7% 0.195 319.8)",
+        "tonalRamp": [
+          "#1b0023",
+          "#3d004a",
+          "#630c74",
+          "#8a27a0",
+          "#b14fc7",
+          "#d27ee6",
+          "#f0aeff",
+          "#ffdaff"
+        ]
+      },
+      "brand-soft": {
+        "role": "primary",
+        "displayName": "Lilac Wash",
+        "canonical": "oklch(94.2% 0.029 320.6)",
+        "tonalRamp": [
+          "#110713",
+          "#2a1f2d",
+          "#473b49",
+          "#655968",
+          "#887b8b",
+          "#ad9fb0",
+          "#d3c5d6",
+          "#f8e9fb"
+        ]
+      },
+      "brand-soft-2": {
+        "role": "primary",
+        "displayName": "Lilac Wash Deep",
+        "canonical": "oklch(88.9% 0.051 319.9)",
+        "tonalRamp": [
+          "#130417",
+          "#2f1b33",
+          "#4c3751",
+          "#6b5470",
+          "#8e7794",
+          "#b39bb9",
+          "#dac0e0",
+          "#fde5ff"
+        ]
+      },
+      "on-brand": {
+        "role": "primary",
+        "displayName": "On Violet",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Lavender Mist",
+        "canonical": "oklch(97.4% 0.006 317.8)",
+        "tonalRamp": [
+          "#0c0a0d",
+          "#252326",
+          "#413f42",
+          "#5f5c60",
+          "#827f83",
+          "#a6a3a7",
+          "#ccc9cd",
+          "#f0edf1"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Soft Lilac Grey",
+        "canonical": "oklch(95.2% 0.011 316.5)",
+        "tonalRamp": [
+          "#0d0a0e",
+          "#262228",
+          "#423e44",
+          "#605c62",
+          "#837e85",
+          "#a7a3a9",
+          "#cdc8cf",
+          "#f1ecf3"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(91.6% 0.017 316.9)",
+        "tonalRamp": [
+          "#0e0910",
+          "#27222a",
+          "#433d46",
+          "#625b64",
+          "#847d87",
+          "#a9a1ac",
+          "#cfc7d2",
+          "#f3ebf6"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Strong Hairline",
+        "canonical": "oklch(86.0% 0.025 317.7)",
+        "tonalRamp": [
+          "#100812",
+          "#29202c",
+          "#453c49",
+          "#645967",
+          "#877c8a",
+          "#aba0af",
+          "#d2c6d6",
+          "#f6eafa"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Plum Ink",
+        "canonical": "oklch(20.9% 0.028 315.2)",
+        "tonalRamp": [
+          "#100713",
+          "#29202e",
+          "#463b4a",
+          "#645969",
+          "#877b8c",
+          "#aca0b1",
+          "#d2c5d8",
+          "#f6e9fc"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Plum Ink Secondary",
+        "canonical": "oklch(42.3% 0.037 315.7)",
+        "tonalRamp": [
+          "#110616",
+          "#2b1e30",
+          "#473a4d",
+          "#66576c",
+          "#897a90",
+          "#ae9eb5",
+          "#d4c4db",
+          "#f8e7ff"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Plum Ink Tertiary",
+        "canonical": "oklch(53.0% 0.035 313.9)",
+        "tonalRamp": [
+          "#100715",
+          "#2a1f30",
+          "#463a4d",
+          "#65586c",
+          "#887a8f",
+          "#ad9fb4",
+          "#d3c4db",
+          "#f7e8ff"
+        ]
+      },
+      "pos": {
+        "role": "tertiary",
+        "displayName": "Ledger Green",
+        "canonical": "oklch(51.4% 0.110 161.0)",
+        "tonalRamp": [
+          "#001303",
+          "#003015",
+          "#00502c",
+          "#007049",
+          "#36946a",
+          "#5fba8e",
+          "#97ddb8",
+          "#c8fde0"
+        ]
+      },
+      "neg": {
+        "role": "tertiary",
+        "displayName": "Alert Red",
+        "canonical": "oklch(54.8% 0.175 30.0)",
+        "tonalRamp": [
+          "#260000",
+          "#4f0000",
+          "#7d0000",
+          "#aa2014",
+          "#d44c3b",
+          "#f67a68",
+          "#ffac9c",
+          "#ffd9cc"
+        ]
+      },
+      "toast-ok": {
+        "role": "tertiary",
+        "displayName": "Toast Check",
+        "canonical": "oklch(75.3% 0.134 162.9)",
+        "tonalRamp": [
+          "#001303",
+          "#003115",
+          "#00522b",
+          "#007447",
+          "#009868",
+          "#4abd8e",
+          "#8cdfb8",
+          "#c1ffe0"
+        ]
+      },
+      "toast-link": {
+        "role": "tertiary",
+        "displayName": "Toast Link",
+        "canonical": "oklch(88.9% 0.051 319.9)",
+        "tonalRamp": [
+          "#130417",
+          "#2f1b33",
+          "#4c3751",
+          "#6b5470",
+          "#8e7794",
+          "#b39bb9",
+          "#dac0e0",
+          "#fde5ff"
+        ]
+      },
+      "warn-bg": {
+        "role": "tertiary",
+        "displayName": "Reminder Amber Wash",
+        "canonical": "oklch(97.0% 0.029 82.6)",
+        "tonalRamp": [
+          "#110a01",
+          "#2b2313",
+          "#473f2e",
+          "#665c4b",
+          "#897f6d",
+          "#aea391",
+          "#d4c9b6",
+          "#f8edd9"
+        ]
+      },
+      "warn-ink": {
+        "role": "tertiary",
+        "displayName": "Reminder Amber Ink",
+        "canonical": "oklch(49.2% 0.110 66.0)",
+        "tonalRamp": [
+          "#1c0300",
+          "#3e1800",
+          "#643000",
+          "#864f00",
+          "#ac722f",
+          "#d39657",
+          "#f2c08e",
+          "#ffe6c0"
+        ]
+      },
+      "pal-violet": {
+        "role": "secondary",
+        "displayName": "Palette Violet",
+        "canonical": "oklch(49.5% 0.222 320.1)",
+        "tonalRamp": [
+          "#1c0025",
+          "#40004d",
+          "#67007a",
+          "#900ea8",
+          "#b743d0",
+          "#d777ed",
+          "#f4aaff",
+          "#ffd8ff"
+        ]
+      },
+      "pal-purple": {
+        "role": "secondary",
+        "displayName": "Palette Purple",
+        "canonical": "oklch(54.1% 0.247 293.0)",
+        "tonalRamp": [
+          "#120034",
+          "#2d0066",
+          "#4b049d",
+          "#6c1ed7",
+          "#8c50ff",
+          "#ac84ff",
+          "#cfb5ff",
+          "#f1e1ff"
+        ]
+      },
+      "pal-blue": {
+        "role": "secondary",
+        "displayName": "Palette Blue",
+        "canonical": "oklch(49.1% 0.185 263.2)",
+        "tonalRamp": [
+          "#000331",
+          "#021a5f",
+          "#0d3592",
+          "#2153c3",
+          "#4379ed",
+          "#6ea1ff",
+          "#a0caff",
+          "#cfefff"
+        ]
+      },
+      "pal-cyan": {
+        "role": "secondary",
+        "displayName": "Palette Cyan",
+        "canonical": "oklch(52.0% 0.094 223.1)",
+        "tonalRamp": [
+          "#000f1d",
+          "#002b3f",
+          "#004963",
+          "#006884",
+          "#338ca9",
+          "#5bb2cf",
+          "#91d6f0",
+          "#c2f8ff"
+        ]
+      },
+      "pal-teal": {
+        "role": "secondary",
+        "displayName": "Palette Teal",
+        "canonical": "oklch(56.2% 0.117 163.9)",
+        "tonalRamp": [
+          "#001304",
+          "#003017",
+          "#00512f",
+          "#00714b",
+          "#24966d",
+          "#56bb91",
+          "#92debb",
+          "#c4fee2"
+        ]
+      },
+      "pal-green": {
+        "role": "secondary",
+        "displayName": "Palette Green",
+        "canonical": "oklch(62.7% 0.170 149.2)",
+        "tonalRamp": [
+          "#001300",
+          "#003100",
+          "#005301",
+          "#00751b",
+          "#009a42",
+          "#54be6e",
+          "#92e0a0",
+          "#c6ffcf"
+        ]
+      },
+      "pal-amber": {
+        "role": "secondary",
+        "displayName": "Palette Amber",
+        "canonical": "oklch(64.7% 0.143 67.0)",
+        "tonalRamp": [
+          "#1e0100",
+          "#431300",
+          "#6a2b00",
+          "#914800",
+          "#b76c00",
+          "#db933d",
+          "#f8bd80",
+          "#ffe5b7"
+        ]
+      },
+      "pal-orange": {
+        "role": "secondary",
+        "displayName": "Palette Orange",
+        "canonical": "oklch(64.6% 0.194 41.1)",
+        "tonalRamp": [
+          "#270000",
+          "#510000",
+          "#800000",
+          "#af1800",
+          "#da4800",
+          "#fa7a48",
+          "#ffad87",
+          "#ffdabe"
+        ]
+      },
+      "pal-coral": {
+        "role": "secondary",
+        "displayName": "Palette Coral",
+        "canonical": "oklch(61.3% 0.176 31.6)",
+        "tonalRamp": [
+          "#260000",
+          "#500000",
+          "#7d0000",
+          "#ab200a",
+          "#d54c36",
+          "#f67b65",
+          "#ffac99",
+          "#ffd9ca"
+        ]
+      },
+      "pal-red": {
+        "role": "secondary",
+        "displayName": "Palette Red",
+        "canonical": "oklch(57.7% 0.215 27.3)",
+        "tonalRamp": [
+          "#290000",
+          "#560000",
+          "#860000",
+          "#b90000",
+          "#e4312e",
+          "#ff6e62",
+          "#ffa597",
+          "#ffd5c9"
+        ]
+      },
+      "pal-pink": {
+        "role": "secondary",
+        "displayName": "Palette Pink",
+        "canonical": "oklch(59.2% 0.218 0.6)",
+        "tonalRamp": [
+          "#270009",
+          "#520020",
+          "#81003b",
+          "#b30057",
+          "#de2b79",
+          "#fd6a9f",
+          "#ffa1c6",
+          "#ffd2eb"
+        ]
+      },
+      "pal-slate": {
+        "role": "secondary",
+        "displayName": "Palette Slate",
+        "canonical": "oklch(55.4% 0.041 257.4)",
+        "tonalRamp": [
+          "#020b1c",
+          "#172438",
+          "#324155",
+          "#4f5f75",
+          "#718199",
+          "#95a6bf",
+          "#bacce6",
+          "#def0ff"
+        ]
+      },
+      "brand-press-dark": {
+        "role": "primary",
+        "displayName": "Pressed Violet (dark theme)",
+        "canonical": "oklch(54.3% 0.226 320.7)",
+        "tonalRamp": [
+          "#1c0025",
+          "#40004d",
+          "#68007a",
+          "#9207a8",
+          "#b941d0",
+          "#d976ed",
+          "#f5aaff",
+          "#ffd8ff"
+        ]
+      },
+      "brand-ink-dark": {
+        "role": "primary",
+        "displayName": "Violet Ink (dark theme)",
+        "canonical": "oklch(76.2% 0.159 319.7)",
+        "tonalRamp": [
+          "#190020",
+          "#3a0745",
+          "#5e1d6d",
+          "#833894",
+          "#a85cba",
+          "#cc85dc",
+          "#ebb3f8",
+          "#ffddff"
+        ]
+      },
+      "brand-soft-dark": {
+        "role": "primary",
+        "displayName": "Lilac Wash (dark theme)",
+        "canonical": "oklch(25.2% 0.064 316.8)",
+        "tonalRamp": [
+          "#130419",
+          "#301938",
+          "#4d3556",
+          "#6c5276",
+          "#90759a",
+          "#b599bf",
+          "#dbbee6",
+          "#fde5ff"
+        ]
+      },
+      "brand-soft-2-dark": {
+        "role": "primary",
+        "displayName": "Lilac Wash Deep (dark theme)",
+        "canonical": "oklch(29.9% 0.080 316.3)",
+        "tonalRamp": [
+          "#14031b",
+          "#31173b",
+          "#50315c",
+          "#6f4f7c",
+          "#9371a0",
+          "#b995c6",
+          "#ddbdea",
+          "#fee4ff"
+        ]
+      },
+      "bg-dark": {
+        "role": "neutral",
+        "displayName": "Lavender Mist (dark theme)",
+        "canonical": "oklch(16.2% 0.019 317.6)",
+        "tonalRamp": [
+          "#0e0910",
+          "#28212a",
+          "#443d46",
+          "#625a65",
+          "#857d88",
+          "#aaa1ad",
+          "#d0c7d3",
+          "#f4ebf7"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Night Plum (dark theme)",
+        "canonical": "oklch(20.0% 0.022 315.6)",
+        "tonalRamp": [
+          "#0f0812",
+          "#28212b",
+          "#443c48",
+          "#635a66",
+          "#857c89",
+          "#aaa1ae",
+          "#d0c6d5",
+          "#f4eaf9"
+        ]
+      },
+      "surface-2-dark": {
+        "role": "neutral",
+        "displayName": "Soft Lilac Grey (dark theme)",
+        "canonical": "oklch(23.5% 0.028 315.3)",
+        "tonalRamp": [
+          "#100813",
+          "#29202d",
+          "#453b4a",
+          "#645969",
+          "#877b8c",
+          "#aba0b1",
+          "#d2c5d7",
+          "#f6e9fc"
+        ]
+      },
+      "line-dark": {
+        "role": "neutral",
+        "displayName": "Hairline (dark theme)",
+        "canonical": "oklch(27.8% 0.030 314.3)",
+        "tonalRamp": [
+          "#100714",
+          "#29202e",
+          "#463b4b",
+          "#64596a",
+          "#877b8d",
+          "#ac9fb2",
+          "#d2c5d9",
+          "#f6e9fd"
+        ]
+      },
+      "line-strong-dark": {
+        "role": "neutral",
+        "displayName": "Strong Hairline (dark theme)",
+        "canonical": "oklch(33.8% 0.035 314.3)",
+        "tonalRamp": [
+          "#100715",
+          "#2a1f30",
+          "#473a4d",
+          "#65586c",
+          "#887a8f",
+          "#ad9eb4",
+          "#d3c4db",
+          "#f7e8ff"
+        ]
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Plum Ink (dark theme)",
+        "canonical": "oklch(95.9% 0.012 317.7)",
+        "tonalRamp": [
+          "#0d0a0f",
+          "#272228",
+          "#423e44",
+          "#615b62",
+          "#837e85",
+          "#a8a2aa",
+          "#cec8d0",
+          "#f2ecf4"
+        ]
+      },
+      "ink-2-dark": {
+        "role": "neutral",
+        "displayName": "Plum Ink Secondary (dark theme)",
+        "canonical": "oklch(79.1% 0.032 315.9)",
+        "tonalRamp": [
+          "#100714",
+          "#2a1f2f",
+          "#463b4b",
+          "#65586a",
+          "#887b8d",
+          "#ad9fb2",
+          "#d3c5d9",
+          "#f7e8fd"
+        ]
+      },
+      "ink-3-dark": {
+        "role": "neutral",
+        "displayName": "Plum Ink Tertiary (dark theme)",
+        "canonical": "oklch(66.6% 0.034 314.6)",
+        "tonalRamp": [
+          "#100715",
+          "#2a1f30",
+          "#473a4d",
+          "#65586b",
+          "#887a8f",
+          "#ad9fb4",
+          "#d3c4db",
+          "#f7e8ff"
+        ]
+      },
+      "pos-dark": {
+        "role": "tertiary",
+        "displayName": "Ledger Green (dark theme)",
+        "canonical": "oklch(75.3% 0.134 162.9)",
+        "tonalRamp": [
+          "#001303",
+          "#003115",
+          "#00522b",
+          "#007447",
+          "#009868",
+          "#4abd8e",
+          "#8cdfb8",
+          "#c1ffe0"
+        ]
+      },
+      "neg-dark": {
+        "role": "tertiary",
+        "displayName": "Alert Red (dark theme)",
+        "canonical": "oklch(75.8% 0.145 29.0)",
+        "tonalRamp": [
+          "#230000",
+          "#4b0101",
+          "#76160f",
+          "#9f3329",
+          "#c8594b",
+          "#ec8273",
+          "#ffb1a3",
+          "#ffdcd1"
+        ]
+      },
+      "toast-ok-dark": {
+        "role": "tertiary",
+        "displayName": "Toast Check (dark theme)",
+        "canonical": "oklch(51.4% 0.110 161.0)",
+        "tonalRamp": [
+          "#001303",
+          "#003015",
+          "#00502c",
+          "#007049",
+          "#36946a",
+          "#5fba8e",
+          "#97ddb8",
+          "#c8fde0"
+        ]
+      },
+      "toast-link-dark": {
+        "role": "tertiary",
+        "displayName": "Toast Link (dark theme)",
+        "canonical": "oklch(42.7% 0.195 319.8)",
+        "tonalRamp": [
+          "#1b0023",
+          "#3d004a",
+          "#630c74",
+          "#8a27a0",
+          "#b14fc7",
+          "#d27ee6",
+          "#f0aeff",
+          "#ffdaff"
+        ]
+      },
+      "warn-bg-dark": {
+        "role": "tertiary",
+        "displayName": "Reminder Amber Wash (dark theme)",
+        "canonical": "oklch(26.3% 0.036 74.2)",
+        "tonalRamp": [
+          "#140800",
+          "#2e210f",
+          "#4b3d2a",
+          "#6a5b47",
+          "#8d7d69",
+          "#b2a28c",
+          "#d9c8b2",
+          "#fdecd5"
+        ]
+      },
+      "warn-ink-dark": {
+        "role": "tertiary",
+        "displayName": "Reminder Amber Ink (dark theme)",
+        "canonical": "oklch(83.6% 0.113 77.7)",
+        "tonalRamp": [
+          "#1a0500",
+          "#3a1b00",
+          "#5e3500",
+          "#805300",
+          "#a57622",
+          "#cb9b4e",
+          "#ebc488",
+          "#ffeabc"
+        ]
+      },
+      "pal-violet-dark": {
+        "role": "secondary",
+        "displayName": "Palette Violet (dark theme)",
+        "canonical": "oklch(71.1% 0.172 320.2)",
+        "tonalRamp": [
+          "#1a0021",
+          "#3b0346",
+          "#60186f",
+          "#863298",
+          "#ac58be",
+          "#ce82df",
+          "#edb1fb",
+          "#ffdcff"
+        ]
+      },
+      "pal-purple-dark": {
+        "role": "secondary",
+        "displayName": "Palette Purple (dark theme)",
+        "canonical": "oklch(70.9% 0.159 293.5)",
+        "tonalRamp": [
+          "#0f002a",
+          "#291154",
+          "#462981",
+          "#6545ad",
+          "#8669d5",
+          "#a991f6",
+          "#cebdff",
+          "#f0e5ff"
+        ]
+      },
+      "pal-blue-dark": {
+        "role": "secondary",
+        "displayName": "Palette Blue (dark theme)",
+        "canonical": "oklch(70.4% 0.154 264.0)",
+        "tonalRamp": [
+          "#00052c",
+          "#071d58",
+          "#183887",
+          "#2f57b3",
+          "#507bdb",
+          "#77a2fc",
+          "#a6caff",
+          "#d3efff"
+        ]
+      },
+      "pal-cyan-dark": {
+        "role": "secondary",
+        "displayName": "Palette Cyan (dark theme)",
+        "canonical": "oklch(79.7% 0.134 211.5)",
+        "tonalRamp": [
+          "#00111d",
+          "#002e3f",
+          "#004e65",
+          "#006f88",
+          "#0094ae",
+          "#00b9d2",
+          "#76dcf0",
+          "#b3fdff"
+        ]
+      },
+      "pal-teal-dark": {
+        "role": "secondary",
+        "displayName": "Palette Teal (dark theme)",
+        "canonical": "oklch(77.3% 0.153 163.2)",
+        "tonalRamp": [
+          "#001402",
+          "#003213",
+          "#005429",
+          "#007644",
+          "#009b65",
+          "#34bf8b",
+          "#83e1b6",
+          "#bdffdf"
+        ]
+      },
+      "pal-green-dark": {
+        "role": "secondary",
+        "displayName": "Palette Green (dark theme)",
+        "canonical": "oklch(80.0% 0.182 151.7)",
+        "tonalRamp": [
+          "#001400",
+          "#003200",
+          "#005404",
+          "#00771d",
+          "#009d43",
+          "#43c070",
+          "#8ae2a2",
+          "#c1ffd1"
+        ]
+      },
+      "pal-amber-dark": {
+        "role": "secondary",
+        "displayName": "Palette Amber (dark theme)",
+        "canonical": "oklch(77.9% 0.146 72.1)",
+        "tonalRamp": [
+          "#1d0200",
+          "#411500",
+          "#682e00",
+          "#8e4a00",
+          "#b46e00",
+          "#d89534",
+          "#f5bf7b",
+          "#ffe7b5"
+        ]
+      },
+      "pal-orange-dark": {
+        "role": "secondary",
+        "displayName": "Palette Orange (dark theme)",
+        "canonical": "oklch(75.8% 0.159 55.9)",
+        "tonalRamp": [
+          "#220000",
+          "#490900",
+          "#732000",
+          "#9d3b00",
+          "#c56100",
+          "#e88a40",
+          "#ffb781",
+          "#ffe1b9"
+        ]
+      },
+      "pal-coral-dark": {
+        "role": "secondary",
+        "displayName": "Palette Coral (dark theme)",
+        "canonical": "oklch(75.7% 0.147 32.3)",
+        "tonalRamp": [
+          "#230000",
+          "#4b0100",
+          "#761605",
+          "#a03421",
+          "#c85944",
+          "#ed826d",
+          "#ffb19f",
+          "#ffdccd"
+        ]
+      },
+      "pal-red-dark": {
+        "role": "secondary",
+        "displayName": "Palette Red (dark theme)",
+        "canonical": "oklch(71.1% 0.166 22.2)",
+        "tonalRamp": [
+          "#250000",
+          "#4e0006",
+          "#7b0418",
+          "#a7242f",
+          "#d14e51",
+          "#f47b79",
+          "#ffaca8",
+          "#ffd9d5"
+        ]
+      },
+      "pal-pink-dark": {
+        "role": "secondary",
+        "displayName": "Palette Pink (dark theme)",
+        "canonical": "oklch(72.5% 0.175 349.8)",
+        "tonalRamp": [
+          "#220010",
+          "#49002c",
+          "#74024b",
+          "#9f216c",
+          "#c84a8f",
+          "#eb78b3",
+          "#ffaad6",
+          "#ffd7f7"
+        ]
+      },
+      "pal-slate-dark": {
+        "role": "secondary",
+        "displayName": "Palette Slate (dark theme)",
+        "canonical": "oklch(71.1% 0.035 256.8)",
+        "tonalRamp": [
+          "#030b1a",
+          "#192535",
+          "#344152",
+          "#515f72",
+          "#738196",
+          "#97a6bb",
+          "#bccce2",
+          "#e0f0ff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display-amount": {
+        "displayName": "Display amount",
+        "purpose": "Live amount in the add sheet."
+      },
+      "display-balance": {
+        "displayName": "Display balance",
+        "purpose": "Net worth on the balance card; savings hero and pot detail totals."
+      },
+      "display-pot": {
+        "displayName": "Display pot",
+        "purpose": "Pot detail balance."
+      },
+      "display-savings": {
+        "displayName": "Display savings",
+        "purpose": "Savings screen total."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Screen titles on mobile."
+      },
+      "picker-date": {
+        "displayName": "Picker date",
+        "purpose": "Selected date in the calendar header (22px on desktop)."
+      },
+      "picker-wheel": {
+        "displayName": "Picker wheel",
+        "purpose": "Hour and minute wheel items; 720 for the selected item."
+      },
+      "subtotal": {
+        "displayName": "Subtotal",
+        "purpose": "Card-level figures and pot name; 24px for the home savings total."
+      },
+      "title-lg": {
+        "displayName": "Title large",
+        "purpose": "Category editor preview name."
+      },
+      "title-sm": {
+        "displayName": "Title small",
+        "purpose": "Savings group names and totals."
+      },
+      "input": {
+        "displayName": "Input",
+        "purpose": "Mobile text inputs, 16px to prevent focus zoom."
+      },
+      "body-sm": {
+        "displayName": "Body small",
+        "purpose": "Links, card labels, settings values, field labels, notification body."
+      },
+      "headline-desktop": {
+        "displayName": "Headline (desktop)",
+        "purpose": "Screen titles at 1024px and up."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section headings and sheet title."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default text, tabular figures on."
+      },
+      "body-strong": {
+        "displayName": "Body strong",
+        "purpose": "Row titles and button labels (540 to 600)."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Secondary lines, day headers, segmented and chip labels."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Meta under amounts, flow labels on the card."
+      },
+      "tab-label": {
+        "displayName": "Tab label",
+        "purpose": "Mobile tab bar labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-sm",
+        "value": "0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04)",
+        "purpose": "Resting panels, groups, icon buttons, search, segmented thumb."
+      },
+      {
+        "name": "shadow-md",
+        "value": "0 6px 18px -6px rgba(45,10,55,.14),0 2px 6px -2px rgba(45,10,55,.06)",
+        "purpose": "Raised cards."
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12)",
+        "purpose": "Sheet, toast, notification."
+      },
+      {
+        "name": "shadow-balance",
+        "value": "0 14px 28px -14px rgba(30,8,36,.45),0 2px 6px -2px rgba(30,8,36,.2)",
+        "purpose": "Violet balance card."
+      },
+      {
+        "name": "shadow-fab",
+        "value": "0 8px 16px -8px rgba(30,8,36,.5),0 2px 4px rgba(30,8,36,.18)",
+        "purpose": "Violet FAB."
+      },
+      {
+        "name": "shadow-sm-dark",
+        "value": "0 1px 2px rgba(0,0,0,.4)",
+        "purpose": "Resting, dark theme."
+      },
+      {
+        "name": "shadow-md-dark",
+        "value": "0 8px 20px -8px rgba(0,0,0,.6)",
+        "purpose": "Raised, dark theme."
+      },
+      {
+        "name": "shadow-lg-dark",
+        "value": "0 24px 48px -12px rgba(0,0,0,.7)",
+        "purpose": "Overlay, dark theme."
+      },
+      {
+        "name": "glass-tabbar",
+        "value": "background: color-mix(in oklab, var(--surface) 88%, transparent); backdrop-filter: saturate(1.6) blur(18px)",
+        "purpose": "Mobile tab bar."
+      },
+      {
+        "name": "glass-notification",
+        "value": "background: color-mix(in oklab, var(--surface) 82%, transparent); backdrop-filter: blur(24px) saturate(1.8)",
+        "purpose": "Push notification preview."
+      },
+      {
+        "name": "scrim",
+        "value": "rgba(20,6,26,.42)",
+        "purpose": "Behind the add sheet."
+      },
+      {
+        "name": "ring-category",
+        "value": "0 0 0 2px var(--surface),0 0 0 4px currentColor",
+        "purpose": "Selected category tile in the add sheet."
+      },
+      {
+        "name": "ring-swatch",
+        "value": "0 0 0 3px var(--surface),0 0 0 5px var(--ring)",
+        "purpose": "Selected color swatch."
+      },
+      {
+        "name": "ring-inset",
+        "value": "inset 0 0 0 2px var(--sel)",
+        "purpose": "Selected icon option (1.5px violet for selected chips)."
+      },
+      {
+        "name": "scrim-picker",
+        "value": "rgba(20,6,26,.34)",
+        "purpose": "Behind mobile pickers; none on desktop popovers."
+      },
+      {
+        "name": "focus-ring",
+        "value": "outline: 2px solid var(--brand); outline-offset: 2px",
+        "purpose": "Global keyboard focus."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.23,1,.32,1)",
+        "purpose": "Presses, segmented thumbs (260-280ms), switch knob (240ms), savings bar (400ms), new row (420ms), toast enter (320ms)."
+      },
+      {
+        "name": "ease-drawer",
+        "value": "cubic-bezier(.32,.72,0,1)",
+        "purpose": "Add sheet open (460ms) and notification enter (520ms)."
+      },
+      {
+        "name": "ease-exit",
+        "value": "cubic-bezier(.4,0,1,1)",
+        "purpose": "Sheet close (240ms) and notification exit (300ms)."
+      },
+      {
+        "name": "picker-sheet",
+        "value": "440ms ease-drawer in, 220ms cubic-bezier(.4,0,1,1) out",
+        "purpose": "Mobile date and time pickers."
+      },
+      {
+        "name": "picker-popover",
+        "value": "scale(.96) to none, 200ms ease-out in, 140ms ease-out out",
+        "purpose": "Desktop anchored pickers."
+      },
+      {
+        "name": "calendar-slide",
+        "value": "translateX(+/-14px) with fade, 220ms ease-out",
+        "purpose": "Month change, in the direction of travel; skipped under reduced motion."
+      },
+      {
+        "name": "press",
+        "value": "scale(.90 to .97), 120-160ms ease-out",
+        "purpose": "Pressed feedback on buttons, FAB, keys, chips."
+      },
+      {
+        "name": "theme-crossfade",
+        "value": "background-color, color 240ms ease",
+        "purpose": "Page cross-fade when the theme changes."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "transition/animation-duration 1ms; scrim and toast keep 160ms opacity",
+        "purpose": "prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "340px"
+      },
+      {
+        "name": "small",
+        "value": "420px"
+      },
+      {
+        "name": "tablet",
+        "value": "720px"
+      },
+      {
+        "name": "desktop",
+        "value": "1024px"
+      }
+    ],
+    "themes": {
+      "modes": [
+        "system",
+        "light",
+        "dark"
+      ],
+      "mechanism": "data-theme attribute on :root overrides prefers-color-scheme; choice persisted in localStorage",
+      "controls": [
+        "Header icon button (moon in light, sun in dark) on the mobile home header",
+        "Rail item \"Dark mode\" / \"Light mode\" on desktop",
+        "Settings > Appearance segmented control: System / Light / Dark"
+      ]
+    },
+    "numberFormat": {
+      "currency": "FCFA",
+      "pattern": "integer, comma thousands grouping, suffix at 0.62em and 72% opacity",
+      "example": "3,012,250 FCFA"
+    }
+  },
+  "components": [
+    {
+      "name": "Balance Card",
+      "kind": "card",
+      "refersTo": "balance-card",
+      "description": "The single solid-violet wallet card holding net worth and the month flows.",
+      "html": "<article class=\"ds-balance\"><div class=\"ds-lbl\">Net worth</div><div class=\"ds-big\">3,012,250<span class=\"ds-cur\">FCFA</span></div><div class=\"ds-split\">Available <b>842,250</b> · Savings <b>2,170,000</b></div><div class=\"ds-flows\"><div class=\"ds-flow\"><small>Income · Oct</small><strong>450,000<span class=\"ds-cur\">FCFA</span></strong></div><div class=\"ds-flow\"><small>Spending · Oct</small><strong>187,500<span class=\"ds-cur\">FCFA</span></strong></div></div></article>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-balance{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;position:relative;overflow:hidden;border-radius:26px;padding:20px 20px 18px;color:#fff;background:var(--brand);max-width:380px;box-shadow:0 14px 28px -14px rgba(30,8,36,.45),0 2px 6px -2px rgba(30,8,36,.2)} .ds-balance::after{content:\"\";position:absolute;right:-60px;top:-80px;width:220px;height:220px;border-radius:50%;border:1px solid rgba(255,255,255,.14);box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 56px rgba(255,255,255,.025);pointer-events:none} .ds-lbl{font-size:14px;font-weight:500;color:rgba(255,255,255,.82)} .ds-big{font-size:40px;font-weight:650;letter-spacing:-.035em;line-height:1.1;margin:6px 0 4px} .ds-cur{font-size:.62em;font-weight:500;letter-spacing:0;margin-left:.22em;opacity:.72} .ds-split{font-size:13px;color:rgba(255,255,255,.8)} .ds-split b{color:#fff;font-weight:600} .ds-flows{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px} .ds-flow{background:rgba(255,255,255,.12);border-radius:16px;padding:11px 12px} .ds-flow small{display:block;font-size:12px;color:rgba(255,255,255,.78)} .ds-flow strong{display:block;font-size:15px;font-weight:620}"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Violet 48px action button.",
+      "html": "<button class=\"ds-btn\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/></svg>Save balances</button>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-btn{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 20px;border:0;border-radius:14px;font-weight:600;font-size:15px;background:var(--brand);color:#fff;cursor:pointer;transition:transform 160ms var(--ease-out),background-color 160ms ease} .ds-btn:hover{background:var(--brand-press)} .ds-btn:active{transform:scale(.97)} .ds-btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action on soft lilac grey.",
+      "html": "<button class=\"ds-ghost\">Cancel</button>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-ghost{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;height:48px;padding:0 20px;border:0;border-radius:14px;font-weight:600;font-size:15px;background:var(--surface-2);color:var(--ink);cursor:pointer;transition:transform 160ms var(--ease-out),background-color 160ms ease} .ds-ghost:hover{background:var(--line)} .ds-ghost:active{transform:scale(.97)} .ds-ghost:focus-visible{outline:2px solid var(--brand);outline-offset:2px}"
+    },
+    {
+      "name": "Tab Bar with FAB",
+      "kind": "nav",
+      "refersTo": "tab-bar",
+      "description": "Mobile glass tab bar with the centered violet add button.",
+      "html": "<nav class=\"ds-tabbar\"><button class=\"ds-tab\" aria-current=\"page\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/></svg>Home</button><button class=\"ds-tab\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/></svg>Activity</button><button class=\"ds-fab\" aria-label=\"Add a transaction\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg></button><button class=\"ds-tab\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z\"/><path d=\"M16 10h.01\"/><path d=\"M2 8v1a2 2 0 0 0 2 2h1\"/></svg>Savings</button><button class=\"ds-tab\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 7h-9\"/><path d=\"M14 17H5\"/><circle cx=\"17\" cy=\"17\" r=\"3\"/><circle cx=\"7\" cy=\"7\" r=\"3\"/></svg>Settings</button></nav>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-tabbar{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;padding:8px 12px;max-width:400px;background:color-mix(in oklab,var(--surface) 88%,transparent);backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);border-top:1px solid var(--line)} .ds-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border:0;background:none;font:inherit;font-size:11px;font-weight:550;color:var(--ink-3);border-radius:12px;cursor:pointer;transition:color 160ms ease} .ds-tab:hover{color:var(--ink)} .ds-tab[aria-current=\"page\"]{color:var(--brand-ink)} .ds-tab:focus-visible,.ds-fab:focus-visible{outline:2px solid var(--brand);outline-offset:2px} .ds-fab{justify-self:center;width:56px;height:56px;border:0;border-radius:18px;background:var(--brand);color:#fff;display:grid;place-items:center;margin-top:-4px;cursor:pointer;box-shadow:0 8px 16px -8px rgba(30,8,36,.5),0 2px 4px rgba(30,8,36,.18);transition:transform 160ms var(--ease-out),background-color 160ms ease} .ds-fab:hover{background:var(--brand-press)} .ds-fab:active{transform:scale(.94)}"
+    },
+    {
+      "name": "Header Icon Buttons and Theme Toggle",
+      "kind": "button",
+      "refersTo": "theme-toggle",
+      "description": "40px circular header buttons: the light/dark toggle (moon/sun) and the notifications bell.",
+      "html": "<div class=\"ds-row\"><button class=\"ds-icon\" aria-label=\"Switch to dark mode\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/></svg></button><button class=\"ds-icon\" aria-label=\"Notifications (1 reminder)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/></svg><span class=\"ds-dot\"></span></button></div>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-row{display:flex;gap:12px} .ds-icon{position:relative;width:40px;height:40px;border:0;border-radius:50%;display:grid;place-items:center;color:var(--ink-2);background:var(--surface);box-shadow:var(--shadow-sm);cursor:pointer;transition:transform 140ms var(--ease-out),background-color 160ms ease} .ds-icon:hover{background:var(--surface-2)} .ds-icon:active{transform:scale(.94)} .ds-icon:focus-visible{outline:2px solid var(--brand);outline-offset:2px} .ds-dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 2px var(--surface)}"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "custom",
+      "refersTo": "segmented-control",
+      "description": "Lilac track with a sliding white thumb; used for filters, sheet type and Appearance.",
+      "html": "<div class=\"ds-seg\" role=\"group\" aria-label=\"Appearance\"><span class=\"ds-thumb\"></span><button aria-pressed=\"true\">System</button><button aria-pressed=\"false\">Light</button><button aria-pressed=\"false\">Dark</button></div>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-seg{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;position:relative;display:grid;grid-template-columns:repeat(3,1fr);width:240px;background:var(--surface-2);border-radius:12px;padding:3px} .ds-seg button{position:relative;z-index:1;height:34px;border:0;background:none;border-radius:9px;font:inherit;font-size:13px;font-weight:560;color:var(--ink-2);cursor:pointer;transition:color 160ms ease} .ds-seg button[aria-pressed=\"true\"],.ds-seg button:hover{color:var(--ink)} .ds-seg button:focus-visible{outline:2px solid var(--brand);outline-offset:2px} .ds-thumb{position:absolute;top:3px;bottom:3px;left:3px;width:calc((100% - 6px)/3);border-radius:9px;background:var(--surface);box-shadow:var(--shadow-sm);transition:transform 260ms var(--ease-out)}"
+    },
+    {
+      "name": "Transaction Row",
+      "kind": "custom",
+      "refersTo": "transaction-row",
+      "description": "Category tile, title and meta, tabular amount; income green, spending ink with a minus sign.",
+      "html": "<div class=\"ds-list\"><button class=\"ds-txrow\"><span class=\"ds-tile\" style=\"color:var(--pal-green);background:color-mix(in oklab,var(--pal-green) 14%,transparent)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m15 11-1 9\"/><path d=\"m19 11-4-7\"/><path d=\"M2 11h20\"/><path d=\"m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4\"/><path d=\"M4.5 15.5h15\"/><path d=\"m5 11 4-7\"/><path d=\"m9 11 1 9\"/></svg></span><span class=\"ds-mid\"><b>Market</b><small>Groceries · 18:40</small></span><span class=\"ds-amt\">−12,500<span class=\"ds-cur\">FCFA</span></span></button><button class=\"ds-txrow\"><span class=\"ds-tile\" style=\"color:var(--pal-teal);background:color-mix(in oklab,var(--pal-teal) 14%,transparent)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/></svg></span><span class=\"ds-mid\"><b>October salary</b><small>Salary</small></span><span class=\"ds-amt ds-in\">+450,000<span class=\"ds-cur\">FCFA</span></span></button></div>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-list{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;display:grid;max-width:380px;background:var(--surface);border-radius:22px;padding:6px 16px 8px;box-shadow:var(--shadow-sm)} .ds-txrow{display:flex;align-items:center;gap:12px;width:calc(100% + 16px);padding:10px 8px;margin:0 -8px;border:0;background:none;font:inherit;color:var(--ink);text-align:left;border-radius:14px;cursor:pointer;transition:background-color 160ms ease} .ds-txrow:hover{background:var(--surface-2)} .ds-txrow:focus-visible{outline:2px solid var(--brand);outline-offset:2px} .ds-tile{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none} .ds-mid{flex:1;min-width:0} .ds-mid b{display:block;font-weight:560;font-size:15px} .ds-mid small{display:block;color:var(--ink-3);font-size:13px} .ds-amt{font-weight:600;white-space:nowrap;letter-spacing:-.01em} .ds-in{color:var(--pos)} .ds-cur{font-size:.62em;font-weight:500;letter-spacing:0;margin-left:.22em;opacity:.72}"
+    },
+    {
+      "name": "Savings Group",
+      "kind": "card",
+      "refersTo": "savings-group",
+      "description": "Savings category card in its fixed hue, with pot rows and goal tracks.",
+      "html": "<div class=\"ds-group\"><div class=\"ds-gh\"><span class=\"ds-gtile\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16\"/><path d=\"m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 15 6 6\"/><path d=\"M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.73 2.73 0 0 0 16 4a2.78 2.78 0 0 0-5 1.8c0 1.2.8 2 1.5 2.8L16 12Z\"/></svg></span><div class=\"ds-gt\"><b>Contributions</b><small>Tontines and group contributions</small></div><div class=\"ds-gv\">640,000<span class=\"ds-cur\">FCFA</span></div></div><button class=\"ds-pocket\"><span class=\"ds-pm\"><b>Neighbourhood tontine</b><small>50,000 every month</small><span class=\"ds-mt\"><i style=\"width:64%\"></i></span></span><span class=\"ds-pr\"><strong>320,000</strong><small>+50,000</small></span></button></div>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-group{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;max-width:380px;background:var(--surface);border-radius:22px;box-shadow:var(--shadow-sm);padding:16px 16px 8px;color:var(--ink)} .ds-gh{display:flex;align-items:center;gap:12px;margin-bottom:6px} .ds-gtile{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:color-mix(in oklab,var(--pal-amber) 14%,transparent);color:var(--pal-amber)} .ds-gt{flex:1} .ds-gt b{display:block;font-weight:620;font-size:16px} .ds-gt small{color:var(--ink-3);font-size:13px} .ds-gv{font-weight:650;font-size:16px;white-space:nowrap} .ds-cur{font-size:.62em;font-weight:500;letter-spacing:0;margin-left:.22em;opacity:.72} .ds-pocket{display:flex;align-items:center;gap:12px;width:calc(100% + 16px);padding:12px 8px;margin:0 -8px;border:0;background:none;font:inherit;color:inherit;text-align:left;border-radius:14px;cursor:pointer;transition:background-color 160ms ease} .ds-pocket:hover{background:var(--surface-2)} .ds-pocket:focus-visible{outline:2px solid var(--brand);outline-offset:2px} .ds-pm{flex:1} .ds-pm b{display:block;font-weight:540;font-size:15px} .ds-pm small{display:block;color:var(--ink-3);font-size:12.5px} .ds-mt{display:block;height:4px;border-radius:2px;background:var(--surface-2);margin-top:7px;overflow:hidden;max-width:180px} .ds-mt i{display:block;height:100%;background:var(--pal-amber)} .ds-pr{text-align:right} .ds-pr strong{display:block;font-weight:600} .ds-pr small{font-size:12px;font-weight:550;color:var(--pos)}"
+    },
+    {
+      "name": "Money Input",
+      "kind": "input",
+      "refersTo": "money-input",
+      "description": "Amount field with FCFA suffix; violet border and surface fill on focus.",
+      "html": "<label class=\"ds-money\"><input inputmode=\"numeric\" value=\"250,000\" aria-label=\"Bank starting balance\"><span>FCFA</span></label>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-money{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:8px;max-width:320px;background:var(--surface-2);border-radius:12px;padding:0 14px;height:50px;border:1.5px solid transparent;transition:border-color 160ms ease,background-color 160ms ease} .ds-money:hover{border-color:var(--line-strong)} .ds-money:focus-within{border-color:var(--brand);background:var(--surface)} .ds-money input{border:0;background:none;outline:none;flex:1;min-width:0;font:inherit;font-size:18px;font-weight:600;color:var(--ink);caret-color:var(--brand)} .ds-money span{color:var(--ink-3);font-weight:550;font-size:14px}"
+    },
+    {
+      "name": "Add Sheet Keypad",
+      "kind": "custom",
+      "refersTo": "add-sheet",
+      "description": "Signature add sheet: large tabular amount over a 3-column keypad and the save button.",
+      "html": "<div class=\"ds-sheet\"><div class=\"ds-grab\"></div><div class=\"ds-amount\">12,500<span class=\"ds-cur\">FCFA</span></div><div class=\"ds-pad\"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>000</button><button>0</button><button aria-label=\"Delete\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10 5a2 2 0 0 0-1.344.519l-6.328 5.74a1 1 0 0 0 0 1.481l6.328 5.741A2 2 0 0 0 10 19h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z\"/><path d=\"m12 9 6 6\"/><path d=\"m18 9-6 6\"/></svg></button></div><button class=\"ds-save\">Save expense</button></div>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-sheet{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;max-width:380px;background:var(--surface);border-radius:28px 28px 0 0;box-shadow:var(--shadow-lg);padding:8px 16px 16px;color:var(--ink)} .ds-grab{width:38px;height:5px;border-radius:3px;background:var(--line-strong);margin:2px auto 10px} .ds-amount{text-align:center;padding:18px 0 14px;font-size:52px;font-weight:650;letter-spacing:-.04em;line-height:1.05} .ds-amount .ds-cur{font-size:.42em;font-weight:500;margin-left:.22em;opacity:.6;letter-spacing:0} .ds-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px} .ds-pad button{height:54px;border:0;background:none;border-radius:14px;font:inherit;font-size:22px;font-weight:550;color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:background-color 120ms ease,transform 120ms var(--ease-out)} .ds-pad button:hover{background:var(--surface-2)} .ds-pad button:active{background:var(--surface-2);transform:scale(.96)} .ds-pad button:focus-visible,.ds-save:focus-visible{outline:2px solid var(--brand);outline-offset:2px} .ds-save{width:100%;height:48px;border:0;border-radius:14px;background:var(--brand);color:#fff;font:inherit;font-weight:600;font-size:15px;cursor:pointer;transition:background-color 160ms ease} .ds-save:hover{background:var(--brand-press)}"
+    },
+    {
+      "name": "Settings Row with Switch and Chips",
+      "kind": "chip",
+      "refersTo": "settings-row",
+      "description": "Grouped settings list: tile, title, violet switch, frequency chips.",
+      "html": "<div class=\"ds-set\"><div class=\"ds-srow\"><span class=\"ds-stile\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/></svg></span><div class=\"ds-sm\"><b>Update reminder</b><small>A notification so you remember to log your transactions</small></div><button class=\"ds-switch\" role=\"switch\" aria-checked=\"true\" aria-label=\"Update reminder\"></button></div><div class=\"ds-chips\"><button class=\"ds-chip\" aria-pressed=\"true\">Every day</button><button class=\"ds-chip\" aria-pressed=\"false\">3 times a week</button><button class=\"ds-chip\" aria-pressed=\"false\">Every Sunday</button></div></div>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-set{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;max-width:420px;background:var(--surface);border-radius:22px;box-shadow:var(--shadow-sm);overflow:hidden;color:var(--ink)} .ds-srow{display:flex;align-items:center;gap:12px;padding:14px 16px;min-height:58px} .ds-stile{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand-ink);flex:none} .ds-sm{flex:1;min-width:0} .ds-sm b{display:block;font-weight:540;font-size:15px} .ds-sm small{display:block;color:var(--ink-3);font-size:13px} .ds-switch{width:50px;height:30px;border:0;border-radius:999px;background:var(--line-strong);position:relative;flex:none;cursor:pointer;transition:background-color 200ms ease} .ds-switch::after{content:\"\";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:transform 240ms var(--ease-out)} .ds-switch[aria-checked=\"true\"]{background:var(--brand)} .ds-switch[aria-checked=\"true\"]::after{transform:translateX(20px)} .ds-switch:focus-visible,.ds-chip:focus-visible{outline:2px solid var(--brand);outline-offset:2px} .ds-chips{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 14px} .ds-chip{height:34px;padding:0 13px;border:0;border-radius:999px;background:var(--surface-2);font:inherit;font-size:13px;font-weight:560;color:var(--ink-2);cursor:pointer;transition:background-color 160ms ease,color 160ms ease,transform 140ms var(--ease-out)} .ds-chip:hover{color:var(--ink)} .ds-chip:active{transform:scale(.96)} .ds-chip[aria-pressed=\"true\"]{background:var(--brand-soft);color:var(--brand-ink);box-shadow:inset 0 0 0 1.5px var(--brand)}"
+    },
+    {
+      "name": "Toast and Notification Preview",
+      "kind": "custom",
+      "refersTo": "toast",
+      "description": "Inverted ink toast with Undo, and the iOS-style glass push banner.",
+      "html": "<div class=\"ds-stack\"><div class=\"ds-notif\"><span class=\"ds-appicon\"></span><div class=\"ds-nm\"><div class=\"ds-app\"><span>Ma moni</span><span>now</span></div><b>Time for a quick check-in?</b><p>Nothing logged for 2 days. Take 30 seconds to update your spending.</p></div></div><div class=\"ds-toast\" role=\"status\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/></svg><span>Expense of 12,500 FCFA saved</span><button>Undo</button></div></div>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-stack{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;display:grid;gap:16px;justify-items:start} .ds-notif{display:flex;gap:12px;width:min(380px,100%);padding:12px 14px;border-radius:22px;background:color-mix(in oklab,var(--surface) 82%,transparent);backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);box-shadow:var(--shadow-lg);color:var(--ink)} .ds-appicon{width:40px;height:40px;border-radius:11px;background:var(--brand);flex:none} .ds-nm{flex:1;min-width:0} .ds-app{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3);font-weight:550;text-transform:uppercase;letter-spacing:.02em} .ds-nm b{display:block;font-size:14.5px;margin-top:1px} .ds-nm p{margin:0;font-size:14px;color:var(--ink-2);line-height:1.35} .ds-toast{display:flex;align-items:center;gap:12px;background:var(--ink);color:var(--bg);border-radius:14px;padding:10px 10px 10px 14px;font-size:14px;font-weight:520;box-shadow:var(--shadow-lg)} .ds-toast svg{color:var(--toast-ok)} .ds-toast button{border:0;background:none;font:inherit;color:var(--toast-link);font-weight:650;padding:6px 8px;border-radius:8px;cursor:pointer} .ds-toast button:hover{text-decoration:underline;text-underline-offset:3px} .ds-toast button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}"
+    },
+    {
+      "name": "Category Editor",
+      "kind": "custom",
+      "refersTo": "category-preview-tile",
+      "description": "Live preview tile, name field with error line, icon radiogroup, 12-swatch color radiogroup and danger zone.",
+      "html": "<div class=\"ds-ce\"><div class=\"ds-prev\"><span class=\"ds-pt\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m15 11-1 9\"/><path d=\"m19 11-4-7\"/><path d=\"M2 11h20\"/><path d=\"m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4\"/><path d=\"M4.5 15.5h15\"/><path d=\"m5 11 4-7\"/><path d=\"m9 11 1 9\"/></svg></span><div><b>Hair salon</b><small>Spending category</small></div></div><label class=\"ds-fl\">Name<span class=\"ds-in\"><input value=\"Groceries\"></span><span class=\"ds-err\" role=\"alert\">You already have a spending category called “Groceries”.</span></label><div class=\"ds-icons\" role=\"radiogroup\" aria-label=\"Icon\"><button class=\"ds-ic\" role=\"radio\" aria-checked=\"true\" aria-label=\"shopping basket\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m15 11-1 9\"/><path d=\"m19 11-4-7\"/><path d=\"M2 11h20\"/><path d=\"m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4\"/><path d=\"M4.5 15.5h15\"/><path d=\"m5 11 4-7\"/><path d=\"m9 11 1 9\"/></svg></button><button class=\"ds-ic\" role=\"radio\" aria-checked=\"false\" aria-label=\"briefcase\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\"/><rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\"/></svg></button><button class=\"ds-ic\" role=\"radio\" aria-checked=\"false\" aria-label=\"bell\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/></svg></button><button class=\"ds-ic\" role=\"radio\" aria-checked=\"false\" aria-label=\"hand coins\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16\"/><path d=\"m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 15 6 6\"/><path d=\"M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.73 2.73 0 0 0 16 4a2.78 2.78 0 0 0-5 1.8c0 1.2.8 2 1.5 2.8L16 12Z\"/></svg></button><button class=\"ds-ic\" role=\"radio\" aria-checked=\"false\" aria-label=\"house\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/></svg></button><button class=\"ds-ic\" role=\"radio\" aria-checked=\"false\" aria-label=\"piggy bank\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z\"/><path d=\"M16 10h.01\"/><path d=\"M2 8v1a2 2 0 0 0 2 2h1\"/></svg></button></div><div class=\"ds-sws\" role=\"radiogroup\" aria-label=\"Color\"><button class=\"ds-sw\" role=\"radio\" aria-checked=\"true\" aria-label=\"violet\" style=\"background:var(--pal-violet);--ring:var(--pal-violet)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"purple\" style=\"background:var(--pal-purple);--ring:var(--pal-purple)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"blue\" style=\"background:var(--pal-blue);--ring:var(--pal-blue)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"cyan\" style=\"background:var(--pal-cyan);--ring:var(--pal-cyan)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"teal\" style=\"background:var(--pal-teal);--ring:var(--pal-teal)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"green\" style=\"background:var(--pal-green);--ring:var(--pal-green)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"amber\" style=\"background:var(--pal-amber);--ring:var(--pal-amber)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"orange\" style=\"background:var(--pal-orange);--ring:var(--pal-orange)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"coral\" style=\"background:var(--pal-coral);--ring:var(--pal-coral)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"red\" style=\"background:var(--pal-red);--ring:var(--pal-red)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"pink\" style=\"background:var(--pal-pink);--ring:var(--pal-pink)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button><button class=\"ds-sw\" role=\"radio\" aria-checked=\"false\" aria-label=\"slate\" style=\"background:var(--pal-slate);--ring:var(--pal-slate)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></button></div><div class=\"ds-dz\"><button class=\"ds-danger\" disabled><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 6h18\"/><path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\"/><path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\"/></svg>Delete category</button><small>Used by 3 transactions. Move or delete them first.</small></div></div>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-ce{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;--sel:var(--pal-violet);display:grid;gap:16px;max-width:420px;color:var(--ink)} .ds-prev{display:flex;align-items:center;gap:14px;background:var(--surface);border-radius:22px;padding:18px;box-shadow:var(--shadow-sm)} .ds-pt{width:56px;height:56px;border-radius:17px;display:grid;place-items:center;color:var(--sel);background:color-mix(in oklab,var(--sel) 14%,transparent);transition:background-color 200ms ease,color 200ms ease} .ds-prev b{display:block;font-size:18px;font-weight:650;letter-spacing:-.015em} .ds-prev small{color:var(--ink-3);font-size:13px} .ds-fl{display:grid;gap:6px;font-weight:560;font-size:14px} .ds-in{display:flex;align-items:center;height:50px;padding:0 14px;background:var(--surface-2);border-radius:12px;border:1.5px solid transparent;transition:border-color 160ms ease,background-color 160ms ease} .ds-in:hover{border-color:var(--line-strong)} .ds-in:focus-within{border-color:var(--brand);background:var(--surface)} .ds-in input{border:0;background:none;outline:none;flex:1;font:inherit;font-size:16px;font-weight:550;color:var(--ink);caret-color:var(--brand)} .ds-err{color:var(--neg);font-size:12.5px;font-weight:400} .ds-icons{display:grid;grid-template-columns:repeat(6,1fr);gap:8px} .ds-ic{aspect-ratio:1;border:0;border-radius:14px;display:grid;place-items:center;color:var(--ink-2);background:var(--surface-2);cursor:pointer;transition:background-color 160ms ease,color 160ms ease,box-shadow 160ms ease,transform 140ms var(--ease-out)} .ds-ic:hover{color:var(--ink)} .ds-ic:active{transform:scale(.93)} .ds-ic[aria-checked=\"true\"]{background:color-mix(in oklab,var(--sel) 14%,transparent);color:var(--sel);box-shadow:inset 0 0 0 2px var(--sel)} .ds-sws{display:grid;grid-template-columns:repeat(6,1fr);gap:12px 8px;justify-items:center} .ds-sw{width:40px;height:40px;border:0;border-radius:50%;display:grid;place-items:center;color:#fff;cursor:pointer;transition:transform 140ms var(--ease-out),box-shadow 160ms ease} .ds-sw svg{opacity:0;transform:scale(.8);transition:opacity 160ms ease,transform 200ms var(--ease-out)} .ds-sw:active{transform:scale(.92)} .ds-sw[aria-checked=\"true\"]{box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--ring)} .ds-sw[aria-checked=\"true\"] svg{opacity:1;transform:none} .ds-ic:focus-visible,.ds-sw:focus-visible,.ds-danger:focus-visible{outline:2px solid var(--brand);outline-offset:2px} .ds-dz{display:grid;gap:4px;justify-items:start;margin-top:24px;padding-top:16px;border-top:1px solid var(--line)} .ds-danger{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 6px;margin-left:-6px;border:0;background:none;border-radius:10px;font:inherit;font-weight:600;color:var(--neg);cursor:pointer;transition:background-color 160ms ease} .ds-danger:not([disabled]):hover{background:color-mix(in oklab,var(--neg) 10%,transparent)} .ds-danger[disabled]{opacity:.45;cursor:not-allowed} .ds-dz small{font-size:12.5px;color:var(--ink-3)}"
+    },
+    {
+      "name": "Calendar Picker",
+      "kind": "custom",
+      "refersTo": "picker-popover",
+      "description": "In-world date picker: date header, shortcuts, month navigation, Monday-first grid with today dot and violet selected day.",
+      "html": "<div class=\"ds-pk\"><div class=\"ds-pkh\"><small>Date</small><strong>Fri, Oct 17</strong></div><div class=\"ds-q\"><button class=\"ds-c\" aria-pressed=\"true\">Today</button><button class=\"ds-c\" aria-pressed=\"false\">Yesterday</button><button class=\"ds-c\" aria-pressed=\"false\">2 days ago</button></div><div class=\"ds-nav\"><button aria-label=\"Previous month\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m15 18-6-6 6-6\"/></svg></button><span>October 2026</span><button aria-label=\"Next month\" disabled><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"/></svg></button></div><div class=\"ds-wd\"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div><div class=\"ds-grid\"><span></span><span></span><span></span><button class=\"ds-d\">1</button><button class=\"ds-d\">2</button><button class=\"ds-d\">3</button><button class=\"ds-d\">4</button><button class=\"ds-d\">5</button><button class=\"ds-d\">6</button><button class=\"ds-d\">7</button><button class=\"ds-d\">8</button><button class=\"ds-d\">9</button><button class=\"ds-d\">10</button><button class=\"ds-d\">11</button><button class=\"ds-d\">12</button><button class=\"ds-d\">13</button><button class=\"ds-d\">14</button><button class=\"ds-d\">15</button><button class=\"ds-d\">16</button><button class=\"ds-d ds-today\" aria-pressed=\"true\">17</button><button class=\"ds-d\" disabled>18</button><button class=\"ds-d\" disabled>19</button><button class=\"ds-d\" disabled>20</button><button class=\"ds-d\" disabled>21</button><button class=\"ds-d\" disabled>22</button><button class=\"ds-d\" disabled>23</button><button class=\"ds-d\" disabled>24</button><button class=\"ds-d\" disabled>25</button><button class=\"ds-d\" disabled>26</button><button class=\"ds-d\" disabled>27</button><button class=\"ds-d\" disabled>28</button><button class=\"ds-d\" disabled>29</button><button class=\"ds-d\" disabled>30</button><button class=\"ds-d\" disabled>31</button></div></div>",
+      "css": ":host{--brand:#9518ad;--brand-press:#7f1493;--brand-ink:#7a0f8f;--brand-soft:#f5e6f8;--bg:#f8f5f9;--surface:#fff;--surface-2:#f2edf4;--line:#e8e0eb;--line-strong:#d8ccdc;--ink:#1d1421;--ink-2:#56485c;--ink-3:#73667a;--pos:#0f7a52;--neg:#c23a2b;--toast-ok:#4cc996;--toast-link:#ead0f0;--pal-violet:#9518ad;--pal-purple:#7c3aed;--pal-blue:#2456c7;--pal-cyan:#0e7490;--pal-teal:#0d8a62;--pal-green:#16a34a;--pal-amber:#c77a00;--pal-orange:#ea580c;--pal-coral:#d9503a;--pal-red:#dc2626;--pal-pink:#db2777;--pal-slate:#64748b;--shadow-sm:0 1px 2px rgba(45,10,55,.06),0 1px 1px rgba(45,10,55,.04);--shadow-lg:0 24px 48px -16px rgba(45,10,55,.28),0 8px 16px -8px rgba(45,10,55,.12);--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)} .ds-pk{font-family:Manrope,ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums;width:336px;background:var(--surface);border-radius:22px;box-shadow:var(--shadow-lg);padding:16px;color:var(--ink)} .ds-pkh{padding:6px 2px 14px} .ds-pkh small{display:block;color:var(--ink-3);font-size:13px;font-weight:550} .ds-pkh strong{display:block;font-size:22px;font-weight:700;letter-spacing:-.025em;line-height:1.15} .ds-q{display:flex;gap:8px;flex-wrap:wrap;padding:0 0 12px} .ds-c{height:34px;padding:0 13px;border:0;border-radius:999px;background:var(--surface-2);font:inherit;font-size:13px;font-weight:560;color:var(--ink-2);cursor:pointer;transition:background-color 160ms ease,color 160ms ease} .ds-c:hover{color:var(--ink)} .ds-c[aria-pressed=\"true\"]{background:var(--brand-soft);color:var(--brand-ink);box-shadow:inset 0 0 0 1.5px var(--brand)} .ds-nav{display:flex;align-items:center;justify-content:space-between;padding:2px 0 8px} .ds-nav span{font-weight:650;font-size:15px} .ds-nav button{width:36px;height:36px;border:0;border-radius:50%;display:grid;place-items:center;color:var(--ink-2);background:var(--surface-2);cursor:pointer;transition:transform 140ms var(--ease-out),opacity 160ms ease} .ds-nav button:active{transform:scale(.92)} .ds-nav button[disabled]{opacity:.3;pointer-events:none} .ds-wd,.ds-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center} .ds-wd span{font-size:12px;font-weight:650;color:var(--ink-3);padding:4px 0 6px} .ds-d{position:relative;height:44px;border:0;background:none;border-radius:13px;font:inherit;font-weight:560;font-size:15px;color:var(--ink);cursor:pointer;transition:background-color 140ms ease,color 140ms ease,transform 120ms var(--ease-out)} .ds-d:not([disabled]):not([aria-pressed=\"true\"]):hover{background:var(--surface-2)} .ds-d:active{transform:scale(.9)} .ds-today{color:var(--brand-ink);font-weight:750} .ds-today::after{content:\"\";position:absolute;left:50%;bottom:6px;width:4px;height:4px;border-radius:50%;background:currentColor;transform:translateX(-50%)} .ds-d[aria-pressed=\"true\"]{background:var(--brand);color:#fff} .ds-d[disabled]{color:var(--ink-3);opacity:.38;cursor:default} .ds-d:focus-visible,.ds-c:focus-visible,.ds-nav button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Violet Wallet",
+    "overview": "Ma moni is the category standard for a personal finance app, executed without irony: one solid violet card holding the money, everything else calm, tinted, and quiet around it. The quality bar is Revolut, Wave, Monarch / Copilot Money and Apple Wallet. The home screen answers one question first (\"where am I this month?\") and refuses the gadget dashboard full of widgets. Density is iOS-native: generous 14 to 18px panel padding, 42px category tiles, 48px buttons, a thumb-height tab bar with the add action in the middle.\n\nThe world is built from violet-tinted neutrals (every grey carries hue 315 to 320), a single saturated brand color, and a fixed 12-color category palette that the user picks from. Depth is soft and ambient, tinted with the brand's own dark plum. Motion borrows iOS physics: a drawer curve for sheets, pickers and notifications, a quick ease-out for presses. Native browser pickers are replaced by in-world ones (calendar, time wheels). Light and dark are both first-class and the user can switch at any time from the header.\n\nAll money is tabular, integer FCFA with comma grouping and the currency as a smaller, dimmed suffix (`3,012,250 FCFA`). The interface copy is English, second person, short and warm (\"Good evening,\", \"2 days without an entry\", \"Time for a quick check-in?\").",
+    "keyCharacteristics": [
+      "One solid violet balance card (#9518ad) per screen at most; violet elsewhere is sparse (active tab, FAB, primary button, switches, selected day, focus).",
+      "Violet-tinted neutrals and plum-tinted shadows.",
+      "Every category color comes from one 12-token palette, each with a dark-mode value, and is tinted at 14%.",
+      "Manrope, tabular figures everywhere, tight negative tracking on large numbers.",
+      "Generous, nested rounded corners (28 / 26 / 22 / 16 / 14 / 12 / 10px), tile radius scaled to tile size.",
+      "Lucide line icons at 1.75 stroke, 20px default.",
+      "Custom calendar and time-wheel pickers: bottom sheet on mobile, anchored popover on desktop.",
+      "Light, dark and system themes, with a visible header toggle."
+    ],
+    "rules": [
+      {
+        "name": "The One Violet Card Rule",
+        "body": "Solid brand fill on a large surface is reserved for the balance card. Every other surface is white/night plum on the tinted page; violet appears in small doses.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tinted Neutral Rule",
+        "body": "Every neutral, border and shadow carries the violet hue (around oklch hue 315 to 320). Do not introduce neutral greys or black shadows in light mode.",
+        "section": "colors"
+      },
+      {
+        "name": "The Palette Key Rule",
+        "body": "A category's color is always one of the 12 pal-* tokens, chosen by key, with its own dark value and a 14% tint. No category gets a raw hex.",
+        "section": "colors"
+      },
+      {
+        "name": "The Quiet Spending Rule",
+        "body": "Spending is shown in ink with a \"−\" sign, not red. Only income is colored (green). Red means something is wrong or destructive.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Money Rule",
+        "body": "Every number is set with tabular figures, slight negative tracking (-0.01em), no wrapping, comma thousands grouping and a dimmed \"FCFA\" suffix: `125,000 FCFA`. Calendar days and time wheels are tabular too.",
+        "section": "typography"
+      },
+      {
+        "name": "The Single Family Rule",
+        "body": "Manrope only. Contrast through weight steps and size, not through a display face.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Zoom Input Rule",
+        "body": "Text inputs are at least 16px on mobile.",
+        "section": "typography"
+      },
+      {
+        "name": "The Plum Shadow Rule",
+        "body": "Light-mode shadows are tinted rgba(45,10,55) or rgba(30,8,36), never neutral black, and never hard-edged.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep solid violet (#9518ad) on large surfaces to the balance card; use violet ink for violet text.",
+      "Do tint neutrals and light-mode shadows with the plum hue.",
+      "Do set every amount with tabular figures, comma grouping and a dimmed \"FCFA\" suffix (`3,012,250 FCFA`).",
+      "Do give every category a pal-* key and render it as the hue on a 14% tint, in both themes.",
+      "Do ship every new surface in light and dark, and keep the header theme toggle reachable.",
+      "Do nest radii from 28px down to 9px as elements nest, scale tile radius with tile size, and keep pills for chips, switches and badges.",
+      "Do use the in-world calendar and time-wheel pickers instead of native date and time inputs; sheet on mobile, anchored 336px popover on desktop.",
+      "Do keep text inputs at 16px or more on mobile.",
+      "Do isolate destructive actions in a danger zone and explain why they are disabled.",
+      "Do use Lucide line icons at 1.75 stroke (2.1 to 2.2 for active and FAB states).",
+      "Do open sheets, pickers and banners on the drawer curve and close them faster."
+    ],
+    "donts": [
+      "Don't color spending red; use ink with \"−\" and keep red for errors and destructive actions.",
+      "Don't give a category a raw hex outside the 12-color palette.",
+      "Don't add a second typeface or a display font; contrast comes from Manrope weights.",
+      "Don't use hard, unblurred offset shadows or neutral black shadows in light mode.",
+      "Don't fill the home screen with widgets; it answers \"where am I this month?\" first.",
+      "Don't add uppercase labels above headings; uppercase lives only inside the OS-style notification header."
+    ]
+  }
+}
