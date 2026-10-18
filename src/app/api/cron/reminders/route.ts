@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import webpush from 'web-push'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { addDays } from '@/lib/format'
+import { groupCoverage, planTontineReminders } from '@/lib/tontine'
 
 /**
  * Sends reminder pushes. Call it every 15 minutes with `Authorization: Bearer $CRON_SECRET`
@@ -60,6 +61,36 @@ export async function GET(request: NextRequest) {
       }
 
       await db.from('profiles').update({ last_reminded_on: today }).eq('id', p.id)
+    }
+
+    // Tontine groups: payment due tomorrow, missed payment, turn day.
+    const [{ data: groups }, { data: turns }, { data: paidRows }] = await Promise.all([
+      db.from('tontine_groups').select('*').eq('user_id', p.id).eq('status', 'active').eq('reminders_enabled', true),
+      db.from('tontine_turns').select('id, group_id, turn_on, status, notified_on, expected_amount').eq('user_id', p.id).eq('status', 'upcoming'),
+      db.from('transactions').select('group_id, amount').eq('user_id', p.id).eq('kind', 'expense').not('group_id', 'is', null),
+    ])
+    for (const g of groups ?? []) {
+      const paidTotal = (paidRows ?? []).filter((r) => r.group_id === g.id).reduce((a, r) => a + Number(r.amount), 0)
+      const plan = planTontineReminders({
+        groupId: g.id,
+        name: g.name,
+        coverage: groupCoverage(g, Math.max(0, paidTotal - Number(g.payments_offset)), today, nowMin),
+        deadlineTime: String(g.deadline_time).slice(0, 5),
+        today,
+        nowMinutes: nowMin,
+        reminderMinutes: slotMin,
+        lastDueFor: g.last_due_reminder_for,
+        lastBehindFor: g.last_behind_reminder_for,
+        turns: (turns ?? [])
+          .filter((t) => t.group_id === g.id)
+          .map((t) => ({ id: t.id, turnOn: t.turn_on, status: t.status, notifiedOn: t.notified_on, expectedAmount: Number(t.expected_amount) })),
+      })
+      for (const msg of plan.pushes) await push(p.id, msg)
+      const marks: Record<string, string> = {}
+      if (plan.dueFor) marks.last_due_reminder_for = plan.dueFor
+      if (plan.behindFor) marks.last_behind_reminder_for = plan.behindFor
+      if (Object.keys(marks).length) await db.from('tontine_groups').update(marks).eq('id', g.id)
+      if (plan.notifiedTurns.length) await db.from('tontine_turns').update({ notified_on: today }).in('id', plan.notifiedTurns)
     }
 
     // Nudge after 2 quiet days, at a reasonable hour, at most once a day.

@@ -2,8 +2,8 @@ import 'server-only'
 import { cache } from 'react'
 import { connection } from 'next/server'
 import { requireUser } from './supabase/server'
-import { addDays, minutesIn, monthRange, shortDate, timeToMinutes, todayIn } from './format'
-import { coverage, statusLine, type Coverage, type GroupStatus } from './tontine'
+import { addDays, minutesIn, monthRange, shortDate, todayIn } from './format'
+import { groupCoverage, statusLine, type Coverage, type GroupStatus } from './tontine'
 import type { Category, Pot, Profile, TontineGroup, TontineTurn, Transaction } from './types'
 
 export const getProfile = cache(async (): Promise<Profile> => {
@@ -147,18 +147,7 @@ export const getTontineGroups = cache(async (): Promise<TontineView[]> => {
     const collected = mine.filter((t) => t.kind === 'income').reduce((a, t) => a + Number(t.amount), 0)
     const paid = Math.max(0, paidTotal - Number(group.payments_offset))
     const groupTurns = (turns.data as TontineTurn[]).filter((t) => t.group_id === group.id)
-    const c = coverage({
-      firstDue: group.first_due,
-      anchorDay: group.anchor_day,
-      cycleEnd: group.cycle_end,
-      frequency: group.frequency,
-      perPeriod: Number(group.amount_per_name) * group.names_held,
-      paid,
-      openingCredit: Number(group.opening_credit),
-      today,
-      nowMinutes,
-      deadlineMinutes: timeToMinutes(group.deadline_time),
-    })
+    const c = groupCoverage(group, paid, today, nowMinutes)
     const turnToday = groupTurns.some((t) => t.status === 'upcoming' && t.turn_on <= today)
     const status: GroupStatus =
       group.status === 'ended'

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { coverage, deadlines, estimateCycleEnd, rebase, statusLine, validateGroupInput, validatePayout } from './tontine'
+import { coverage, deadlines, estimateCycleEnd, planTontineReminders, rebase, statusLine, validateGroupInput, validatePayout } from './tontine'
 import { shortDate } from './format'
 
 const W = {
@@ -164,5 +164,55 @@ describe('validateGroupInput', () => {
   })
   it('cycle end cannot precede the start', () => {
     expect(validateGroupInput({ ...ok, cycleEnd: '2026-09-01' })).toBe('The cycle end must be after its start.')
+  })
+})
+
+describe('planTontineReminders', () => {
+  const base = {
+    groupId: 'g1',
+    name: 'Friday tontine',
+    deadlineTime: '18:00',
+    reminderMinutes: 20 * 60 + 30,
+    lastDueFor: null as string | null,
+    lastBehindFor: null as string | null,
+    turns: [] as { id: string; turnOn: string; status: 'upcoming' | 'collected' | 'before_app'; notifiedOn: string | null; expectedAmount: number }[],
+  }
+  const cov = (paid: number, today: string, nowMinutes: number) => coverage({ ...W, paid, today, nowMinutes })
+
+  it('reminds the evening before an unpaid deadline', () => {
+    const r = planTontineReminders({ ...base, coverage: cov(0, '2026-10-23', 1240), today: '2026-10-23', nowMinutes: 1240 })
+    expect(r.pushes).toEqual([{ title: 'Friday tontine: payment due tomorrow', body: '5,000 FCFA before 18:00.', url: '/tontines/g1', tag: 'tontine-due-g1-2026-10-24' }])
+    expect(r.dueFor).toBe('2026-10-24')
+  })
+
+  it('stays quiet while paid ahead', () => {
+    const r = planTontineReminders({ ...base, coverage: cov(20000, '2026-10-23', 1240), today: '2026-10-23', nowMinutes: 1240 })
+    expect(r.pushes).toEqual([])
+  })
+
+  it('does not repeat a due reminder already sent', () => {
+    const r = planTontineReminders({ ...base, lastDueFor: '2026-10-24', coverage: cov(0, '2026-10-23', 1250), today: '2026-10-23', nowMinutes: 1250 })
+    expect(r.pushes).toEqual([])
+  })
+
+  it('waits for the reminder time', () => {
+    const r = planTontineReminders({ ...base, coverage: cov(0, '2026-10-23', 600), today: '2026-10-23', nowMinutes: 600 })
+    expect(r.pushes).toEqual([])
+  })
+
+  it('sends one behind reminder the morning after a missed deadline', () => {
+    const r = planTontineReminders({ ...base, coverage: cov(0, '2026-10-25', 540), today: '2026-10-25', nowMinutes: 540 })
+    expect(r.pushes[0].title).toBe('Friday tontine: payment missed')
+    expect(r.pushes[0].body).toBe('5,000 FCFA is due.')
+    expect(r.behindFor).toBe('2026-10-24')
+    const again = planTontineReminders({ ...base, lastBehindFor: '2026-10-24', coverage: cov(0, '2026-10-25', 600), today: '2026-10-25', nowMinutes: 600 })
+    expect(again.pushes).toEqual([])
+  })
+
+  it('announces the turn on its morning once', () => {
+    const turns = [{ id: 't1', turnOn: '2026-12-05', status: 'upcoming' as const, notifiedOn: null, expectedAmount: 50000 }]
+    const r = planTontineReminders({ ...base, turns, coverage: cov(100000, '2026-12-05', 500), today: '2026-12-05', nowMinutes: 500 })
+    expect(r.pushes).toEqual([{ title: 'It’s your turn: 50,000 FCFA from Friday tontine', body: 'Tap to record it and choose how much to save.', url: '/tontines/g1', tag: 'tontine-turn-t1' }])
+    expect(r.notifiedTurns).toEqual(['t1'])
   })
 })

@@ -133,3 +133,68 @@ export function validateGroupInput(g: GroupInput): string | null {
   if (g.turns.some((t) => !ISO.test(t.turnOn) || t.turnOn < g.cycleStart || t.turnOn > g.cycleEnd)) return 'Each turn must fall within the cycle.'
   return null
 }
+
+export type ReminderPush = { title: string; body: string; url: string; tag: string }
+
+/** Decides which tontine pushes are due now. Pure: the caller sends them and stores the markers. */
+export function planTontineReminders(input: {
+  groupId: string
+  name: string
+  coverage: Coverage
+  deadlineTime: string
+  today: string
+  nowMinutes: number
+  reminderMinutes: number
+  lastDueFor: string | null
+  lastBehindFor: string | null
+  turns: { id: string; turnOn: string; status: 'upcoming' | 'collected' | 'before_app'; notifiedOn: string | null; expectedAmount: number }[]
+}): { pushes: ReminderPush[]; dueFor?: string; behindFor?: string; notifiedTurns: string[] } {
+  const { coverage: c, today, nowMinutes } = input
+  const url = `/tontines/${input.groupId}`
+  const pushes: ReminderPush[] = []
+  const out: { pushes: ReminderPush[]; dueFor?: string; behindFor?: string; notifiedTurns: string[] } = { pushes, notifiedTurns: [] }
+  const morning = nowMinutes >= 8 * 60
+
+  const inSlot = nowMinutes >= input.reminderMinutes && nowMinutes - input.reminderMinutes <= 180
+  if (inSlot && c.behindCount === 0 && c.nextDue && c.nextDue === addDays(today, 1) && input.lastDueFor !== c.nextDue) {
+    pushes.push({ title: `${input.name}: payment due tomorrow`, body: `${fmt(c.nextDueAmount)} FCFA before ${input.deadlineTime}.`, url, tag: `tontine-due-${input.groupId}-${c.nextDue}` })
+    out.dueFor = c.nextDue
+  }
+
+  const newestMissed = c.missedDeadlines.at(-1)
+  if (morning && newestMissed && newestMissed < today && input.lastBehindFor !== newestMissed) {
+    pushes.push({ title: `${input.name}: payment missed`, body: `${fmt(c.behindAmount)} FCFA is due.`, url, tag: `tontine-behind-${input.groupId}-${newestMissed}` })
+    out.behindFor = newestMissed
+  }
+
+  if (morning) {
+    for (const t of input.turns) {
+      if (t.status !== 'upcoming' || t.turnOn !== today || t.notifiedOn) continue
+      pushes.push({ title: `It’s your turn: ${fmt(t.expectedAmount)} FCFA from ${input.name}`, body: 'Tap to record it and choose how much to save.', url, tag: `tontine-turn-${t.id}` })
+      out.notifiedTurns.push(t.id)
+    }
+  }
+  return out
+}
+
+/** Coverage for a stored group row, given contributions counted since its last schedule change. */
+export function groupCoverage(
+  g: { first_due: string; anchor_day: number; cycle_end: string; frequency: Frequency; amount_per_name: number; names_held: number; opening_credit: number; deadline_time: string },
+  paid: number,
+  today: string,
+  nowMinutes: number,
+): Coverage {
+  const t = String(g.deadline_time)
+  return coverage({
+    firstDue: g.first_due,
+    anchorDay: g.anchor_day,
+    cycleEnd: g.cycle_end,
+    frequency: g.frequency,
+    perPeriod: Number(g.amount_per_name) * g.names_held,
+    paid,
+    openingCredit: Number(g.opening_credit),
+    today,
+    nowMinutes,
+    deadlineMinutes: Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5)),
+  })
+}
