@@ -1,5 +1,6 @@
 import 'server-only'
 import { cache } from 'react'
+import { connection } from 'next/server'
 import { requireUser } from './supabase/server'
 import { addDays, monthRange, todayIn } from './format'
 import type { Category, Pot, Profile, Transaction } from './types'
@@ -11,7 +12,11 @@ export const getProfile = cache(async (): Promise<Profile> => {
   return { ...data, reminder_time: String(data.reminder_time).slice(0, 5) } as Profile
 })
 
-export const getToday = cache(async () => todayIn((await getProfile()).timezone))
+export const getToday = cache(async () => {
+  const { timezone } = await getProfile()
+  await connection()
+  return todayIn(timezone)
+})
 
 export const getCategories = cache(async (): Promise<Category[]> => {
   const { supabase } = await requireUser()
