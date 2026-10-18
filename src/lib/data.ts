@@ -2,8 +2,9 @@ import 'server-only'
 import { cache } from 'react'
 import { connection } from 'next/server'
 import { requireUser } from './supabase/server'
-import { addDays, monthRange, todayIn } from './format'
-import type { Category, Pot, Profile, Transaction } from './types'
+import { addDays, minutesIn, monthRange, shortDate, timeToMinutes, todayIn } from './format'
+import { coverage, statusLine, type Coverage, type GroupStatus } from './tontine'
+import type { Category, Pot, Profile, TontineGroup, TontineTurn, Transaction } from './types'
 
 export const getProfile = cache(async (): Promise<Profile> => {
   const { supabase, userId } = await requireUser()
@@ -112,4 +113,67 @@ export async function daysSinceLastEntry(today: string) {
   let n = 0
   while (addDays(last.occurred_on, n) < today && n < 365) n++
   return n
+}
+
+export type TontineView = {
+  group: TontineGroup
+  turns: TontineTurn[]
+  /** Contributions counted toward coverage (after the last schedule change). */
+  paid: number
+  /** All contributions logged for this group. */
+  paidTotal: number
+  collected: number
+  coverage: Coverage
+  status: GroupStatus
+}
+
+const TONE_ORDER: GroupStatus['tone'][] = ['turn', 'late', 'soon', 'ok', 'done']
+
+export const getTontineGroups = cache(async (): Promise<TontineView[]> => {
+  const { supabase } = await requireUser()
+  const [profile, today] = await Promise.all([getProfile(), getToday()])
+  const nowMinutes = minutesIn(profile.timezone)
+  const [groups, turns, txs] = await Promise.all([
+    supabase.from('tontine_groups').select('*').order('created_at'),
+    supabase.from('tontine_turns').select('id, group_id, turn_on, expected_amount, status, transaction_id').order('turn_on'),
+    supabase.from('transactions').select('group_id, kind, amount').not('group_id', 'is', null),
+  ])
+  for (const r of [groups, turns, txs]) if (r.error) throw r.error
+
+  const views = (groups.data as TontineGroup[]).map((raw): TontineView => {
+    const group = { ...raw, deadline_time: String(raw.deadline_time).slice(0, 5) }
+    const mine = (txs.data as { group_id: string; kind: string; amount: number }[]).filter((t) => t.group_id === group.id)
+    const paidTotal = mine.filter((t) => t.kind === 'expense').reduce((a, t) => a + Number(t.amount), 0)
+    const collected = mine.filter((t) => t.kind === 'income').reduce((a, t) => a + Number(t.amount), 0)
+    const paid = Math.max(0, paidTotal - Number(group.payments_offset))
+    const groupTurns = (turns.data as TontineTurn[]).filter((t) => t.group_id === group.id)
+    const c = coverage({
+      firstDue: group.first_due,
+      anchorDay: group.anchor_day,
+      cycleEnd: group.cycle_end,
+      frequency: group.frequency,
+      perPeriod: Number(group.amount_per_name) * group.names_held,
+      paid,
+      openingCredit: Number(group.opening_credit),
+      today,
+      nowMinutes,
+      deadlineMinutes: timeToMinutes(group.deadline_time),
+    })
+    const turnToday = groupTurns.some((t) => t.status === 'upcoming' && t.turn_on <= today)
+    const status: GroupStatus =
+      group.status === 'ended'
+        ? { tone: 'done', text: `Ended ${shortDate(group.ended_on ?? today)}` }
+        : statusLine(c, { today, turnToday, label: shortDate }, group.frequency)
+    return { group, turns: groupTurns, paid, paidTotal, collected, coverage: c, status }
+  })
+
+  return views.sort((a, b) => {
+    if (a.group.status !== b.group.status) return a.group.status === 'active' ? -1 : 1
+    if (a.group.status === 'ended') return (b.group.ended_on ?? '').localeCompare(a.group.ended_on ?? '')
+    return TONE_ORDER.indexOf(a.status.tone) - TONE_ORDER.indexOf(b.status.tone)
+  })
+})
+
+export async function getTontineGroup(id: string) {
+  return (await getTontineGroups()).find((v) => v.group.id === id) ?? null
 }

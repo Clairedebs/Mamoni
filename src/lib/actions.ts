@@ -59,6 +59,7 @@ export async function addTransaction(input: {
   potId?: string
   occurredOn: string
   note?: string
+  groupId?: string
 }): Promise<Result<{ id: string }>> {
   const { supabase } = await requireUser()
   if (!amountOk(input.amount)) return fail('Enter an amount.')
@@ -71,6 +72,7 @@ export async function addTransaction(input: {
       amount: input.amount,
       category_id: isSaving ? null : input.categoryId,
       pot_id: isSaving ? input.potId : null,
+      group_id: isSaving ? null : (input.groupId ?? null),
       occurred_on: input.occurredOn,
       note: clean(input.note, 80) || null,
     })

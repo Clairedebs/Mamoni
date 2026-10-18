@@ -76,3 +76,15 @@ export function greetingFor(hour: number) {
 export function greeting(timeZone: string) {
   return greetingFor(Number(new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', hourCycle: 'h23' }).format(new Date())))
 }
+
+/** Minutes since local midnight in the given IANA time zone. */
+export function minutesIn(timeZone: string) {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+      .formatToParts(new Date())
+      .map((x) => [x.type, x.value]),
+  )
+  return Number(p.hour) * 60 + Number(p.minute)
+}
+
+export const timeToMinutes = (hhmm: string) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5))

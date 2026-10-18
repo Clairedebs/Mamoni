@@ -101,3 +101,35 @@ export function validatePayout(amount: number, saveAmount: number): string | nul
   if (saveAmount < 0 || saveAmount > amount) return 'You can move at most the payout amount.'
   return null
 }
+
+export type GroupInput = {
+  name: string
+  amountPerName: number
+  namesTotal: number
+  namesHeld: number
+  frequency: Frequency
+  deadlineTime: string
+  cycleStart: string
+  cycleEnd: string
+  firstDue: string
+  turns: { turnOn: string; beforeApp: boolean }[]
+}
+
+const ISO = /^\d{4}-\d{2}-\d{2}$/
+const isInt = (n: number, min: number, max: number) => Number.isInteger(n) && n >= min && n <= max
+
+export function validateGroupInput(g: GroupInput): string | null {
+  if (!g.name.trim()) return 'Give your group a name.'
+  if (!isInt(g.amountPerName, 1, 9_999_999_999)) return 'Enter the amount each name pays.'
+  if (!isInt(g.namesTotal, 2, 200)) return 'A group has between 2 and 200 names.'
+  if (!isInt(g.namesHeld, 1, 200)) return 'You hold at least one name.'
+  if (g.namesHeld > g.namesTotal) return 'You can’t hold more names than the group has.'
+  if (g.frequency !== 'weekly' && g.frequency !== 'monthly') return 'Pick weekly or monthly.'
+  if (!/^\d{2}:\d{2}$/.test(g.deadlineTime)) return 'Pick a deadline time.'
+  if (![g.cycleStart, g.cycleEnd, g.firstDue].every((d) => ISO.test(d))) return 'Pick valid dates.'
+  if (g.cycleEnd < g.cycleStart) return 'The cycle end must be after its start.'
+  if (g.firstDue < g.cycleStart || g.firstDue > g.cycleEnd) return 'Your next due date must be within the cycle.'
+  if (g.turns.length !== g.namesHeld) return 'Add one turn for each name you hold.'
+  if (g.turns.some((t) => !ISO.test(t.turnOn) || t.turnOn < g.cycleStart || t.turnOn > g.cycleEnd)) return 'Each turn must fall within the cycle.'
+  return null
+}

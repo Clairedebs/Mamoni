@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { coverage, deadlines, estimateCycleEnd, rebase, statusLine, validatePayout } from './tontine'
+import { coverage, deadlines, estimateCycleEnd, rebase, statusLine, validateGroupInput, validatePayout } from './tontine'
 import { shortDate } from './format'
 
 const W = {
@@ -125,5 +125,44 @@ describe('validatePayout', () => {
   })
   it('accepts moving all of it', () => {
     expect(validatePayout(50000, 50000)).toBeNull()
+  })
+})
+
+describe('validateGroupInput', () => {
+  const ok = {
+    name: 'Friday tontine',
+    amountPerName: 2500,
+    namesTotal: 20,
+    namesHeld: 2,
+    frequency: 'weekly' as const,
+    deadlineTime: '18:00',
+    cycleStart: '2026-09-05',
+    cycleEnd: '2027-01-16',
+    firstDue: '2026-10-24',
+    turns: [
+      { turnOn: '2026-12-05', beforeApp: false },
+      { turnOn: '2026-09-12', beforeApp: true },
+    ],
+  }
+  it('accepts a complete group', () => {
+    expect(validateGroupInput(ok)).toBeNull()
+  })
+  it('needs a name', () => {
+    expect(validateGroupInput({ ...ok, name: '  ' })).toBe('Give your group a name.')
+  })
+  it('needs one turn per name held', () => {
+    expect(validateGroupInput({ ...ok, turns: ok.turns.slice(0, 1) })).toBe('Add one turn for each name you hold.')
+  })
+  it('cannot hold more names than the group has', () => {
+    expect(validateGroupInput({ ...ok, namesTotal: 2, namesHeld: 3, turns: [...ok.turns, ok.turns[0]] })).toBe('You can’t hold more names than the group has.')
+  })
+  it('next due date must sit inside the cycle', () => {
+    expect(validateGroupInput({ ...ok, firstDue: '2026-09-01' })).toBe('Your next due date must be within the cycle.')
+  })
+  it('turns must sit inside the cycle', () => {
+    expect(validateGroupInput({ ...ok, turns: [ok.turns[0], { turnOn: '2027-02-01', beforeApp: false }] })).toBe('Each turn must fall within the cycle.')
+  })
+  it('cycle end cannot precede the start', () => {
+    expect(validateGroupInput({ ...ok, cycleEnd: '2026-09-01' })).toBe('The cycle end must be after its start.')
   })
 })
