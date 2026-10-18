@@ -7,7 +7,7 @@ import { Icon } from './Icon'
 import { ThemeToggle } from './ThemeToggle'
 import type { TransactionKind } from '@/lib/types'
 
-export type SheetRequest = { kind: TransactionKind; categoryId?: string; potId?: string; nonce: number }
+export type SheetRequest = { kind: TransactionKind; categoryId?: string; potId?: string; groupId?: string; amount?: number; nonce: number }
 const SheetCtx = createContext<{ req: SheetRequest | null; open: (r?: Omit<SheetRequest, 'nonce'>) => void; close: () => void }>({
   req: null,
   open: () => {},
@@ -84,10 +84,10 @@ function ActiveNav({ items, cls }: { items: NavItem[]; cls: string }) {
 }
 
 /** Any button that opens the add sheet (e.g. "Update now", "Deposit"). */
-export function AddButton({ className, children, kind, potId, ...rest }: { className?: string; children: React.ReactNode; kind?: TransactionKind; potId?: string } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function AddButton({ className, children, kind, potId, categoryId, groupId, amount, ...rest }: { className?: string; children: React.ReactNode; kind?: TransactionKind; potId?: string; categoryId?: string; groupId?: string; amount?: number } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const { open } = useAddSheet()
   return (
-    <button className={className} onClick={() => open({ kind: kind ?? 'expense', potId })} {...rest}>
+    <button className={className} onClick={() => open({ kind: kind ?? 'expense', potId, categoryId, groupId, amount })} {...rest}>
       {children}
     </button>
   )
