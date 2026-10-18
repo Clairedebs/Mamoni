@@ -501,3 +501,8 @@ main{animation:none}
 .seg .seg-link[aria-current="page"]{color:var(--ink)}
 a.set-row,a.pocket,a.row{color:inherit}
 @media (hover:hover) and (pointer:fine){a.set-row:hover{background:var(--surface-2)}}
+
+.pw-toggle{width:36px;height:36px;margin-right:-8px;border-radius:10px;display:grid;place-items:center;color:var(--ink-3);flex:none;transition:color 160ms ease,background-color 160ms ease,transform 140ms var(--ease-out)}
+.pw-toggle:active{transform:scale(.92)}
+.pw-toggle[aria-pressed="true"]{color:var(--brand-ink)}
+@media (hover:hover) and (pointer:fine){.pw-toggle:hover{color:var(--ink);background:var(--surface-2)}}

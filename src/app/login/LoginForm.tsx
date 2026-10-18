@@ -6,6 +6,7 @@ import { signIn, signUp } from '@/lib/actions'
 
 export function LoginForm({ next, notice }: { next?: string; notice?: string }) {
   const [mode, setMode] = useState<'in' | 'up'>('in')
+  const [showPw, setShowPw] = useState(false)
   const [inState, inAction, inPending] = useActionState(signIn, undefined)
   const [upState, upAction, upPending] = useActionState(signUp, undefined)
 
@@ -58,8 +59,11 @@ export function LoginForm({ next, notice }: { next?: string; notice?: string }) 
           <div className="fld">
             <label htmlFor="password">Password</label>
             <div className="text-in">
-              <Icon name="eye-off" />
-              <input id="password" name="password" type="password" required minLength={mode === 'up' ? 8 : undefined} autoComplete={mode === 'in' ? 'current-password' : 'new-password'} placeholder={mode === 'up' ? 'At least 8 characters' : 'Your password'} />
+              <Icon name="lock" />
+              <input id="password" name="password" type={showPw ? 'text' : 'password'} required minLength={mode === 'up' ? 8 : undefined} autoComplete={mode === 'in' ? 'current-password' : 'new-password'} placeholder={mode === 'up' ? 'At least 8 characters' : 'Your password'} />
+              <button type="button" className="pw-toggle" aria-label={showPw ? 'Hide password' : 'Show password'} aria-pressed={showPw} onClick={() => setShowPw((v) => !v)}>
+                <Icon name={showPw ? 'eye-off' : 'eye'} />
+              </button>
             </div>
           </div>
           <p className="form-err" role="alert">
