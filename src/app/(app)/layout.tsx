@@ -1,11 +1,14 @@
 import { Suspense } from 'react'
 import { AppShell } from '@/components/AppShell'
 import { AddSheet } from '@/components/AddSheet'
-import { getCategories, getPots, getToday } from '@/lib/data'
+import { getCategories, getPots, getTontineGroups, getToday } from '@/lib/data'
 
 async function SheetLoader() {
-  const [categories, pots, today] = await Promise.all([getCategories(), getPots(), getToday()])
-  return <AddSheet categories={categories} pots={pots} today={today} />
+  const [categories, pots, today, tontines] = await Promise.all([getCategories(), getPots(), getToday(), getTontineGroups()])
+  const groups = tontines
+    .filter((v) => v.group.status === 'active')
+    .map((v) => ({ id: v.group.id, name: v.group.name, perPeriod: v.coverage.perPeriod, frequency: v.group.frequency }))
+  return <AddSheet categories={categories} pots={pots} groups={groups} today={today} />
 }
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

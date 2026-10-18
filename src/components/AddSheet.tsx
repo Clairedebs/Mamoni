@@ -14,7 +14,9 @@ import type { Category, Pot, TransactionKind } from '@/lib/types'
 type Tab = 'expense' | 'income' | 'saving'
 const LABEL: Record<TransactionKind, string> = { expense: 'expense', income: 'income', deposit: 'deposit', withdrawal: 'withdrawal' }
 
-export function AddSheet({ categories, pots, today }: { categories: Category[]; pots: Pot[]; today: string }) {
+export type SheetGroup = { id: string; name: string; perPeriod: number; frequency: 'weekly' | 'monthly' }
+
+export function AddSheet({ categories, pots, groups, today }: { categories: Category[]; pots: Pot[]; groups: SheetGroup[]; today: string }) {
   const { req, close } = useAddSheet()
   const { openDate } = usePickers()
   const toast = useToast()
@@ -29,6 +31,7 @@ export function AddSheet({ categories, pots, today }: { categories: Category[]; 
   const [date, setDate] = useState(today)
   const [err, setErr] = useState('')
   const [seen, setSeen] = useState<number | null>(null)
+  const [groupId, setGroupId] = useState('')
   const lastFocus = useRef<Element | null>(null)
   const closeBtn = useRef<HTMLButtonElement>(null)
 
@@ -42,6 +45,9 @@ export function AddSheet({ categories, pots, today }: { categories: Category[]; 
       : categories.filter((c) => c.kind === tab).map((c) => ({ id: c.id, name: c.name, icon: c.icon, color: c.color }))
   const current = options.find((o) => o.id === pick)
   const kind: TransactionKind = tab === 'saving' ? dir : tab
+  const isTontine = tab === 'expense' && categories.find((c) => c.id === pick)?.role === 'tontine'
+  const group = groups.find((g) => g.id === groupId)
+  const needsGroup = isTontine && groups.length > 0 && !group
 
   // A new open request resets the form (state adjusted during render, not in an effect).
   if (req && req.nonce !== seen) {
@@ -50,11 +56,12 @@ export function AddSheet({ categories, pots, today }: { categories: Category[]; 
     setSeen(req.nonce)
     setTab(t)
     setDir(req.kind === 'withdrawal' ? 'withdrawal' : 'deposit')
-    setAmt('')
+    setAmt(req.amount ? String(req.amount) : '')
     setNote('')
     setErr('')
     setDate(today)
     setPick(req.potId ?? req.categoryId ?? first ?? '')
+    setGroupId(req.groupId ?? (groups.length === 1 ? groups[0].id : ''))
     setOpen(true)
   }
 
@@ -85,7 +92,7 @@ export function AddSheet({ categories, pots, today }: { categories: Category[]; 
     })
 
   const save = () => {
-    if (!amt || !pick || pending) return
+    if (!amt || !pick || pending || needsGroup) return
     setErr('')
     start(async () => {
       const res = await addTransaction({
@@ -95,6 +102,7 @@ export function AddSheet({ categories, pots, today }: { categories: Category[]; 
         potId: tab === 'saving' ? pick : undefined,
         occurredOn: date,
         note,
+        groupId: isTontine && group ? group.id : undefined,
       })
       if (!res.ok) return setErr(res.error)
       shut()
@@ -215,6 +223,29 @@ export function AddSheet({ categories, pots, today }: { categories: Category[]; 
           </div>
         )}
 
+        {isTontine && groups.length > 0 && (
+          <div className="stack" style={{ gap: 8, marginBottom: 10 }}>
+            {groups.length > 1 && (
+              <div className="mini-chips" role="group" aria-label="Tontine group">
+                {groups.map((g) => (
+                  <button key={g.id} className="chipsel" aria-pressed={groupId === g.id} onClick={() => setGroupId(g.id)}>
+                    {g.name}
+                  </button>
+                ))}
+              </div>
+            )}
+            {group && (
+              <div className="mini-chips" role="group" aria-label="Amount shortcuts">
+                {[1, 4].map((n) => (
+                  <button key={n} className="chipsel" aria-pressed={amt === String(group.perPeriod * n)} onClick={() => setAmt(String(group.perPeriod * n))}>
+                    {n} {group.frequency === 'weekly' ? 'week' : 'month'}
+                    {n > 1 ? 's' : ''} · {fmt(group.perPeriod * n)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         <label className="note">
           <Icon name="pencil-line" />
           <span className="sr">Note</span>
@@ -232,7 +263,7 @@ export function AddSheet({ categories, pots, today }: { categories: Category[]; 
             {err}
           </p>
         )}
-        <button className="btn block" disabled={!amt || !pick || pending} onClick={save}>
+        <button className="btn block" disabled={!amt || !pick || pending || needsGroup} onClick={save}>
           <Icon name={pending ? 'loader' : 'check'} />
           {pending ? 'Saving…' : `Save ${LABEL[kind]}`}
         </button>

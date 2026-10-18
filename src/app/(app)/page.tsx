@@ -5,9 +5,10 @@ import { BalanceCard } from '@/components/BalanceCard'
 import { Icon } from '@/components/Icon'
 import { Greeting } from '@/components/Greeting'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { TontineStatusLine } from '@/components/TontineStatusLine'
 import { FlowChart, Money, SavingsBar, Skeleton, Tile, TxRow } from '@/components/ui'
 import {
-  daysSinceLastEntry, getCategories, getLifetimeTotals, getMonthlyFlows, getPots, getProfile, getToday, getTransactions, sumBy,
+  daysSinceLastEntry, getCategories, getLifetimeTotals, getMonthlyFlows, getPots, getProfile, getToday, getTontineGroups, getTransactions, sumBy,
 } from '@/lib/data'
 import { LONG_MONTHS, MONTHS, greeting, monthRange, parseIso } from '@/lib/format'
 
@@ -24,12 +25,14 @@ export default function HomePage() {
 async function Home() {
   const [profile, today, cats, pots, totals] = await Promise.all([getProfile(), getToday(), getCategories(), getPots(), getLifetimeTotals()])
   const { start, end } = monthRange(today)
-  const [monthTx, flows, since, recent] = await Promise.all([
+  const [monthTx, flows, since, recent, tontines] = await Promise.all([
     getTransactions({ from: start, to: end }),
     getMonthlyFlows(today),
     daysSinceLastEntry(today),
     getTransactions({ limit: 5 }),
+    getTontineGroups(),
   ])
+  const activeTontines = tontines.filter((v) => v.group.status === 'active')
 
   const savings = pots.reduce((a, p) => a + Number(p.balance), 0)
   const available = Number(profile.opening_cash) + totals.income - totals.expense - totals.deposit + totals.withdrawal
@@ -92,6 +95,22 @@ async function Home() {
                 <AddButton className="btn-sm">Update now</AddButton>
               </div>
             )
+          )}
+
+          <div className="section-h">
+            <h2>Tontines</h2>
+            <Link className="link" href="/tontines">
+              {activeTontines.length ? 'See all' : 'Track a tontine'}
+            </Link>
+          </div>
+          {activeTontines.length > 0 && (
+            <div className="panel" style={{ padding: '6px 16px 8px' }}>
+              <div className="list">
+                {activeTontines.map((v) => (
+                  <TontineStatusLine key={v.group.id} view={v} />
+                ))}
+              </div>
+            </div>
           )}
 
           <div className="section-h">

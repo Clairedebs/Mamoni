@@ -15,6 +15,10 @@ export default function SavingsPage() {
         <div className="grow">
           <h1>Savings</h1>
         </div>
+        <Link className="btn-sm" style={{ background: 'var(--surface)', boxShadow: 'var(--shadow-sm)' }} href="/tontines">
+          <Icon name="hand-coins" size={15} />
+          Tontines
+        </Link>
         <Link className="btn-sm" style={{ background: 'var(--surface)', boxShadow: 'var(--shadow-sm)' }} href="/savings/setup">
           <Icon name="pencil" size={15} />
           Starting balances
