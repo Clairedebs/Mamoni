@@ -7,6 +7,20 @@ alter table public.categories
   add column role text check (role in ('tontine', 'tontine_payout'));
 create unique index categories_one_role on public.categories (user_id, role) where role is not null;
 
+-- Reuse categories the user already created with these names.
+update public.categories set role = 'tontine'
+where id in (
+  select distinct on (user_id) id from public.categories
+  where kind = 'expense' and lower(btrim(name)) = 'tontine' and role is null
+  order by user_id, created_at
+);
+update public.categories set role = 'tontine_payout'
+where id in (
+  select distinct on (user_id) id from public.categories
+  where kind = 'income' and lower(btrim(name)) = 'tontine payout' and role is null
+  order by user_id, created_at
+);
+
 insert into public.categories (user_id, kind, name, icon, color, is_default, position, role)
 select pr.id, 'expense', 'Tontine', 'hand-coins', 'amber', true, 7, 'tontine'
 from public.profiles pr

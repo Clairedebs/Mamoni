@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { coverage, deadlines, estimateCycleEnd, planTontineReminders, rebase, statusLine, validateGroupInput, validatePayout } from './tontine'
+import { categoryDeleteBlock, coverage, deadlines, estimateCycleEnd, hasTurnToday, nextRoundStart, planTontineReminders, rebase, rebaseOnEdit, statusLine, validateGroupInput, validatePayout } from './tontine'
 import { shortDate } from './format'
 
 const W = {
@@ -214,5 +214,41 @@ describe('planTontineReminders', () => {
     const r = planTontineReminders({ ...base, turns, coverage: cov(100000, '2026-12-05', 500), today: '2026-12-05', nowMinutes: 500 })
     expect(r.pushes).toEqual([{ title: 'It’s your turn: 50,000 FCFA from Friday tontine', body: 'Tap to record it and choose how much to save.', url: '/tontines/g1', tag: 'tontine-turn-t1' }])
     expect(r.notifiedTurns).toEqual(['t1'])
+  })
+})
+
+describe('review fixes', () => {
+  it('rebaseOnEdit skips a fully paid group', () => {
+    const c = coverage({ ...W, paid: 13 * 5000 + 3000, today: '2026-10-22', nowMinutes: 600 })
+    expect(rebaseOnEdit(c, { perPeriod: 5000, frequency: 'weekly' }, { perPeriod: 6000, frequency: 'weekly' })).toBeNull()
+  })
+  it('rebaseOnEdit ignores changes that keep the per-period amount', () => {
+    const c = coverage({ ...W, paid: 20000, today: '2026-10-22', nowMinutes: 600 })
+    expect(rebaseOnEdit(c, { perPeriod: 5000, frequency: 'weekly' }, { perPeriod: 5000, frequency: 'weekly' })).toBeNull()
+  })
+  it('rebaseOnEdit rebases when the per-period amount changes', () => {
+    const c = coverage({ ...W, paid: 22000, today: '2026-10-22', nowMinutes: 600 })
+    expect(rebaseOnEdit(c, { perPeriod: 5000, frequency: 'weekly' }, { perPeriod: 6000, frequency: 'weekly' })).toEqual({ firstDue: '2026-11-21', openingCredit: 2000 })
+  })
+  it('covered until survives a rebase', () => {
+    const c = coverage({ ...W, cycleStart: '2026-09-05', firstDue: '2026-11-21', perPeriod: 6000, paid: 0, today: '2026-10-22', nowMinutes: 600 })
+    expect(c.coveredUntil).toBe('2026-11-14')
+    expect(statusLine(c, { today: '2026-10-22', turnToday: false, label: shortDate }, 'weekly').text).toBe('Covered until Sat, Nov 14')
+  })
+  it('turnToday only on the turn date itself', () => {
+    const turns = [{ turn_on: '2026-10-20', status: 'upcoming' as const }]
+    expect(hasTurnToday(turns, '2026-10-27')).toBe(false)
+    expect(hasTurnToday(turns, '2026-10-20')).toBe(true)
+    expect(hasTurnToday([{ turn_on: '2026-10-20', status: 'collected' as const }], '2026-10-20')).toBe(false)
+  })
+  it('a new round starts one period after the cycle end, on the same weekday', () => {
+    expect(nextRoundStart({ cycle_end: '2027-01-15', frequency: 'weekly', anchor_day: 24 })).toBe('2027-01-22')
+    expect(nextRoundStart({ cycle_end: '2027-01-31', frequency: 'monthly', anchor_day: 31 })).toBe('2027-02-28')
+  })
+  it('tontine categories cannot be deleted', () => {
+    expect(categoryDeleteBlock({ role: 'tontine_payout', usage: 0, isLast: false, kind: 'income' })).toBe('Ma moni needs this category for tontines.')
+    expect(categoryDeleteBlock({ role: null, usage: 0, isLast: true, kind: 'income' })).toBe('You need at least one category of this type.')
+    expect(categoryDeleteBlock({ role: null, usage: 2, isLast: false, kind: 'expense' })).toBe('Used by 2 transactions. Move or delete those first.')
+    expect(categoryDeleteBlock({ role: null, usage: 0, isLast: false, kind: 'expense' })).toBeNull()
   })
 })

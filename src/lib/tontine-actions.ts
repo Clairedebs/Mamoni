@@ -3,7 +3,7 @@
 import { refresh } from 'next/cache'
 import { requireUser } from './supabase/server'
 import { getTontineGroup, getToday } from './data'
-import { rebase, validateGroupInput, validatePayout, type GroupInput } from './tontine'
+import { rebaseOnEdit, validateGroupInput, validatePayout, type GroupInput } from './tontine'
 import { parseIso } from './format'
 
 type Result<T = null> = { ok: true; data: T } | { ok: false; error: string }
@@ -46,11 +46,16 @@ export async function saveTontineGroup(
     const current = await getTontineGroup(id)
     if (!current) return fail('Group not found.')
     const g = current.group
-    const scheduleChanged =
-      g.amount_per_name !== input.amountPerName || g.names_held !== input.namesHeld || g.names_total !== input.namesTotal || g.frequency !== input.frequency
     const patch: Record<string, unknown> = { ...base }
-    if (scheduleChanged && g.status === 'active') {
-      const r = rebase(current.coverage)
+    const r =
+      g.status === 'active'
+        ? rebaseOnEdit(
+            current.coverage,
+            { perPeriod: g.amount_per_name * g.names_held, frequency: g.frequency },
+            { perPeriod: input.amountPerName * input.namesHeld, frequency: input.frequency },
+          )
+        : null
+    if (r) {
       patch.first_due = r.firstDue
       patch.opening_credit = r.openingCredit
       patch.payments_offset = current.paidTotal

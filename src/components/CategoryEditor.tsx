@@ -9,6 +9,7 @@ import { useAddSheet } from './AppShell'
 import { useToast } from './Toast'
 import { deleteCategory, saveCategory } from '@/lib/actions'
 import { tint } from '@/lib/format'
+import { categoryDeleteBlock } from '@/lib/tontine'
 import { PALETTE, type Category, type CategoryKind, type PaletteKey } from '@/lib/types'
 
 const TYPE_N: Record<CategoryKind, string> = { expense: 'Spending', income: 'Income', saving: 'Savings' }
@@ -29,7 +30,7 @@ export function CategoryEditor({ kind, category, siblings, usage, from }: { kind
   const back = from === 'sheet' ? '/' : `/settings/categories${kind === 'expense' ? '' : `?tab=${kind}`}`
   const t = tint(color)
   const last = !!category && siblings.length === 0
-  const usageLabel = kind === 'saving' ? `${usage} pot${usage > 1 ? 's' : ''}` : `${usage} transaction${usage > 1 ? 's' : ''}`
+  const block = category ? categoryDeleteBlock({ role: category.role, usage, isLast: last, kind }) : null
 
   const save = () =>
     start(async () => {
@@ -129,12 +130,12 @@ export function CategoryEditor({ kind, category, siblings, usage, from }: { kind
 
       {category && (
         <div className="danger-zone">
-          <button className="btn-danger" disabled={usage > 0 || last || pending} onClick={remove}>
+          <button className="btn-danger" disabled={!!block || pending} onClick={remove}>
             <Icon name="trash-2" />
             Delete category
           </button>
           <span className="hint">
-            {last ? 'You need at least one category of this type.' : usage > 0 ? `Used by ${usageLabel}. Move or delete ${kind === 'saving' ? 'them' : 'those'} first.` : 'This can’t be undone.'}
+            {block ?? 'This can’t be undone.'}
           </span>
         </div>
       )}

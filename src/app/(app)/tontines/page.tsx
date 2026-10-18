@@ -67,6 +67,7 @@ async function Groups() {
           <div className="set-group">
             {past.map((v) => {
               const diff = v.collected - v.paidTotal
+              const credit = v.coverage.credit + v.coverage.extraCredit
               return (
                 <Link key={v.group.id} className="set-row" href={`/tontines/${v.group.id}`}>
                   <span className="tile" style={{ background: 'var(--surface-2)', color: 'var(--ink-2)' }}>
@@ -77,6 +78,7 @@ async function Groups() {
                     <small>
                       Paid {fmt(v.paidTotal)} · Collected {fmt(v.collected)} · {diff >= 0 ? '+' : '−'}
                       {fmt(Math.abs(diff))}
+                      {credit > 0 ? ` · Credit ${fmt(credit)}` : ''}
                     </small>
                   </div>
                   <span className="val">

@@ -41,6 +41,8 @@ export type Coverage = {
 
 export function coverage(input: {
   firstDue: string
+  /** When given, the deadline before `firstDue` counts as already covered (it was paid before the app or before a schedule change). */
+  cycleStart?: string
   anchorDay?: number
   cycleEnd: string
   frequency: Frequency
@@ -63,7 +65,7 @@ export function coverage(input: {
   const nextDue = fullyPaid ? null : ds[covered]
   return {
     perPeriod: per,
-    coveredUntil: covered > 0 ? ds[covered - 1] : null,
+    coveredUntil: covered > 0 ? ds[covered - 1] : priorDeadline(input),
     nextDue,
     nextDueAmount: nextDue ? per - credit : 0,
     credit,
@@ -73,6 +75,12 @@ export function coverage(input: {
     extraCredit,
     missedDeadlines,
   }
+}
+
+function priorDeadline(input: { firstDue: string; cycleStart?: string; frequency: Frequency; anchorDay?: number }): string | null {
+  if (!input.cycleStart || input.firstDue <= input.cycleStart) return null
+  const prev = addPeriods(input.firstDue, input.frequency, -1, input.frequency === 'monthly' ? (input.anchorDay ?? parseIso(input.firstDue).getDate()) : undefined)
+  return prev >= input.cycleStart ? prev : null
 }
 
 export type GroupStatus = { tone: 'ok' | 'soon' | 'late' | 'turn' | 'done'; text: string }
@@ -179,7 +187,7 @@ export function planTontineReminders(input: {
 
 /** Coverage for a stored group row, given contributions counted since its last schedule change. */
 export function groupCoverage(
-  g: { first_due: string; anchor_day: number; cycle_end: string; frequency: Frequency; amount_per_name: number; names_held: number; opening_credit: number; deadline_time: string },
+  g: { first_due: string; cycle_start: string; anchor_day: number; cycle_end: string; frequency: Frequency; amount_per_name: number; names_held: number; opening_credit: number; deadline_time: string },
   paid: number,
   today: string,
   nowMinutes: number,
@@ -187,6 +195,7 @@ export function groupCoverage(
   const t = String(g.deadline_time)
   return coverage({
     firstDue: g.first_due,
+    cycleStart: g.cycle_start,
     anchorDay: g.anchor_day,
     cycleEnd: g.cycle_end,
     frequency: g.frequency,
@@ -197,4 +206,30 @@ export function groupCoverage(
     nowMinutes,
     deadlineMinutes: Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5)),
   })
+}
+
+/** Rebase only when what she owes per period (or how often) changes, and never once the cycle is fully paid. */
+export function rebaseOnEdit(c: Coverage, before: { perPeriod: number; frequency: Frequency }, after: { perPeriod: number; frequency: Frequency }) {
+  if (c.fullyPaid) return null
+  if (before.perPeriod === after.perPeriod && before.frequency === after.frequency) return null
+  const r = rebase(c)
+  return r.firstDue ? r : null
+}
+
+export function hasTurnToday(turns: { turn_on: string; status: string }[], today: string) {
+  return turns.some((t) => t.status === 'upcoming' && t.turn_on === today)
+}
+
+export function nextRoundStart(g: { cycle_end: string; frequency: Frequency; anchor_day: number }) {
+  return addPeriods(g.cycle_end, g.frequency, 1, g.frequency === 'monthly' ? g.anchor_day : undefined)
+}
+
+export function categoryDeleteBlock(c: { role: string | null; usage: number; isLast: boolean; kind: 'expense' | 'income' | 'saving' }): string | null {
+  if (c.role) return 'Ma moni needs this category for tontines.'
+  if (c.isLast) return 'You need at least one category of this type.'
+  if (c.usage > 0) {
+    const what = c.kind === 'saving' ? 'pot' : 'transaction'
+    return `Used by ${c.usage} ${what}${c.usage > 1 ? 's' : ''}. Move or delete ${c.kind === 'saving' ? 'them' : 'those'} first.`
+  }
+  return null
 }

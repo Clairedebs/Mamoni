@@ -6,8 +6,8 @@ import { Icon } from './Icon'
 import { usePickers } from './Pickers'
 import { useToast } from './Toast'
 import { saveTontineGroup } from '@/lib/tontine-actions'
-import { addPeriods, estimateCycleEnd, type Frequency } from '@/lib/tontine'
-import { addDays, fmt, parseIso, shortDate } from '@/lib/format'
+import { addPeriods, estimateCycleEnd, nextRoundStart, type Frequency } from '@/lib/tontine'
+import { fmt, parseIso, shortDate } from '@/lib/format'
 import type { TontineView } from '@/lib/data'
 
 const digits = (s: string) => s.replace(/\D/g, '').slice(0, 10)
@@ -27,8 +27,8 @@ export function TontineForm({ today, group, from }: { today: string; group?: Ton
   const [held, setHeld] = useState(src?.names_held ?? 1)
   const [frequency, setFrequency] = useState<Frequency>(src?.frequency ?? 'weekly')
   const [deadline, setDeadline] = useState(src?.deadline_time ?? '18:00')
-  const [cycleStart, setCycleStart] = useState(group ? group.group.cycle_start : from ? addDays(from.group.cycle_end, 1) : today)
-  const [firstDue, setFirstDue] = useState(group ? group.group.first_due : from ? addDays(from.group.cycle_end, 1) : today)
+  const [cycleStart, setCycleStart] = useState(group ? group.group.cycle_start : from ? nextRoundStart(from.group) : today)
+  const [firstDue, setFirstDue] = useState(group ? group.group.first_due : from ? nextRoundStart(from.group) : today)
   const [cycleEnd, setCycleEnd] = useState(group?.group.cycle_end ?? '')
   const [endTouched, setEndTouched] = useState(Boolean(group))
   const [turns, setTurns] = useState<TurnDraft[]>(

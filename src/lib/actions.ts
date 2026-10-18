@@ -117,6 +117,8 @@ export async function saveCategory(input: {
 
 export async function deleteCategory(id: string): Promise<Result> {
   const { supabase } = await requireUser()
+  const { data: cat } = await supabase.from('categories').select('role').eq('id', id).single()
+  if (cat?.role) return fail('Ma moni needs this category for tontines.')
   const { error } = await supabase.from('categories').delete().eq('id', id)
   if (error) return fail(dbError(error))
   refresh()

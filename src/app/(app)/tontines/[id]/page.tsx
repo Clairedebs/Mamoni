@@ -92,7 +92,7 @@ async function Group({ params }: { params: P }) {
               </div>
             </>
           ) : (
-            <div className="facts">
+            <div className="facts" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
               <div className="fact">
                 <small>Paid</small>
                 <strong className="num">
@@ -103,6 +103,12 @@ async function Group({ params }: { params: P }) {
                 <small>Collected</small>
                 <strong className="num">
                   <Money n={view.collected} />
+                </strong>
+              </div>
+              <div className="fact">
+                <small>Credit left</small>
+                <strong className="num">
+                  <Money n={c.credit + c.extraCredit} />
                 </strong>
               </div>
             </div>

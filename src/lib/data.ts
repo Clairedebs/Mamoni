@@ -3,7 +3,7 @@ import { cache } from 'react'
 import { connection } from 'next/server'
 import { requireUser } from './supabase/server'
 import { addDays, minutesIn, monthRange, shortDate, todayIn } from './format'
-import { groupCoverage, statusLine, type Coverage, type GroupStatus } from './tontine'
+import { groupCoverage, hasTurnToday, statusLine, type Coverage, type GroupStatus } from './tontine'
 import type { Category, Pot, Profile, TontineGroup, TontineTurn, Transaction } from './types'
 
 export const getProfile = cache(async (): Promise<Profile> => {
@@ -148,7 +148,7 @@ export const getTontineGroups = cache(async (): Promise<TontineView[]> => {
     const paid = Math.max(0, paidTotal - Number(group.payments_offset))
     const groupTurns = (turns.data as TontineTurn[]).filter((t) => t.group_id === group.id)
     const c = groupCoverage(group, paid, today, nowMinutes)
-    const turnToday = groupTurns.some((t) => t.status === 'upcoming' && t.turn_on <= today)
+    const turnToday = hasTurnToday(groupTurns, today)
     const status: GroupStatus =
       group.status === 'ended'
         ? { tone: 'done', text: `Ended ${shortDate(group.ended_on ?? today)}` }
