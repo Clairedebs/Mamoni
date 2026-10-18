@@ -506,3 +506,11 @@ a.set-row,a.pocket,a.row{color:inherit}
 .pw-toggle:active{transform:scale(.92)}
 .pw-toggle[aria-pressed="true"]{color:var(--brand-ink)}
 @media (hover:hover) and (pointer:fine){.pw-toggle:hover{color:var(--ink);background:var(--surface-2)}}
+
+/* tontines */
+.stepper{display:inline-flex;align-items:center;gap:4px;background:var(--surface-2);border-radius:12px;padding:3px}
+.stepper button{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--ink-2);transition:background-color 160ms ease,transform 120ms var(--ease-out)}
+.stepper button:active{transform:scale(.92)}
+.stepper button[disabled]{opacity:.35;pointer-events:none}
+.stepper .num{min-width:28px;text-align:center;font-weight:700;font-size:16px}
+@media (hover:hover) and (pointer:fine){.stepper button:hover{background:var(--surface)}}
