@@ -15,10 +15,10 @@ export default function SetupPage() {
           <svg className="appicon" aria-hidden="true">
             <use href="#logo" />
           </svg>
-          <b>Ma moni</b>
+          <b>Moni yem</b>
         </div>
         <h1>Connect your database</h1>
-        <p className="lead">Ma moni stores your data in your own Supabase project. Four steps and you&apos;re in.</p>
+        <p className="lead">Moni yem stores your data in your own Supabase project. Four steps and you&apos;re in.</p>
         <ol className="setup-steps">
           <li>
             Create a free project at <b>supabase.com</b> (choose a region close to you, e.g. Frankfurt or London).

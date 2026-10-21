@@ -118,7 +118,7 @@ export async function saveCategory(input: {
 export async function deleteCategory(id: string): Promise<Result> {
   const { supabase } = await requireUser()
   const { data: cat } = await supabase.from('categories').select('role').eq('id', id).single()
-  if (cat?.role) return fail('Ma moni needs this category for tontines.')
+  if (cat?.role) return fail('Moni yem needs this category for tontines.')
   const { error } = await supabase.from('categories').delete().eq('id', id)
   if (error) return fail(dbError(error))
   refresh()
@@ -242,7 +242,7 @@ export async function sendTestNotification(): Promise<Result<{ sent: number }>> 
     try {
       await webpush.sendNotification(
         { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
-        JSON.stringify({ title: 'Time for a quick check-in?', body: 'This is how your Ma moni reminders will look.', url: '/' }),
+        JSON.stringify({ title: 'Time for a quick check-in?', body: 'This is how your Moni yem reminders will look.', url: '/' }),
       )
       sent++
     } catch (e) {

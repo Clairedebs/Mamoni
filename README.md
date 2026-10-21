@@ -1,4 +1,4 @@
-# Ma moni
+# Moni yem
 
 A personal finance PWA for spending, income and savings, with tontines included. Built with Next.js 16 (App Router, Cache Components) and Supabase. Amounts are in FCFA.
 
@@ -7,7 +7,7 @@ A personal finance PWA for spending, income and savings, with tontines included.
 - **Home**: net worth, available cash, income and spending this month, a 6-month chart, top spending categories, a savings breakdown, and recent activity.
 - **Activity**: browse by month, filter by spending, income or savings, and search.
 - **Savings**: categories (Contributions, Bank, Family, plus your own) that hold *pots*. Each pot has a starting balance and an optional goal.
-- **Tontines**: track rotating contribution groups. Set the amount per name, number of names, names you hold, weekly or monthly deadline, and your turns. Ma moni shows "covered until" as you pay ahead, flags late weeks, and on your turn records the payout as income and can move part of it into savings. Contributions count as spending.
+- **Tontines**: track rotating contribution groups. Set the amount per name, number of names, names you hold, weekly or monthly deadline, and your turns. Moni yem shows "covered until" as you pay ahead, flags late weeks, and on your turn records the payout as income and can move part of it into savings. Contributions count as spending.
 - **Add sheet**: a keypad, a custom date picker (defaults to today), expenses, income, and savings deposits or withdrawals. Saving shows an Undo toast.
 - **Categories**: create or edit spending, income and savings categories with an icon and a colour from a fixed palette.
 - **Reminders** (web push): a daily or weekly check-in at the time you choose, a nudge after 2 days with no entries, and for each tontine: the evening before an unpaid deadline, once if a payment is missed, and on your turn.

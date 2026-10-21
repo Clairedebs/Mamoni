@@ -35,7 +35,7 @@ export function AppShell({ children, sheet }: { children: React.ReactNode; sheet
             <svg className="appicon" aria-hidden="true">
               <use href="#logo" />
             </svg>
-            Ma moni
+            Moni yem
           </div>
           <button className="btn add" onClick={() => open()}>
             <Icon name="plus" />

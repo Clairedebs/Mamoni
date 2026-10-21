@@ -265,7 +265,7 @@ function InstallRow() {
       </span>
       <div className="mid">
         <b>Add to home screen</b>
-        <small>{installed ? 'Installed on this device' : ios ? 'In Safari: Share › Add to Home Screen' : 'Open Ma moni like a native app'}</small>
+        <small>{installed ? 'Installed on this device' : ios ? 'In Safari: Share › Add to Home Screen' : 'Open Moni yem like a native app'}</small>
       </div>
       {evt && !installed && (
         <button

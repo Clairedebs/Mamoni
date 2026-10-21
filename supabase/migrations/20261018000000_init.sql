@@ -1,4 +1,4 @@
--- Ma moni: initial schema
+-- Moni yem: initial schema
 -- Amounts are whole FCFA stored as bigint. Every row belongs to one user and is protected by RLS.
 
 create type public.category_kind as enum ('expense', 'income', 'saving');

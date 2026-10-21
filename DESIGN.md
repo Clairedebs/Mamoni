@@ -1,5 +1,5 @@
 ---
-name: Ma moni
+name: Moni yem
 description: Personal finance PWA in FCFA, built to the category standard (Revolut, Wave, Monarch, Apple Wallet) around one solid violet balance card.
 colors:
   brand: "#9518ad"
@@ -393,13 +393,13 @@ components:
     padding: "2px 7px"
 ---
 
-# Design System: Ma moni
+# Design System: Moni yem
 
 ## Overview
 
 **Creative North Star: "The Violet Wallet"**
 
-Ma moni is the category standard for a personal finance app, executed without irony: one solid violet card holding the money, everything else calm, tinted, and quiet around it. The quality bar is Revolut, Wave, Monarch / Copilot Money and Apple Wallet. The home screen answers one question first ("where am I this month?") and refuses the gadget dashboard full of widgets. Density is iOS-native: generous 14 to 18px panel padding, 42px category tiles, 48px buttons, a thumb-height tab bar with the add action in the middle.
+Moni yem is the category standard for a personal finance app, executed without irony: one solid violet card holding the money, everything else calm, tinted, and quiet around it. The quality bar is Revolut, Wave, Monarch / Copilot Money and Apple Wallet. The home screen answers one question first ("where am I this month?") and refuses the gadget dashboard full of widgets. Density is iOS-native: generous 14 to 18px panel padding, 42px category tiles, 48px buttons, a thumb-height tab bar with the add action in the middle.
 
 The world is built from violet-tinted neutrals (every grey carries hue 315 to 320), a single saturated brand color, and a fixed 12-color category palette that the user picks from. Depth is soft and ambient, tinted with the brand's own dark plum. Motion borrows iOS physics: a drawer curve for sheets, pickers and notifications, a quick ease-out for presses. Native browser pickers are replaced by in-world ones (calendar, time wheels). Light and dark are both first-class and the user can switch at any time from the header.
 
@@ -420,7 +420,7 @@ All money is tabular, integer FCFA with comma grouping and the currency as a sma
 A tinted-plum neutral field carrying a single saturated violet, with semantic green/red and a 12-color category palette.
 
 ### Primary
-- **Ma moni Violet** (brand): the balance card fill, FAB, primary buttons, active switches, the selected calendar day, chart income bars and savings line, focus outlines, text selection, caret, notification dot. Identical in both themes; the brand constraint from PRODUCT.md.
+- **Moni yem Violet** (brand): the balance card fill, FAB, primary buttons, active switches, the selected calendar day, chart income bars and savings line, focus outlines, text selection, caret, notification dot. Identical in both themes; the brand constraint from PRODUCT.md.
 - **Pressed Violet** (brand-press / brand-press-dark): hover and pressed fill for violet buttons and the FAB. Darker in light mode, lighter in dark mode.
 - **Violet Ink** (brand-ink / brand-ink-dark): violet used as text: "See all" links, active tab label, active rail item, today in the calendar, "Soon" badge, "Edit" actions. Never use raw brand as small text on light surfaces; use this.
 - **Lilac Wash** (brand-soft, brand-soft-2, and dark counterparts): the avatar, active rail item, selected chip, a past-date pill in the add sheet, reminder settings tile, new-row flash.

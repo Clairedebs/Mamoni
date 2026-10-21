@@ -40,7 +40,7 @@ L'épargne y est traitée comme dans la vraie vie en Afrique francophone : pas s
 ## Brand Commitments
 
 - Couleur préférée et principale : violet #9518ad (contrainte imposée par l'utilisatrice).
-- App name: "Ma moni".
+- App name: "Moni yem".
 - Interface in English (the user is practicing toward a B2 level), amounts in FCFA with comma grouping (3,012,250 FCFA). Light and dark modes required.
 - Categories (spending, income, savings) are user-configurable: name, icon from the app's icon set, color from a fixed palette.
 - Préférence de style choisie : le standard des apps de finances perso, exécuté au niveau de finition de Revolut, Wave, Monarch / Copilot Money et Apple Wallet. Pas de motif folklorique ni de gadget.

@@ -225,7 +225,7 @@ export function nextRoundStart(g: { cycle_end: string; frequency: Frequency; anc
 }
 
 export function categoryDeleteBlock(c: { role: string | null; usage: number; isLast: boolean; kind: 'expense' | 'income' | 'saving' }): string | null {
-  if (c.role) return 'Ma moni needs this category for tontines.'
+  if (c.role) return 'Moni yem needs this category for tontines.'
   if (c.isLast) return 'You need at least one category of this type.'
   if (c.usage > 0) {
     const what = c.kind === 'saving' ? 'pot' : 'transaction'

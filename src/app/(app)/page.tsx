@@ -81,7 +81,7 @@ async function Home() {
             <div className="remind" role="status">
               <Icon name="sparkles" />
               <div className="t">
-                <b>Welcome to Ma moni</b>Log your first expense or income to get started.
+                <b>Welcome to Moni yem</b>Log your first expense or income to get started.
               </div>
               <AddButton className="btn-sm">Add one</AddButton>
             </div>

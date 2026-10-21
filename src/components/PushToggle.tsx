@@ -65,7 +65,7 @@ export function PushToggle() {
 
   const sub =
     state === 'ios-install'
-      ? 'On iPhone, add Ma moni to your Home Screen first (Share › Add to Home Screen).'
+      ? 'On iPhone, add Moni yem to your Home Screen first (Share › Add to Home Screen).'
       : state === 'unsupported'
         ? 'This browser can’t receive notifications.'
         : state === 'denied'

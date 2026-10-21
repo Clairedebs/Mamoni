@@ -1,4 +1,4 @@
-/* Ma moni service worker: app-shell caching + push reminders. */
+/* Moni yem service worker: app-shell caching + push reminders. */
 const VERSION = 'mm-v1'
 const SHELL = ['/offline.html', '/icons/icon-192.png', '/icons/icon.svg']
 
@@ -48,10 +48,10 @@ self.addEventListener('push', (event) => {
   try {
     data = event.data ? event.data.json() : {}
   } catch {
-    data = { title: 'Ma moni', body: event.data ? event.data.text() : '' }
+    data = { title: 'Moni yem', body: event.data ? event.data.text() : '' }
   }
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Ma moni', {
+    self.registration.showNotification(data.title || 'Moni yem', {
       body: data.body || '',
       icon: '/icons/icon-192.png',
       badge: '/icons/badge-96.png',

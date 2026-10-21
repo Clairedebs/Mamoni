@@ -246,7 +246,7 @@ describe('review fixes', () => {
     expect(nextRoundStart({ cycle_end: '2027-01-31', frequency: 'monthly', anchor_day: 31 })).toBe('2027-02-28')
   })
   it('tontine categories cannot be deleted', () => {
-    expect(categoryDeleteBlock({ role: 'tontine_payout', usage: 0, isLast: false, kind: 'income' })).toBe('Ma moni needs this category for tontines.')
+    expect(categoryDeleteBlock({ role: 'tontine_payout', usage: 0, isLast: false, kind: 'income' })).toBe('Moni yem needs this category for tontines.')
     expect(categoryDeleteBlock({ role: null, usage: 0, isLast: true, kind: 'income' })).toBe('You need at least one category of this type.')
     expect(categoryDeleteBlock({ role: null, usage: 2, isLast: false, kind: 'expense' })).toBe('Used by 2 transactions. Move or delete those first.')
     expect(categoryDeleteBlock({ role: null, usage: 0, isLast: false, kind: 'expense' })).toBeNull()

@@ -8,10 +8,10 @@ import './globals.css'
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' })
 
 export const metadata: Metadata = {
-  title: { default: 'Ma moni', template: '%s · Ma moni' },
+  title: { default: 'Moni yem', template: '%s · Moni yem' },
   description: 'Track your spending, income and savings — tontines included.',
-  applicationName: 'Ma moni',
-  appleWebApp: { capable: true, title: 'Ma moni', statusBarStyle: 'default' },
+  applicationName: 'Moni yem',
+  appleWebApp: { capable: true, title: 'Moni yem', statusBarStyle: 'default' },
   icons: { icon: '/icons/icon.svg', apple: '/icons/apple-touch-icon.png' },
   formatDetection: { telephone: false },
 }

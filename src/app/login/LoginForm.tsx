@@ -20,7 +20,7 @@ export function LoginForm({ next, notice }: { next?: string; notice?: string }) 
         <svg className="appicon" aria-hidden="true">
           <use href="#logo" />
         </svg>
-        <b>Ma moni</b>
+        <b>Moni yem</b>
       </div>
       <h1>{mode === 'in' ? 'Welcome back' : 'Create your account'}</h1>
       <p className="lead">{mode === 'in' ? 'Sign in to see where your money stands.' : 'Track spending, income and savings — tontines included.'}</p>
@@ -77,7 +77,7 @@ export function LoginForm({ next, notice }: { next?: string; notice?: string }) 
       )}
 
       <p className="switch-mode">
-        {mode === 'in' ? 'New to Ma moni?' : 'Already have an account?'}{' '}
+        {mode === 'in' ? 'New to Moni yem?' : 'Already have an account?'}{' '}
         <button type="button" onClick={() => setMode(mode === 'in' ? 'up' : 'in')}>
           {mode === 'in' ? 'Create an account' : 'Sign in'}
         </button>
