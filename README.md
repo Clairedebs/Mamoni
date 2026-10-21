@@ -9,6 +9,7 @@ A personal finance PWA for spending, income and savings, with tontines included.
 - **Savings**: categories (Contributions, Bank, Family, plus your own) that hold *pots*. Each pot has a starting balance and an optional goal.
 - **Tontines**: track rotating contribution groups. Set the amount per name, number of names, names you hold, weekly or monthly deadline, and your turns. Moni yem shows "covered until" as you pay ahead, flags late weeks, and on your turn records the payout as income and can move part of it into savings. Contributions count as spending.
 - **Add sheet**: a keypad, a custom date picker (defaults to today), expenses, income, and savings deposits or withdrawals. Saving shows an Undo toast.
+- **Transaction detail**: tap any transaction to see it, edit its amount, category or pot, date and note, or delete it (with Undo).
 - **Categories**: create or edit spending, income and savings categories with an icon and a colour from a fixed palette.
 - **Reminders** (web push): a daily or weekly check-in at the time you choose, a nudge after 2 days with no entries, and for each tontine: the evening before an unpaid deadline, once if a payment is missed, and on your turn.
 - **PWA**: installable, works with light and dark mode, and shows an offline fallback page. Full offline entry with sync is planned for v2.
@@ -19,6 +20,7 @@ A personal finance PWA for spending, income and savings, with tontines included.
 2. In **SQL Editor**, run the migrations in order:
    1. `supabase/migrations/20261018000000_init.sql`: tables, row-level security (each user only sees their own rows) and default categories.
    2. `supabase/migrations/20261019000000_tontine_groups.sql`: tontine groups and turns, the Tontine / Tontine payout categories, and the payout function.
+   3. `supabase/migrations/20261021000000_transaction_edits.sql`: links a payout's savings deposit to the payout, and reopens the turn when a payout is deleted.
 3. In **Authentication › URL Configuration**:
    - set **Site URL** to `http://localhost:3000` (later, your production URL);
    - add `http://localhost:3000/auth/callback` to **Redirect URLs** (and the production equivalent).

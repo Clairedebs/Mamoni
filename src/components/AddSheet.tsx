@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Icon } from './Icon'
 import { useAddSheet } from './AppShell'
+import { Keypad, pressKey } from './Keypad'
 import { usePickers } from './Pickers'
 import { useToast } from './Toast'
 import { addTransaction, deleteTransaction } from '@/lib/actions'
@@ -84,12 +85,7 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
     setPick((t === 'saving' ? pots[0]?.id : categories.find((c) => c.kind === t)?.id) ?? '')
   }
 
-  const press = (k: string) =>
-    setAmt((a) => {
-      if (k === 'del') return a.slice(0, -1)
-      if (a === '' && (k === '0' || k === '000')) return a
-      return (a + k).slice(0, 10)
-    })
+  const press = (k: string) => setAmt((a) => pressKey(a, k))
 
   const save = () => {
     if (!amt || !pick || pending || needsGroup) return
@@ -251,13 +247,7 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
           <span className="sr">Note</span>
           <input value={note} onChange={(e) => setNote(e.target.value)} maxLength={80} placeholder="Add a note (optional)" autoComplete="off" />
         </label>
-        <div className="pad">
-          {['1', '2', '3', '4', '5', '6', '7', '8', '9', '000', '0', 'del'].map((k) => (
-            <button key={k} className="key" aria-label={k === 'del' ? 'Delete' : k} onClick={() => press(k)}>
-              {k === 'del' ? <Icon name="delete" /> : k === '000' ? <small>000</small> : k}
-            </button>
-          ))}
-        </div>
+        <Keypad onKey={press} />
         {err && (
           <p className="form-err" role="alert" style={{ marginBottom: 8 }}>
             {err}

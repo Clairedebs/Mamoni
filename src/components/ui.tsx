@@ -1,4 +1,5 @@
 import { Icon } from './Icon'
+import { TxOpen } from './TxOpen'
 import { MONTHS, fmt, parseIso, tint } from '@/lib/format'
 import type { Category, PaletteKey, Pot, Transaction } from '@/lib/types'
 
@@ -37,7 +38,7 @@ export function TxRow({ t, cats, pots, sub }: { t: Transaction; cats: Category[]
   const title = t.note || (t.kind === 'deposit' ? `Deposit · ${d.name}` : t.kind === 'withdrawal' ? `Withdrawal · ${d.name}` : d.name)
   const subtitle = sub ?? (t.pot_id ? `Savings · ${d.group}` : d.name)
   return (
-    <div className="row">
+    <TxOpen t={t} label={`${title}, ${isIn ? '+' : '−'}${fmt(Number(t.amount))} FCFA, open details`}>
       <Tile icon={d.icon} color={d.color} />
       <span className="mid">
         <b>{title}</b>
@@ -46,7 +47,7 @@ export function TxRow({ t, cats, pots, sub }: { t: Transaction; cats: Category[]
       <span className={`amt num${t.kind === 'income' ? ' in' : ''}`}>
         <Money n={Number(t.amount)} sign={isIn ? '+' : '−'} />
       </span>
-    </div>
+    </TxOpen>
   )
 }
 

@@ -5,6 +5,8 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import webpush from 'web-push'
 import { createClient, requireUser } from './supabase/server'
+import { getToday } from './data'
+import { validateTxEdit } from './tx'
 import { PALETTE, type CategoryKind, type PaletteKey, type ReminderFrequency, type TransactionKind } from './types'
 import { ICON_NAMES } from '@/components/icon-names'
 
@@ -86,6 +88,41 @@ export async function addTransaction(input: {
 export async function deleteTransaction(id: string): Promise<Result> {
   const { supabase } = await requireUser()
   const { error } = await supabase.from('transactions').delete().eq('id', id)
+  if (error) return fail(dbError(error))
+  refresh()
+  return { ok: true, data: null }
+}
+
+export async function updateTransaction(input: { id: string; amount: number; occurredOn: string; note?: string; categoryId?: string; potId?: string }): Promise<Result> {
+  const { supabase } = await requireUser()
+  const invalid = validateTxEdit({ amount: input.amount, occurredOn: input.occurredOn, today: await getToday() })
+  if (invalid) return fail(invalid)
+  const { data: tx, error: readErr } = await supabase.from('transactions').select('kind, group_id').eq('id', input.id).single()
+  if (readErr || !tx) return fail('Transaction not found.')
+  const patch: Record<string, unknown> = { amount: input.amount, occurred_on: input.occurredOn, note: clean(input.note, 80) || null }
+  if (tx.kind === 'deposit' || tx.kind === 'withdrawal') {
+    if (input.potId) patch.pot_id = input.potId
+  } else if (!tx.group_id && input.categoryId) {
+    patch.category_id = input.categoryId
+  }
+  const { error } = await supabase.from('transactions').update(patch).eq('id', input.id)
+  if (error) return fail(dbError(error))
+  refresh()
+  return { ok: true, data: null }
+}
+
+/** Puts back a transaction deleted a moment ago (Undo). */
+export async function restoreTransaction(t: { kind: TransactionKind; amount: number; category_id: string | null; pot_id: string | null; group_id: string | null; occurred_on: string; note: string | null }): Promise<Result> {
+  const { supabase } = await requireUser()
+  const { error } = await supabase.from('transactions').insert({
+    kind: t.kind,
+    amount: t.amount,
+    category_id: t.category_id,
+    pot_id: t.pot_id,
+    group_id: t.group_id,
+    occurred_on: t.occurred_on,
+    note: t.note,
+  })
   if (error) return fail(dbError(error))
   refresh()
   return { ok: true, data: null }

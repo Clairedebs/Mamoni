@@ -5,14 +5,18 @@ import { usePathname } from 'next/navigation'
 import { Suspense, createContext, useCallback, useContext, useState } from 'react'
 import { Icon } from './Icon'
 import { ThemeToggle } from './ThemeToggle'
-import type { TransactionKind } from '@/lib/types'
+import type { Transaction, TransactionKind } from '@/lib/types'
 
 export type SheetRequest = { kind: TransactionKind; categoryId?: string; potId?: string; groupId?: string; amount?: number; nonce: number }
-const SheetCtx = createContext<{ req: SheetRequest | null; open: (r?: Omit<SheetRequest, 'nonce'>) => void; close: () => void }>({
-  req: null,
-  open: () => {},
-  close: () => {},
-})
+type SheetCtxValue = {
+  req: SheetRequest | null
+  open: (r?: Omit<SheetRequest, 'nonce'>) => void
+  close: () => void
+  detail: Transaction | null
+  openDetail: (t: Transaction) => void
+  closeDetail: () => void
+}
+const SheetCtx = createContext<SheetCtxValue>({ req: null, open: () => {}, close: () => {}, detail: null, openDetail: () => {}, closeDetail: () => {} })
 export const useAddSheet = () => useContext(SheetCtx)
 
 const NAV = [
@@ -26,9 +30,12 @@ export function AppShell({ children, sheet }: { children: React.ReactNode; sheet
   const [req, setReq] = useState<SheetRequest | null>(null)
   const open = useCallback((r?: Omit<SheetRequest, 'nonce'>) => setReq({ kind: 'expense', ...r, nonce: Date.now() }), [])
   const close = useCallback(() => setReq(null), [])
+  const [detail, setDetail] = useState<Transaction | null>(null)
+  const openDetail = useCallback((t: Transaction) => setDetail(t), [])
+  const closeDetail = useCallback(() => setDetail(null), [])
 
   return (
-    <SheetCtx.Provider value={{ req, open, close }}>
+    <SheetCtx.Provider value={{ req, open, close, detail, openDetail, closeDetail }}>
       <div className="app">
         <aside className="rail" aria-label="Main navigation">
           <div className="brand">
