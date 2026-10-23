@@ -27,8 +27,10 @@ function dbError(e: { code?: string; message: string }) {
 // ---------------------------------------------------------------- auth
 export async function signIn(_: unknown, form: FormData): Promise<Result | undefined> {
   const supabase = await createClient()
-  const { error } = await supabase.auth.signInWithPassword({ email: clean(form.get('email'), 200), password: String(form.get('password') ?? '') })
+  const { data: auth, error } = await supabase.auth.signInWithPassword({ email: clean(form.get('email'), 200), password: String(form.get('password') ?? '') })
   if (error) return fail(error.message === 'Invalid login credentials' ? 'Wrong email or password.' : error.message)
+  const { data: profile } = await supabase.from('profiles').select('onboarded_at').eq('id', auth.user.id).single()
+  if (profile && !profile.onboarded_at) redirect('/welcome')
   const next = clean(form.get('next'), 200)
   redirect(next.startsWith('/') && !next.startsWith('//') ? next : '/')
 }
@@ -45,7 +47,7 @@ export async function signUp(_: unknown, form: FormData): Promise<Result<{ confi
     options: { data: { name }, emailRedirectTo: origin ? `${origin}/auth/callback` : undefined },
   })
   if (error) return fail(error.message)
-  if (data.session) redirect('/savings/setup?welcome=1')
+  if (data.session) redirect('/welcome')
   return { ok: true, data: { confirm: true } }
 }
 
@@ -53,6 +55,14 @@ export async function signOut() {
   const supabase = await createClient()
   await supabase.auth.signOut()
   redirect('/login')
+}
+
+/** Marks the welcome tour as done (finished or skipped), so it doesn't open again on its own. */
+export async function completeOnboarding(): Promise<Result> {
+  const { supabase, userId } = await requireUser()
+  const { error } = await supabase.from('profiles').update({ onboarded_at: new Date().toISOString() }).eq('id', userId).is('onboarded_at', null)
+  if (error) return fail(dbError(error))
+  return { ok: true, data: null }
 }
 
 // ---------------------------------------------------------------- transactions

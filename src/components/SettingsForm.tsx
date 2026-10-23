@@ -198,6 +198,24 @@ export function SettingsForm({ profile, counts, email }: Props) {
       </div>
 
       <div className="section-h">
+        <h2>Help</h2>
+      </div>
+      <div className="set-group">
+        <Link className="set-row" href="/welcome?replay=1">
+          <span className="tile" style={{ background: 'var(--brand-soft)', color: 'var(--brand-ink)' }}>
+            <Icon name="sparkles" />
+          </span>
+          <div className="mid">
+            <b>Replay the tour</b>
+            <small>How transactions, savings and tontines work</small>
+          </div>
+          <span className="val">
+            <Icon name="chevron-right" />
+          </span>
+        </Link>
+      </div>
+
+      <div className="section-h">
         <h2>Account</h2>
       </div>
       <div className="set-group">

@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient()
     const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash })
     if (!error) {
-      const target = next?.startsWith('/') && !next.startsWith('//') ? next : '/savings/setup?welcome=1'
+      const target = next?.startsWith('/') && !next.startsWith('//') ? next : '/welcome'
       return NextResponse.redirect(new URL(target, url.origin))
     }
   }

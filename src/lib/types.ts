@@ -55,6 +55,7 @@ export type Profile = {
   nudge_enabled: boolean
   contribution_enabled: boolean
   contribution_lead_days: number
+  onboarded_at: string | null
 }
 
 export type TontineFrequency = 'weekly' | 'monthly'

@@ -12,6 +12,7 @@ A personal finance PWA for spending, income and savings, with tontines included.
 - **Transaction detail**: tap any transaction to see it, edit its amount, category or pot, date and note, or delete it (with Undo).
 - **Categories**: create or edit spending, income and savings categories with an icon and a colour from a fixed palette.
 - **Reminders** (web push): a daily or weekly check-in at the time you choose, a nudge after 2 days with no entries, and for each tontine: the evening before an unpaid deadline, once if a payment is missed, and on your turn.
+- **Welcome tour**: new accounts see 4 short screens (balance, logging, savings pots, tontines), then pick their currency and time zone and enter starting balances. Replay it from Settings › Help.
 - **PWA**: installable, works with light and dark mode, and shows an offline fallback page. Full offline entry with sync is planned for v2.
 
 ## 1. Create the database
@@ -22,6 +23,7 @@ A personal finance PWA for spending, income and savings, with tontines included.
    2. `supabase/migrations/20261019000000_tontine_groups.sql`: tontine groups and turns, the Tontine / Tontine payout categories, and the payout function.
    3. `supabase/migrations/20261021000000_transaction_edits.sql`: links a payout's savings deposit to the payout, and reopens the turn when a payout is deleted.
    4. `supabase/migrations/20261023000000_currency.sql`: amounts keep cents, and the account currency is checked against the supported list.
+   5. `supabase/migrations/20261025000000_onboarding.sql`: remembers who finished the welcome tour (existing accounts are marked done).
 3. In **Authentication › URL Configuration**:
    - set **Site URL** to `http://localhost:3000` (later, your production URL);
    - add `http://localhost:3000/auth/callback` to **Redirect URLs** (and the production equivalent).
