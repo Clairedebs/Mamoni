@@ -7,6 +7,7 @@ import webpush from 'web-push'
 import { createClient, requireUser } from './supabase/server'
 import { getToday } from './data'
 import { validateTxEdit } from './tx'
+import { CURRENCIES, isMoney } from './currencies'
 import { PALETTE, type CategoryKind, type PaletteKey, type ReminderFrequency, type TransactionKind } from './types'
 import { ICON_NAMES } from '@/components/icon-names'
 
@@ -14,7 +15,8 @@ type Result<T = null> = { ok: true; data: T } | { ok: false; error: string }
 const fail = (error: string): Result<never> => ({ ok: false, error })
 const ISO = /^\d{4}-\d{2}-\d{2}$/
 const clean = (s: unknown, max: number) => (typeof s === 'string' ? s.trim().slice(0, max) : '')
-const amountOk = (n: unknown): n is number => typeof n === 'number' && Number.isInteger(n) && n > 0 && n < 1e10
+const amountOk = (n: unknown): n is number => typeof n === 'number' && isMoney(n)
+const zeroOrMoney = (n: unknown) => n === 0 || amountOk(n)
 
 function dbError(e: { code?: string; message: string }) {
   if (e.code === '23505') return 'That name is already used.'
@@ -175,7 +177,8 @@ export async function savePot(input: {
   const { supabase } = await requireUser()
   const name = clean(input.name, 32)
   if (!name) return fail('Give your pot a name.')
-  if (!Number.isInteger(input.initialAmount) || input.initialAmount < 0) return fail('Starting balance must be 0 or more.')
+  if (!zeroOrMoney(input.initialAmount)) return fail('Starting balance must be 0 or more.')
+  if (input.goalAmount && !amountOk(input.goalAmount)) return fail('Enter a valid goal.')
   if (!ISO.test(input.startedOn)) return fail('Pick a valid start date.')
   const row = {
     category_id: input.categoryId,
@@ -205,7 +208,7 @@ export async function deletePot(id: string): Promise<Result> {
 export async function saveStartingBalances(input: { openingCash: number; pots: { id: string; initial: number }[] }): Promise<Result> {
   const { supabase, userId } = await requireUser()
   const values = [input.openingCash, ...input.pots.map((p) => p.initial)]
-  if (values.some((v) => !Number.isInteger(v) || v < 0 || v >= 1e10)) return fail('Amounts must be whole numbers, 0 or more.')
+  if (values.some((v) => !zeroOrMoney(v))) return fail('Amounts must be 0 or more, with at most 2 decimals.')
   const { error } = await supabase.from('profiles').update({ opening_cash: input.openingCash }).eq('id', userId)
   if (error) return fail(dbError(error))
   for (const p of input.pots) {
@@ -239,6 +242,16 @@ export async function updateSettings(patch: {
   }
   if (patch.display_name !== undefined) patch.display_name = clean(patch.display_name, 40)
   const { error } = await supabase.from('profiles').update(patch).eq('id', userId)
+  if (error) return fail(dbError(error))
+  refresh()
+  return { ok: true, data: null }
+}
+
+/** Relabels every amount with another currency; the numbers themselves don't change. */
+export async function changeCurrency(code: string): Promise<Result> {
+  const { supabase, userId } = await requireUser()
+  if (!CURRENCIES.some((c) => c.code === code)) return fail('Unknown currency.')
+  const { error } = await supabase.from('profiles').update({ currency: code }).eq('id', userId)
   if (error) return fail(dbError(error))
   refresh()
   return { ok: true, data: null }

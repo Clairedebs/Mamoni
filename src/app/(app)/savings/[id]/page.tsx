@@ -79,7 +79,7 @@ async function Pot({ params }: { params: Promise<{ id: string }> }) {
             <div className="lbls">
               <span>Goal</span>
               <span className="num">
-                {Math.round((balance / Number(p.goal_amount)) * 100)}% · {fmt(Number(p.goal_amount))} FCFA
+                {Math.round((balance / Number(p.goal_amount)) * 100)}% · {fmt(Number(p.goal_amount))} <span className="cur" />
               </span>
             </div>
             <div className="tr">

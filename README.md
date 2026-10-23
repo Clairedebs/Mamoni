@@ -1,6 +1,6 @@
 # Moni yem
 
-A personal finance PWA for spending, income and savings, with tontines included. Built with Next.js 16 (App Router, Cache Components) and Supabase. Amounts are in FCFA.
+A personal finance PWA for spending, income and savings, with tontines included. Built with Next.js 16 (App Router, Cache Components) and Supabase. One currency per account (FCFA by default; EUR, USD, NGN and more in Settings).
 
 ## What's inside
 
@@ -21,6 +21,7 @@ A personal finance PWA for spending, income and savings, with tontines included.
    1. `supabase/migrations/20261018000000_init.sql`: tables, row-level security (each user only sees their own rows) and default categories.
    2. `supabase/migrations/20261019000000_tontine_groups.sql`: tontine groups and turns, the Tontine / Tontine payout categories, and the payout function.
    3. `supabase/migrations/20261021000000_transaction_edits.sql`: links a payout's savings deposit to the payout, and reopens the turn when a payout is deleted.
+   4. `supabase/migrations/20261023000000_currency.sql`: amounts keep cents, and the account currency is checked against the supported list.
 3. In **Authentication › URL Configuration**:
    - set **Site URL** to `http://localhost:3000` (later, your production URL);
    - add `http://localhost:3000/auth/callback` to **Redirect URLs** (and the production equivalent).
@@ -44,7 +45,7 @@ npm install
 npm run dev
 ```
 
-Run the unit tests (tontine maths and reminder rules) with `npm test`.
+Run the unit tests (tontine maths, reminders, currencies) with `npm test`, and the database tests (migrations in an in-memory Postgres) with `npm run test:db`.
 
 Open http://localhost:3000, create an account, then enter your starting balances.
 

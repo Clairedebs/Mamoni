@@ -54,7 +54,7 @@ async function Group({ params }: { params: P }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
             <span className="chip" style={tint(tone)}>
               <Icon name="hand-coins" />
-              {active ? `${fmt(per)} FCFA per ${unit}` : 'Past cycle'}
+              {active ? <>{fmt(per)} <span className="cur" /> per {unit}</> : 'Past cycle'}
             </span>
             {active && (
               <Link className="btn-sm" style={{ background: 'var(--surface-2)' }} href={`/tontines/${g.id}/edit`}>
@@ -128,7 +128,7 @@ async function Group({ params }: { params: P }) {
                 </span>
                 <div className="mid">
                   <b>
-                    {shortDate(t.turn_on)} · {fmt(t.expected_amount)} FCFA
+                    {shortDate(t.turn_on)} · {fmt(t.expected_amount)} <span className="cur" />
                   </b>
                   <small>
                     Name {i + 1} · {due ? (t.turn_on === today ? 'Today' : 'Ready to collect') : TURN_LABEL[t.status]}

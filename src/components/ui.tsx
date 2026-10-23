@@ -8,7 +8,7 @@ export function Money({ n, sign = '' }: { n: number; sign?: string }) {
     <>
       {sign}
       {fmt(n)}
-      <span className="cur">FCFA</span>
+      <span className="cur" />
     </>
   )
 }
@@ -38,7 +38,7 @@ export function TxRow({ t, cats, pots, sub }: { t: Transaction; cats: Category[]
   const title = t.note || (t.kind === 'deposit' ? `Deposit · ${d.name}` : t.kind === 'withdrawal' ? `Withdrawal · ${d.name}` : d.name)
   const subtitle = sub ?? (t.pot_id ? `Savings · ${d.group}` : d.name)
   return (
-    <TxOpen t={t} label={`${title}, ${isIn ? '+' : '−'}${fmt(Number(t.amount))} FCFA, open details`}>
+    <TxOpen t={t} title={title} amountText={`${isIn ? '+' : '−'}${fmt(Number(t.amount))}`}>
       <Tile icon={d.icon} color={d.color} />
       <span className="mid">
         <b>{title}</b>

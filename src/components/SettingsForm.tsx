@@ -5,6 +5,7 @@ import { useEffect, useState, useTransition } from 'react'
 import { Icon } from './Icon'
 import { usePickers } from './Pickers'
 import { PushToggle } from './PushToggle'
+import { CurrencyPicker } from './CurrencyPicker'
 import { TimeZonePicker } from './TimeZonePicker'
 import { useToast } from './Toast'
 import { applyTheme, readTheme, type ThemeChoice } from './theme'
@@ -123,15 +124,7 @@ export function SettingsForm({ profile, counts, email }: Props) {
             onBlur={() => name !== (p.display_name ?? '') && patch({ display_name: name })}
           />
         </div>
-        <div className="set-row">
-          <span className="tile" style={{ background: 'var(--surface-2)', color: 'var(--ink-2)' }}>
-            <Icon name="coins" />
-          </span>
-          <div className="mid">
-            <b>Currency</b>
-          </div>
-          <span className="val">CFA franc (FCFA)</span>
-        </div>
+        <CurrencyPicker value={profile.currency} />
         <TimeZonePicker
           value={p.timezone}
           onPick={(tz) => {

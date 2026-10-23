@@ -5,15 +5,17 @@ import { useState, useTransition } from 'react'
 import { Icon } from './Icon'
 import { usePickers } from './Pickers'
 import { useToast } from './Toast'
+import { useCurrency } from './currency'
+import { sanitizeMoney, typedLabel } from './Keypad'
 import { deletePot, savePot } from '@/lib/actions'
-import { fmt, shortDate, tint } from '@/lib/format'
+import { shortDate, tint } from '@/lib/format'
 import type { Category, Pot } from '@/lib/types'
 
-const digits = (s: string) => s.replace(/\D/g, '').slice(0, 10)
 
 export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Category[]; pot?: Pot; categoryId?: string; today: string; hasMoves?: boolean }) {
   const router = useRouter()
   const toast = useToast()
+  const cur = useCurrency()
   const { openDate } = usePickers()
   const [pending, start] = useTransition()
   const [cat, setCat] = useState(pot?.category_id ?? categoryId ?? cats[0]?.id ?? '')
@@ -86,8 +88,8 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
         <div className="fld">
           <label htmlFor="pot-init">What&apos;s already in it</label>
           <div className="money">
-            <input id="pot-init" inputMode="numeric" value={initial ? fmt(Number(initial)) : ''} onChange={(e) => setInitial(digits(e.target.value))} placeholder="0" />
-            <span>FCFA</span>
+            <input id="pot-init" inputMode={cur.decimals ? 'decimal' : 'numeric'} value={initial ? typedLabel(initial) : ''} onChange={(e) => setInitial(sanitizeMoney(e.target.value, cur.decimals))} placeholder="0" />
+            <span className="cur-label" />
           </div>
         </div>
         <div className="fld">
@@ -104,8 +106,8 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
             Goal <span className="muted" style={{ fontWeight: 450 }}>(optional)</span>
           </label>
           <div className="money">
-            <input id="pot-goal" inputMode="numeric" value={goal ? fmt(Number(goal)) : ''} onChange={(e) => setGoal(digits(e.target.value))} placeholder="No goal" />
-            <span>FCFA</span>
+            <input id="pot-goal" inputMode={cur.decimals ? 'decimal' : 'numeric'} value={goal ? typedLabel(goal) : ''} onChange={(e) => setGoal(sanitizeMoney(e.target.value, cur.decimals))} placeholder="No goal" />
+            <span className="cur-label" />
           </div>
         </div>
       </div>

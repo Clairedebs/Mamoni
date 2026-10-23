@@ -6,7 +6,16 @@ export const LONG_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'
 export const LONG_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 /** 3012250 -> "3,012,250" */
-export const fmt = (n: number) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+const group = (digits: string) => digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+/** 3012250 -> "3,012,250"; 1250.5 -> "1,250.50" (cents only when there are some). */
+export const fmt = (n: number) => {
+  const cents = Math.round(Math.abs(n) * 100)
+  const sign = n < 0 && cents > 0 ? '-' : ''
+  const whole = group(String(Math.floor(cents / 100)))
+  const rest = cents % 100
+  return rest ? `${sign}${whole}.${String(rest).padStart(2, '0')}` : `${sign}${whole}`
+}
 
 export const pad2 = (n: number) => String(n).padStart(2, '0')
 export const isoOf = (d: Date) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`

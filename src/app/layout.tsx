@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Manrope } from 'next/font/google'
 import { InlineScript } from '@/components/InlineScript'
 import { THEME_SCRIPT } from '@/components/theme'
+import { CURRENCY_SCRIPT } from '@/lib/currencies'
 import { Providers } from '@/components/Providers'
 import './globals.css'
 
@@ -30,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={manrope.variable} suppressHydrationWarning>
       <head>
-        <InlineScript html={THEME_SCRIPT} />
+        <InlineScript html={THEME_SCRIPT + CURRENCY_SCRIPT} />
       </head>
       <body>
         <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">

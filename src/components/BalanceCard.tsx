@@ -8,7 +8,7 @@ const M = ({ n, sign = '' }: { n: number; sign?: string }) => (
   <>
     {sign}
     {fmt(n)}
-    <span className="cur">FCFA</span>
+    <span className="cur" />
   </>
 )
 

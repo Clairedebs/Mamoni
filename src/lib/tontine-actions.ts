@@ -5,6 +5,7 @@ import { requireUser } from './supabase/server'
 import { getTontineGroup, getToday } from './data'
 import { rebaseOnEdit, validateGroupInput, validatePayout, type GroupInput } from './tontine'
 import { parseIso } from './format'
+import { roundMoney } from './currencies'
 
 type Result<T = null> = { ok: true; data: T } | { ok: false; error: string }
 const fail = (error: string): Result<never> => ({ ok: false, error })
@@ -36,7 +37,7 @@ export async function saveTontineGroup(
         ...base,
         first_due: input.firstDue,
         anchor_day: parseIso(input.firstDue).getDate(),
-        opening_credit: Math.max(0, Math.round(input.openingCredit ?? 0)),
+        opening_credit: Math.max(0, roundMoney(input.openingCredit ?? 0)),
       })
       .select('id')
       .single()
@@ -85,13 +86,14 @@ export async function saveTontineGroup(
 
 export async function collectTontinePayout(input: { turnId: string; amount: number; occurredOn: string; savePotId?: string; saveAmount?: number }): Promise<Result<{ id: string }>> {
   const { supabase } = await requireUser()
-  const save = input.savePotId ? Math.round(input.saveAmount ?? 0) : 0
-  const invalid = validatePayout(Math.round(input.amount), save)
+  const amount = roundMoney(input.amount)
+  const save = input.savePotId ? roundMoney(input.saveAmount ?? 0) : 0
+  const invalid = validatePayout(amount, save)
   if (invalid) return fail(invalid)
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.occurredOn)) return fail('Pick a valid date.')
   const { data, error } = await supabase.rpc('collect_payout', {
     p_turn_id: input.turnId,
-    p_amount: Math.round(input.amount),
+    p_amount: amount,
     p_occurred_on: input.occurredOn,
     p_save_pot_id: input.savePotId ?? null,
     p_save_amount: save,

@@ -5,6 +5,8 @@ import { useState, useTransition } from 'react'
 import { Icon } from './Icon'
 import { usePickers } from './Pickers'
 import { useToast } from './Toast'
+import { useCurrency } from './currency'
+import { sanitizeMoney, typedLabel } from './Keypad'
 import { saveTontineGroup } from '@/lib/tontine-actions'
 import { addPeriods, estimateCycleEnd, nextRoundStart, type Frequency } from '@/lib/tontine'
 import { fmt, parseIso, shortDate } from '@/lib/format'
@@ -16,6 +18,7 @@ type TurnDraft = { id?: string; turnOn: string; beforeApp: boolean; collected?: 
 export function TontineForm({ today, group, from }: { today: string; group?: TontineView; from?: TontineView }) {
   const router = useRouter()
   const toast = useToast()
+  const cur = useCurrency()
   const { openDate, openTime } = usePickers()
   const [pending, start] = useTransition()
   const src = group?.group ?? from?.group
@@ -90,8 +93,8 @@ export function TontineForm({ today, group, from }: { today: string; group?: Ton
         <div className="fld">
           <label htmlFor="tg-amount">Amount per name</label>
           <div className="money">
-            <input id="tg-amount" inputMode="numeric" value={amount ? fmt(per) : ''} onChange={(e) => setAmount(digits(e.target.value))} placeholder="2,500" />
-            <span>FCFA</span>
+            <input id="tg-amount" inputMode={cur.decimals ? 'decimal' : 'numeric'} value={amount ? typedLabel(amount) : ''} onChange={(e) => setAmount(sanitizeMoney(e.target.value, cur.decimals))} placeholder="2,500" />
+            <span className="cur-label" />
           </div>
         </div>
         <div className="fld">
@@ -118,7 +121,7 @@ export function TontineForm({ today, group, from }: { today: string; group?: Ton
         </div>
         {per > 0 && total >= 2 && (
           <p className="notice" style={{ padding: '10px 14px' }}>
-            You pay {fmt(per * held)} FCFA {unit} · Payout {fmt(per * total)} FCFA per turn
+            You pay {fmt(per * held)} {cur.symbol} {unit} · Payout {fmt(per * total)} {cur.symbol} per turn
           </p>
         )}
         {group && <p className="hint">Changes to amounts or names apply from your next unpaid deadline.</p>}
@@ -205,7 +208,7 @@ export function TontineForm({ today, group, from }: { today: string; group?: Ton
         <div className="set-group" style={{ marginTop: 14 }}>
           <div className="set-row">
             <div className="mid">
-              <b>Carry {fmt(carry)} FCFA credit</b>
+              <b>Carry {fmt(carry)} {cur.symbol} credit</b>
               <small>Left over from the last cycle</small>
             </div>
             <button type="button" className="switch" role="switch" aria-checked={carryCredit} aria-label="Carry credit" onClick={() => setCarryCredit(!carryCredit)} />

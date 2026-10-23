@@ -5,7 +5,8 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Icon } from './Icon'
 import { useAddSheet } from './AppShell'
-import { Keypad, pressKey } from './Keypad'
+import { Keypad, pressKey, typedLabel } from './Keypad'
+import { useCurrency } from './currency'
 import { usePickers } from './Pickers'
 import { useToast } from './Toast'
 import { addTransaction, deleteTransaction } from '@/lib/actions'
@@ -23,6 +24,7 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
   const toast = useToast()
   const router = useRouter()
   const [pending, start] = useTransition()
+  const cur = useCurrency()
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState<Tab>('expense')
   const [dir, setDir] = useState<'deposit' | 'withdrawal'>('deposit')
@@ -85,7 +87,7 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
     setPick((t === 'saving' ? pots[0]?.id : categories.find((c) => c.kind === t)?.id) ?? '')
   }
 
-  const press = (k: string) => setAmt((a) => pressKey(a, k))
+  const press = (k: string) => setAmt((a) => pressKey(a, k, cur.decimals))
 
   const save = () => {
     if (!amt || !pick || pending || needsGroup) return
@@ -103,7 +105,7 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
       if (!res.ok) return setErr(res.error)
       shut()
       const what = { expense: 'Expense', income: 'Income', deposit: 'Deposit', withdrawal: 'Withdrawal' }[kind]
-      toast(`${what} of ${fmt(Number(amt))} FCFA saved${date !== today ? ` · ${dayLabel(date, today)}` : ''}`, async () => {
+      toast(`${what} of ${fmt(Number(amt))} ${cur.symbol} saved${date !== today ? ` · ${dayLabel(date, today)}` : ''}`, async () => {
         await deleteTransaction(res.data.id)
         router.refresh()
       })
@@ -158,8 +160,8 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
 
         <div className="amount">
           <div className={`v num${amt ? '' : ' zero'}`} aria-live="polite">
-            {amt ? fmt(Number(amt)) : '0'}
-            <span className="cur">FCFA</span>
+            {typedLabel(amt)}
+            <span className="cur" />
           </div>
           <div className="meta">
             <button
@@ -247,7 +249,7 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
           <span className="sr">Note</span>
           <input value={note} onChange={(e) => setNote(e.target.value)} maxLength={80} placeholder="Add a note (optional)" autoComplete="off" />
         </label>
-        <Keypad onKey={press} />
+        <Keypad onKey={press} decimals={cur.decimals} />
         {err && (
           <p className="form-err" role="alert" style={{ marginBottom: 8 }}>
             {err}

@@ -3,6 +3,7 @@ import webpush from 'web-push'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { addDays } from '@/lib/format'
 import { groupCoverage, planTontineReminders } from '@/lib/tontine'
+import { currencyOf } from '@/lib/currencies'
 
 /**
  * Sends reminder pushes. Call it every 15 minutes with `Authorization: Bearer $CRON_SECRET`
@@ -81,6 +82,7 @@ export async function GET(request: NextRequest) {
         reminderMinutes: slotMin,
         lastDueFor: g.last_due_reminder_for,
         lastBehindFor: g.last_behind_reminder_for,
+        symbol: currencyOf(p.currency).symbol,
         turns: (turns ?? [])
           .filter((t) => t.group_id === g.id)
           .map((t) => ({ id: t.id, turnOn: t.turn_on, status: t.status, notifiedOn: t.notified_on, expectedAmount: Number(t.expected_amount) })),

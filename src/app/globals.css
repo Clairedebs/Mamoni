@@ -517,3 +517,8 @@ a.set-row,a.pocket,a.row{color:inherit}
 .tz-sheet{height:min(86dvh,720px)}
 .tz-list{flex:1;min-height:0;overflow-y:auto;margin:0 -16px;padding:0 16px 8px}
 @media (min-width:1024px){.tz-sheet{height:min(80dvh,640px)}}
+
+/* currency label: the symbol comes from --cur (set from the account currency) */
+.cur::before,.cur-label::before{content:var(--cur,"FCFA")}
+.cur-label{color:var(--ink-3);font-weight:550;font-size:14px}
+.cur-tile{background:var(--surface-2);color:var(--ink-2);font-weight:700;font-size:13px;letter-spacing:-.01em}

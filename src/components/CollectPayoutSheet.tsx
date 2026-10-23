@@ -4,14 +4,16 @@ import { useState, useTransition } from 'react'
 import { Icon } from './Icon'
 import { usePickers } from './Pickers'
 import { useToast } from './Toast'
+import { useCurrency } from './currency'
+import { sanitizeMoney, typedLabel } from './Keypad'
 import { collectTontinePayout } from '@/lib/tontine-actions'
 import { dayLabel, fmt, tint } from '@/lib/format'
 import type { Category, Pot, TontineTurn } from '@/lib/types'
 
-const digits = (s: string) => s.replace(/\D/g, '').slice(0, 10)
 
 export function CollectPayoutSheet({ turn, groupName, today, pots, cats }: { turn: TontineTurn; groupName: string; today: string; pots: Pot[]; cats: Category[] }) {
   const toast = useToast()
+  const cur = useCurrency()
   const { openDate } = usePickers()
   const [pending, start] = useTransition()
   const [open, setOpen] = useState(false)
@@ -29,7 +31,7 @@ export function CollectPayoutSheet({ turn, groupName, today, pots, cats }: { tur
       const res = await collectTontinePayout({ turnId: turn.id, amount: amt, occurredOn: date, savePotId: save ? potId : undefined, saveAmount: save ? Number(saveAmount || 0) : 0 })
       if (!res.ok) return setErr(res.error)
       setOpen(false)
-      toast(`Payout of ${fmt(amt)} FCFA recorded`)
+      toast(`Payout of ${fmt(amt)} ${cur.symbol} recorded`)
     })
 
   return (
@@ -53,8 +55,8 @@ export function CollectPayoutSheet({ turn, groupName, today, pots, cats }: { tur
           <div className="fld">
             <label htmlFor="po-amount">Amount received</label>
             <div className="money">
-              <input id="po-amount" inputMode="numeric" value={amount ? fmt(amt) : ''} onChange={(e) => setAmount(digits(e.target.value))} />
-              <span>FCFA</span>
+              <input id="po-amount" inputMode={cur.decimals ? 'decimal' : 'numeric'} value={amount ? fmt(amt) : ''} onChange={(e) => setAmount(sanitizeMoney(e.target.value, cur.decimals))} />
+              <span className="cur-label" />
             </div>
           </div>
           <div className="sub-row" style={{ borderTop: 0, padding: 0 }}>
@@ -91,8 +93,8 @@ export function CollectPayoutSheet({ turn, groupName, today, pots, cats }: { tur
                   })}
                 </div>
                 <div className="money">
-                  <input aria-label="Amount to save" inputMode="numeric" value={saveAmount ? fmt(Number(saveAmount)) : ''} onChange={(e) => setSaveAmount(digits(e.target.value))} />
-                  <span>FCFA</span>
+                  <input aria-label="Amount to save" inputMode={cur.decimals ? 'decimal' : 'numeric'} value={saveAmount ? typedLabel(saveAmount) : ''} onChange={(e) => setSaveAmount(sanitizeMoney(e.target.value, cur.decimals))} />
+                  <span className="cur-label" />
                 </div>
               </div>
             )}
@@ -105,7 +107,7 @@ export function CollectPayoutSheet({ turn, groupName, today, pots, cats }: { tur
         )}
         <button className="btn block" style={{ marginTop: 14 }} disabled={!amt || pending} onClick={submit}>
           <Icon name={pending ? 'loader' : 'check'} />
-          Collect {fmt(amt)} FCFA
+          Collect {fmt(amt)} {cur.symbol}
         </button>
       </div>
     </>

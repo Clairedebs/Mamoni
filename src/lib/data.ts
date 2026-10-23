@@ -4,6 +4,7 @@ import { connection } from 'next/server'
 import { requireUser } from './supabase/server'
 import { addDays, minutesIn, monthRange, shortDate, todayIn } from './format'
 import { groupCoverage, hasTurnToday, statusLine, type Coverage, type GroupStatus } from './tontine'
+import { currencyOf } from './currencies'
 import type { Category, Pot, Profile, TontineGroup, TontineTurn, Transaction } from './types'
 
 export const getProfile = cache(async (): Promise<Profile> => {
@@ -152,7 +153,7 @@ export const getTontineGroups = cache(async (): Promise<TontineView[]> => {
     const status: GroupStatus =
       group.status === 'ended'
         ? { tone: 'done', text: `Ended ${shortDate(group.ended_on ?? today)}` }
-        : statusLine(c, { today, turnToday, label: shortDate }, group.frequency)
+        : statusLine(c, { today, turnToday, label: shortDate, symbol: currencyOf(profile.currency).symbol }, group.frequency)
     return { group, turns: groupTurns, paid, paidTotal, collected, coverage: c, status }
   })
 

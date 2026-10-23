@@ -252,3 +252,31 @@ describe('review fixes', () => {
     expect(categoryDeleteBlock({ role: null, usage: 0, isLast: false, kind: 'expense' })).toBeNull()
   })
 })
+
+describe('amounts with cents', () => {
+  it('coverage counts exact periods despite floating point', () => {
+    const c = coverage({ ...W, perPeriod: 0.1, paid: 0.7, today: '2026-10-22', nowMinutes: 600 })
+    expect(c.coveredUntil).toBe('2026-12-05')
+    expect(c.credit).toBe(0)
+  })
+  it('keeps credit to the cent', () => {
+    const c = coverage({ ...W, perPeriod: 2.5, paid: 6.2, today: '2026-10-22', nowMinutes: 600 })
+    expect(c.credit).toBe(1.2)
+    expect(c.nextDueAmount).toBe(1.3)
+  })
+  it('accepts an amount per name with cents', () => {
+    const g = {
+      name: 'Club', amountPerName: 2.5, namesTotal: 10, namesHeld: 1, frequency: 'weekly' as const, deadlineTime: '18:00',
+      cycleStart: '2026-09-05', cycleEnd: '2026-11-07', firstDue: '2026-10-24', turns: [{ turnOn: '2026-10-17', beforeApp: false }],
+    }
+    expect(validateGroupInput(g)).toBeNull()
+    expect(validateGroupInput({ ...g, amountPerName: 2.555 })).toBe('Enter the amount each name pays.')
+  })
+  it('accepts a payout with cents', () => {
+    expect(validatePayout(24.75, 10.5)).toBeNull()
+  })
+  it('shows the account currency in status lines', () => {
+    const c = coverage({ ...W, paid: 0, today: '2026-10-27', nowMinutes: 600 })
+    expect(statusLine(c, { today: '2026-10-27', turnToday: false, label: shortDate, symbol: '€' }, 'weekly').text).toBe('1 week late · 5,000 € due')
+  })
+})

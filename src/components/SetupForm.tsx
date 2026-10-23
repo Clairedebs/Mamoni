@@ -6,15 +6,17 @@ import { useState, useTransition } from 'react'
 import { Icon } from './Icon'
 import { Tile } from './ui'
 import { useToast } from './Toast'
+import { useCurrency } from './currency'
+import { sanitizeMoney, typedLabel } from './Keypad'
 import { saveStartingBalances } from '@/lib/actions'
-import { fmt, sinceLabel } from '@/lib/format'
+import { sinceLabel } from '@/lib/format'
 import type { Category, Pot } from '@/lib/types'
 
-const digits = (s: string) => s.replace(/\D/g, '').slice(0, 10)
 
 export function SetupForm({ cats, pots, openingCash, welcome }: { cats: Category[]; pots: Pot[]; openingCash: number; welcome: boolean }) {
   const router = useRouter()
   const toast = useToast()
+  const cur = useCurrency()
   const [pending, start] = useTransition()
   const [cash, setCash] = useState(String(openingCash || ''))
   const [vals, setVals] = useState<Record<string, string>>(() => Object.fromEntries(pots.map((p) => [p.id, String(p.initial_amount || '')])))
@@ -38,8 +40,8 @@ export function SetupForm({ cats, pots, openingCash, welcome }: { cats: Category
               Cash and current account
             </label>
             <div className="money">
-              <input id="cash" inputMode="numeric" value={cash ? fmt(Number(cash)) : ''} onChange={(e) => setCash(digits(e.target.value))} placeholder="0" />
-              <span>FCFA</span>
+              <input id="cash" inputMode={cur.decimals ? 'decimal' : 'numeric'} value={cash ? typedLabel(cash) : ''} onChange={(e) => setCash(sanitizeMoney(e.target.value, cur.decimals))} placeholder="0" />
+              <span className="cur-label" />
             </div>
             <span className="hint">Money you can spend today. It becomes your “Available” balance.</span>
           </div>
@@ -59,8 +61,8 @@ export function SetupForm({ cats, pots, openingCash, welcome }: { cats: Category
                 <div key={p.id} className="field">
                   <label htmlFor={`in-${p.id}`}>{p.name}</label>
                   <div className="money">
-                    <input id={`in-${p.id}`} inputMode="numeric" value={vals[p.id] ? fmt(Number(vals[p.id])) : ''} onChange={(e) => setVals({ ...vals, [p.id]: digits(e.target.value) })} placeholder="0" />
-                    <span>FCFA</span>
+                    <input id={`in-${p.id}`} inputMode={cur.decimals ? 'decimal' : 'numeric'} value={vals[p.id] ? typedLabel(vals[p.id]) : ''} onChange={(e) => setVals({ ...vals, [p.id]: sanitizeMoney(e.target.value, cur.decimals) })} placeholder="0" />
+                    <span className="cur-label" />
                   </div>
                   <span className="hint">As of {sinceLabel(p.started_on)}</span>
                 </div>

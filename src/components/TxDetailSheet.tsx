@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react'
 import { Icon } from './Icon'
-import { Keypad, pressKey } from './Keypad'
+import { Keypad, pressKey, typedLabel } from './Keypad'
+import { useCurrency } from './currency'
 import { useAddSheet } from './AppShell'
 import { usePickers } from './Pickers'
 import { useToast } from './Toast'
@@ -25,6 +26,7 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
   const { openDate } = usePickers()
   const toast = useToast()
   const [pending, start] = useTransition()
+  const cur = useCurrency()
   const [shown, setShown] = useState<Transaction | null>(null)
   const [editing, setEditing] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -112,8 +114,8 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
           <div className="amount" style={{ paddingTop: 10 }}>
             <div className={`v num${editing && !amt ? ' zero' : ''}`} aria-live="polite" style={!editing && sign === '+' ? { color: 'var(--pos)' } : undefined}>
               {!editing && sign}
-              {fmt(Number(editing ? amt || 0 : t.amount))}
-              <span className="cur">FCFA</span>
+              {editing ? typedLabel(amt) : fmt(Number(t.amount))}
+              <span className="cur" />
             </div>
             <div className="meta">
               {editing ? (
@@ -193,7 +195,7 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
                 <span className="sr">Note</span>
                 <input value={note} onChange={(e) => setNote(e.target.value)} maxLength={80} placeholder="Add a note (optional)" autoComplete="off" />
               </label>
-              <Keypad onKey={(k) => setAmt((a) => pressKey(a, k))} />
+              <Keypad onKey={(k) => setAmt((a) => pressKey(a, k, cur.decimals))} decimals={cur.decimals} />
             </>
           )}
         </div>
@@ -217,7 +219,7 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
         ) : confirmDelete ? (
           <div className="stack" style={{ gap: 10 }}>
             <p className="hint" role="alert">
-              Delete this {KIND[t.kind].toLowerCase()} of {fmt(Number(t.amount))} FCFA?
+              Delete this {KIND[t.kind].toLowerCase()} of {fmt(Number(t.amount))} {cur.symbol}?
               {payoutOf ? ' Its turn will be ready to collect again, and any savings moved with it is removed.' : ''}
             </p>
             <div style={{ display: 'flex', gap: 10 }}>

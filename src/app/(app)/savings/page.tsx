@@ -52,7 +52,7 @@ async function Savings() {
             <span className="delta" style={gained < 0 ? { color: 'var(--neg)', background: 'color-mix(in oklab,var(--neg) 12%,transparent)' } : undefined}>
               <Icon name="trending-up" />
               {gained >= 0 ? '+' : '−'}
-              {fmt(Math.abs(gained))} FCFA since you started
+              {fmt(Math.abs(gained))} <span className="cur" /> since you started
             </span>
           )}
           <div style={{ marginTop: 16 }}>{pots.length > 0 ? <SavingsLine points={history} /> : null}</div>

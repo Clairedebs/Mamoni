@@ -1,4 +1,5 @@
 import { addDays, fmt, isoOf, parseIso } from './format'
+import { isMoney } from './currencies'
 
 export type Frequency = 'weekly' | 'monthly'
 
@@ -54,8 +55,9 @@ export function coverage(input: {
   deadlineMinutes: number
 }): Coverage {
   const ds = deadlines(input.firstDue, input.cycleEnd, input.frequency, input.anchorDay)
-  const funds = Math.max(0, input.paid + input.openingCredit)
-  const per = input.perPeriod
+  // Work in whole cents so 0.1-sized contributions add up exactly.
+  const funds = Math.max(0, Math.round((input.paid + input.openingCredit) * 100))
+  const per = Math.round(input.perPeriod * 100)
   const covered = Math.min(ds.length, Math.floor(funds / per))
   const fullyPaid = covered === ds.length
   const credit = fullyPaid ? 0 : funds - covered * per
@@ -64,15 +66,15 @@ export function coverage(input: {
   const missedDeadlines = ds.slice(covered).filter(passed)
   const nextDue = fullyPaid ? null : ds[covered]
   return {
-    perPeriod: per,
+    perPeriod: per / 100,
     coveredUntil: covered > 0 ? ds[covered - 1] : priorDeadline(input),
     nextDue,
-    nextDueAmount: nextDue ? per - credit : 0,
-    credit,
+    nextDueAmount: nextDue ? (per - credit) / 100 : 0,
+    credit: credit / 100,
     behindCount: missedDeadlines.length,
-    behindAmount: missedDeadlines.length ? missedDeadlines.length * per - credit : 0,
+    behindAmount: missedDeadlines.length ? (missedDeadlines.length * per - credit) / 100 : 0,
     fullyPaid,
-    extraCredit,
+    extraCredit: extraCredit / 100,
     missedDeadlines,
   }
 }
@@ -85,15 +87,16 @@ function priorDeadline(input: { firstDue: string; cycleStart?: string; frequency
 
 export type GroupStatus = { tone: 'ok' | 'soon' | 'late' | 'turn' | 'done'; text: string }
 
-export function statusLine(c: Coverage, opts: { today: string; turnToday: boolean; label: (iso: string) => string }, frequency: Frequency): GroupStatus {
+export function statusLine(c: Coverage, opts: { today: string; turnToday: boolean; label: (iso: string) => string; symbol?: string }, frequency: Frequency): GroupStatus {
+  const sym = opts.symbol ?? 'FCFA'
   if (opts.turnToday) return { tone: 'turn', text: 'Your turn today' }
   if (c.behindCount > 0) {
     const unit = frequency === 'weekly' ? 'week' : 'month'
-    return { tone: 'late', text: `${c.behindCount} ${unit}${c.behindCount > 1 ? 's' : ''} late · ${fmt(c.behindAmount)} FCFA due` }
+    return { tone: 'late', text: `${c.behindCount} ${unit}${c.behindCount > 1 ? 's' : ''} late · ${fmt(c.behindAmount)} ${sym} due` }
   }
   if (c.fullyPaid) return { tone: 'done', text: 'Fully paid for this cycle' }
   if (c.nextDue === addDays(opts.today, 1) || c.nextDue === opts.today) {
-    return { tone: 'soon', text: `${fmt(c.nextDueAmount)} FCFA due ${c.nextDue === opts.today ? 'today' : 'tomorrow'}` }
+    return { tone: 'soon', text: `${fmt(c.nextDueAmount)} ${sym} due ${c.nextDue === opts.today ? 'today' : 'tomorrow'}` }
   }
   if (c.coveredUntil) return { tone: 'ok', text: `Covered until ${opts.label(c.coveredUntil)}` }
   return { tone: 'ok', text: `Due ${opts.label(c.nextDue!)}` }
@@ -128,7 +131,7 @@ const isInt = (n: number, min: number, max: number) => Number.isInteger(n) && n 
 
 export function validateGroupInput(g: GroupInput): string | null {
   if (!g.name.trim()) return 'Give your group a name.'
-  if (!isInt(g.amountPerName, 1, 9_999_999_999)) return 'Enter the amount each name pays.'
+  if (!isMoney(g.amountPerName)) return 'Enter the amount each name pays.'
   if (!isInt(g.namesTotal, 2, 200)) return 'A group has between 2 and 200 names.'
   if (!isInt(g.namesHeld, 1, 200)) return 'You hold at least one name.'
   if (g.namesHeld > g.namesTotal) return 'You can’t hold more names than the group has.'
@@ -156,8 +159,10 @@ export function planTontineReminders(input: {
   lastDueFor: string | null
   lastBehindFor: string | null
   turns: { id: string; turnOn: string; status: 'upcoming' | 'collected' | 'before_app'; notifiedOn: string | null; expectedAmount: number }[]
+  symbol?: string
 }): { pushes: ReminderPush[]; dueFor?: string; behindFor?: string; notifiedTurns: string[] } {
   const { coverage: c, today, nowMinutes } = input
+  const sym = input.symbol ?? 'FCFA'
   const url = `/tontines/${input.groupId}`
   const pushes: ReminderPush[] = []
   const out: { pushes: ReminderPush[]; dueFor?: string; behindFor?: string; notifiedTurns: string[] } = { pushes, notifiedTurns: [] }
@@ -165,20 +170,20 @@ export function planTontineReminders(input: {
 
   const inSlot = nowMinutes >= input.reminderMinutes && nowMinutes - input.reminderMinutes <= 180
   if (inSlot && c.behindCount === 0 && c.nextDue && c.nextDue === addDays(today, 1) && input.lastDueFor !== c.nextDue) {
-    pushes.push({ title: `${input.name}: payment due tomorrow`, body: `${fmt(c.nextDueAmount)} FCFA before ${input.deadlineTime}.`, url, tag: `tontine-due-${input.groupId}-${c.nextDue}` })
+    pushes.push({ title: `${input.name}: payment due tomorrow`, body: `${fmt(c.nextDueAmount)} ${sym} before ${input.deadlineTime}.`, url, tag: `tontine-due-${input.groupId}-${c.nextDue}` })
     out.dueFor = c.nextDue
   }
 
   const newestMissed = c.missedDeadlines.at(-1)
   if (morning && newestMissed && newestMissed < today && input.lastBehindFor !== newestMissed) {
-    pushes.push({ title: `${input.name}: payment missed`, body: `${fmt(c.behindAmount)} FCFA is due.`, url, tag: `tontine-behind-${input.groupId}-${newestMissed}` })
+    pushes.push({ title: `${input.name}: payment missed`, body: `${fmt(c.behindAmount)} ${sym} is due.`, url, tag: `tontine-behind-${input.groupId}-${newestMissed}` })
     out.behindFor = newestMissed
   }
 
   if (morning) {
     for (const t of input.turns) {
       if (t.status !== 'upcoming' || t.turnOn !== today || t.notifiedOn) continue
-      pushes.push({ title: `It’s your turn: ${fmt(t.expectedAmount)} FCFA from ${input.name}`, body: 'Tap to record it and choose how much to save.', url, tag: `tontine-turn-${t.id}` })
+      pushes.push({ title: `It’s your turn: ${fmt(t.expectedAmount)} ${sym} from ${input.name}`, body: 'Tap to record it and choose how much to save.', url, tag: `tontine-turn-${t.id}` })
       out.notifiedTurns.push(t.id)
     }
   }
