@@ -2,6 +2,7 @@ import 'server-only'
 import { cache } from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { connection } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { SUPABASE_KEY, SUPABASE_URL } from './env'
 
@@ -23,6 +24,7 @@ export async function createClient() {
 
 /** The signed-in user's id, verified from the JWT. Redirects to /login when signed out. */
 export const requireUser = cache(async () => {
+  await connection()
   const supabase = await createClient()
   const { data } = await supabase.auth.getClaims()
   const userId = data?.claims?.sub
