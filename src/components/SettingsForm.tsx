@@ -5,6 +5,7 @@ import { useEffect, useState, useTransition } from 'react'
 import { Icon } from './Icon'
 import { usePickers } from './Pickers'
 import { PushToggle } from './PushToggle'
+import { TimeZonePicker } from './TimeZonePicker'
 import { useToast } from './Toast'
 import { applyTheme, readTheme, type ThemeChoice } from './theme'
 import { useClientValue } from './useClientValue'
@@ -30,7 +31,6 @@ export function SettingsForm({ profile, counts, email }: Props) {
   const [p, setP] = useState(profile)
   const theme = useClientValue<ThemeChoice>(readTheme, 'system', subscribeTheme)
   const [name, setName] = useState(profile.display_name ?? '')
-  const deviceTz = typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : profile.timezone
 
   const patch = (u: Partial<Profile>) => {
     setP((cur) => ({ ...cur, ...u }))
@@ -132,20 +132,13 @@ export function SettingsForm({ profile, counts, email }: Props) {
           </div>
           <span className="val">CFA franc (FCFA)</span>
         </div>
-        <div className="set-row">
-          <span className="tile" style={{ background: 'var(--surface-2)', color: 'var(--ink-2)' }}>
-            <Icon name="clock-3" />
-          </span>
-          <div className="mid">
-            <b>Time zone</b>
-            <small>{p.timezone.replace(/_/g, ' ')}</small>
-          </div>
-          {deviceTz && deviceTz !== p.timezone && (
-            <button className="btn-sm" style={{ background: 'var(--brand-soft)', color: 'var(--brand-ink)' }} onClick={() => patch({ timezone: deviceTz })}>
-              Use {deviceTz.split('/').pop()?.replace(/_/g, ' ')}
-            </button>
-          )}
-        </div>
+        <TimeZonePicker
+          value={p.timezone}
+          onPick={(tz) => {
+            patch({ timezone: tz })
+            toast('Time zone updated')
+          }}
+        />
         <div className="set-row" style={{ flexWrap: 'wrap' }}>
           <span className="tile" style={{ background: 'var(--surface-2)', color: 'var(--ink-2)' }}>
             <Icon name="sun-moon" />
