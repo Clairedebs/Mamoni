@@ -2,7 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Icon } from './Icon'
-import { DAYS, LONG_DAYS, LONG_MONTHS, MONTHS, addDays, isoOf, pad2, parseIso } from '@/lib/format'
+import { useLang, useT } from './i18n'
+import { addDays, fullDate, isoOf, pad2, parseIso, shortDate } from '@/lib/format'
 
 type DateOpts = { anchor: HTMLElement; value: string; today: string; min?: string; max?: string; title: string; quick?: boolean; onPick: (v: string) => void }
 type TimeOpts = { anchor: HTMLElement; value: string; title: string; onPick: (v: string) => void }
@@ -10,11 +11,6 @@ type State = ({ kind: 'date' } & DateOpts) | ({ kind: 'time' } & TimeOpts)
 
 const Ctx = createContext<{ openDate: (o: DateOpts) => void; openTime: (o: TimeOpts) => void }>({ openDate: () => {}, openTime: () => {} })
 export const usePickers = () => useContext(Ctx)
-
-const short = (iso: string) => {
-  const d = parseIso(iso)
-  return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`
-}
 
 export function PickerProvider({ children }: { children: React.ReactNode }) {
   const [st, setSt] = useState<State | null>(null)
@@ -83,6 +79,8 @@ export function PickerProvider({ children }: { children: React.ReactNode }) {
 }
 
 function Calendar({ o, done }: { o: DateOpts; done: () => void }) {
+  const lang = useLang()
+  const m = useT()
   const [sel, setSel] = useState(o.value)
   const [focus, setFocus] = useState(o.value)
   const [view, setView] = useState(() => {
@@ -94,11 +92,11 @@ function Calendar({ o, done }: { o: DateOpts; done: () => void }) {
   const inRange = (iso: string) => (!o.min || iso >= o.min) && (!o.max || iso <= o.max)
 
   const y = view.getFullYear()
-  const m = view.getMonth()
-  const off = (new Date(y, m, 1).getDay() + 6) % 7
-  const days = new Date(y, m + 1, 0).getDate()
-  const first = isoOf(new Date(y, m, 1))
-  const last = isoOf(new Date(y, m, days))
+  const mo = view.getMonth()
+  const off = (new Date(y, mo, 1).getDay() + 6) % 7
+  const days = new Date(y, mo + 1, 0).getDate()
+  const first = isoOf(new Date(y, mo, 1))
+  const last = isoOf(new Date(y, mo, days))
 
   useEffect(() => {
     if (dir.current && grid.current && !matchMedia('(prefers-reduced-motion: reduce)').matches)
@@ -113,7 +111,7 @@ function Calendar({ o, done }: { o: DateOpts; done: () => void }) {
 
   const move = (d: number) => {
     dir.current = d
-    setView(new Date(y, m + d, 1))
+    setView(new Date(y, mo + d, 1))
   }
   const pick = (iso: string) => {
     setSel(iso)
@@ -129,7 +127,7 @@ function Calendar({ o, done }: { o: DateOpts; done: () => void }) {
     const next = addDays(iso, step)
     if (!inRange(next)) return
     const nd = parseIso(next)
-    if (nd.getMonth() !== m || nd.getFullYear() !== y) {
+    if (nd.getMonth() !== mo || nd.getFullYear() !== y) {
       dir.current = Math.sign(step)
       setView(new Date(nd.getFullYear(), nd.getMonth(), 1))
     }
@@ -138,9 +136,9 @@ function Calendar({ o, done }: { o: DateOpts; done: () => void }) {
 
   const quick = o.quick
     ? [
-        ['Today', o.today],
-        ['Yesterday', addDays(o.today, -1)],
-        ['2 days ago', addDays(o.today, -2)],
+        [m.date.today, o.today],
+        [m.date.yesterday, addDays(o.today, -1)],
+        [m.date.twoDaysAgo, addDays(o.today, -2)],
       ]
     : []
 
@@ -149,11 +147,11 @@ function Calendar({ o, done }: { o: DateOpts; done: () => void }) {
       <div className="pk-head">
         <div>
           <small id="pk-title">{o.title}</small>
-          <strong>{short(sel)}</strong>
+          <strong>{shortDate(sel, lang)}</strong>
         </div>
       </div>
       {quick.length > 0 && (
-        <div className="pk-quick" role="group" aria-label="Shortcuts">
+        <div className="pk-quick" role="group" aria-label={m.picker.shortcuts}>
           {quick.map(([l, v]) => (
             <button key={l} className="chipsel" aria-pressed={sel === v} onClick={() => pick(v)}>
               {l}
@@ -162,18 +160,16 @@ function Calendar({ o, done }: { o: DateOpts; done: () => void }) {
         </div>
       )}
       <div className="cal-nav">
-        <button onClick={() => move(-1)} disabled={!!o.min && first <= o.min} aria-label="Previous month">
+        <button onClick={() => move(-1)} disabled={!!o.min && first <= o.min} aria-label={m.picker.prevMonth}>
           <Icon name="chevron-left" />
         </button>
-        <span aria-live="polite">
-          {LONG_MONTHS[m]} {y}
-        </span>
-        <button onClick={() => move(1)} disabled={!!o.max && last >= o.max} aria-label="Next month">
+        <span aria-live="polite">{m.date.monthYear(m.date.longMonths[mo], y)}</span>
+        <button onClick={() => move(1)} disabled={!!o.max && last >= o.max} aria-label={m.picker.nextMonth}>
           <Icon name="chevron-right" />
         </button>
       </div>
       <div className="cal-wd" aria-hidden="true">
-        {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+        {m.date.weekLetters.map((d, i) => (
           <span key={i}>{d}</span>
         ))}
       </div>
@@ -182,7 +178,7 @@ function Calendar({ o, done }: { o: DateOpts; done: () => void }) {
           <span key={`b${i}`} />
         ))}
         {Array.from({ length: days }, (_, i) => {
-          const dt = new Date(y, m, i + 1)
+          const dt = new Date(y, mo, i + 1)
           const iso = isoOf(dt)
           const tabbable = iso === focus || (!inRange(focus) && i === 0)
           return (
@@ -193,7 +189,7 @@ function Calendar({ o, done }: { o: DateOpts; done: () => void }) {
               aria-pressed={iso === sel}
               disabled={!inRange(iso)}
               tabIndex={tabbable ? 0 : -1}
-              aria-label={`${LONG_DAYS[dt.getDay()]}, ${LONG_MONTHS[m]} ${i + 1}, ${y}${iso === o.today ? ' (today)' : ''}`}
+              aria-label={`${fullDate(iso, lang)}${iso === o.today ? m.picker.todaySuffix : ''}`}
               onClick={() => pick(iso)}
               onKeyDown={(e) => onKey(e, iso)}
             >
@@ -209,13 +205,14 @@ function Calendar({ o, done }: { o: DateOpts; done: () => void }) {
 const HOURS = Array.from({ length: 24 }, (_, i) => i)
 const MINS = Array.from({ length: 12 }, (_, i) => i * 5)
 const PRESETS = [
-  ['Morning', '07:00'],
-  ['Lunch', '12:30'],
-  ['Evening', '20:30'],
-  ['Bedtime', '22:00'],
-]
+  ['morning', '07:00'],
+  ['lunch', '12:30'],
+  ['evening', '20:30'],
+  ['bedtime', '22:00'],
+] as const
 
 function TimeWheels({ o, done }: { o: TimeOpts; done: () => void }) {
+  const m = useT().picker
   const hRef = useRef<HTMLDivElement>(null)
   const mRef = useRef<HTMLDivElement>(null)
   const [hi, setHi] = useState(() => Number(o.value.slice(0, 2)))
@@ -271,7 +268,7 @@ function TimeWheels({ o, done }: { o: TimeOpts; done: () => void }) {
           <strong className="num">{value}</strong>
         </div>
       </div>
-      <div className="pk-quick" role="group" aria-label="Presets">
+      <div className="pk-quick" role="group" aria-label={m.presets}>
         {PRESETS.map(([l, v]) => (
           <button
             key={l}
@@ -282,17 +279,17 @@ function TimeWheels({ o, done }: { o: TimeOpts; done: () => void }) {
               scrollTo(mRef.current, Number(v.slice(3)) / 5, true)
             }}
           >
-            {l}
+            {m.presetNames[l]}
           </button>
         ))}
       </div>
       <div className="wheels">
         <div className="band" aria-hidden="true" />
-        {wheel(hRef, HOURS, hi, setHi, 'Hours')}
+        {wheel(hRef, HOURS, hi, setHi, m.hours)}
         <span className="colon" aria-hidden="true">
           :
         </span>
-        {wheel(mRef, MINS, mi, setMi, 'Minutes')}
+        {wheel(mRef, MINS, mi, setMi, m.minutes)}
       </div>
       <button
         className="btn block"
@@ -302,7 +299,7 @@ function TimeWheels({ o, done }: { o: TimeOpts; done: () => void }) {
         }}
       >
         <Icon name="check" />
-        Set time
+        {m.setTime}
       </button>
     </>
   )

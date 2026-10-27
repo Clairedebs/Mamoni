@@ -1,6 +1,7 @@
 import { Icon } from './Icon'
 import { TxOpen } from './TxOpen'
-import { MONTHS, fmt, parseIso, tint } from '@/lib/format'
+import { fmt, monthShort, tint } from '@/lib/format'
+import { messages, type Lang } from '@/lib/i18n'
 import type { Category, PaletteKey, Pot, Transaction } from '@/lib/types'
 
 export function Money({ n, sign = '' }: { n: number; sign?: string }) {
@@ -22,21 +23,23 @@ export function Tile({ icon, color, style }: { icon: string; color: PaletteKey; 
 }
 
 /** Resolves what a transaction should look like (icon, colour, labels). */
-export function describe(t: Transaction, cats: Category[], pots: Pot[]) {
+export function describe(t: Transaction, cats: Category[], pots: Pot[], lang: Lang) {
+  const m = messages(lang)
   if (t.pot_id) {
     const p = pots.find((p) => p.id === t.pot_id)
     const c = cats.find((c) => c.id === p?.category_id)
-    return { name: p?.name ?? 'Savings pot', icon: c?.icon ?? 'piggy-bank', color: (c?.color ?? 'violet') as PaletteKey, group: c?.name ?? 'Savings' }
+    return { name: p?.name ?? m.tx.savingsPot, icon: c?.icon ?? 'piggy-bank', color: (c?.color ?? 'violet') as PaletteKey, group: c?.name ?? m.common.savings }
   }
   const c = cats.find((c) => c.id === t.category_id)
-  return { name: c?.name ?? 'Category', icon: c?.icon ?? 'tag', color: (c?.color ?? 'slate') as PaletteKey, group: c?.name ?? '' }
+  return { name: c?.name ?? m.common.category, icon: c?.icon ?? 'tag', color: (c?.color ?? 'slate') as PaletteKey, group: c?.name ?? '' }
 }
 
-export function TxRow({ t, cats, pots, sub }: { t: Transaction; cats: Category[]; pots: Pot[]; sub?: string }) {
-  const d = describe(t, cats, pots)
+export function TxRow({ t, cats, pots, sub, lang }: { t: Transaction; cats: Category[]; pots: Pot[]; sub?: string; lang: Lang }) {
+  const d = describe(t, cats, pots, lang)
+  const m = messages(lang).tx
   const isIn = t.kind === 'income' || t.kind === 'withdrawal'
-  const title = t.note || (t.kind === 'deposit' ? `Deposit · ${d.name}` : t.kind === 'withdrawal' ? `Withdrawal · ${d.name}` : d.name)
-  const subtitle = sub ?? (t.pot_id ? `Savings · ${d.group}` : d.name)
+  const title = t.note || (t.kind === 'deposit' ? m.depositTo(d.name) : t.kind === 'withdrawal' ? m.withdrawalFrom(d.name) : d.name)
+  const subtitle = sub ?? (t.pot_id ? m.savingsIn(d.group) : d.name)
   return (
     <TxOpen t={t} title={title} amountText={`${isIn ? '+' : '−'}${fmt(Number(t.amount))}`}>
       <Tile icon={d.icon} color={d.color} />
@@ -51,12 +54,12 @@ export function TxRow({ t, cats, pots, sub }: { t: Transaction; cats: Category[]
   )
 }
 
-export function FlowChart({ data }: { data: { month: string; income: number; expense: number }[] }) {
+export function FlowChart({ data, lang }: { data: { month: string; income: number; expense: number }[]; lang: Lang }) {
   const W = 520, H = 168, pad = 22
   const max = Math.max(1, ...data.flatMap((d) => [d.income, d.expense])) * 1.08
   const gw = W / data.length, bw = Math.min(18, gw * 0.26)
   return (
-    <svg className="chart" viewBox={`0 0 ${W} ${H + pad}`} role="img" aria-label="Income and spending over 6 months">
+    <svg className="chart" viewBox={`0 0 ${W} ${H + pad}`} role="img" aria-label={messages(lang).charts.flows}>
       {[0, 0.5, 1].map((f) => (
         <line key={f} x1="0" x2={W} y1={H - H * f} y2={H - H * f} stroke="var(--line)" strokeDasharray={f ? '3 4' : undefined} />
       ))}
@@ -67,7 +70,7 @@ export function FlowChart({ data }: { data: { month: string; income: number; exp
             <rect x={cx - bw - 2} y={H - hi} width={bw} height={hi} rx="5" fill="var(--brand)" opacity={last ? 1 : 0.55} />
             <rect x={cx + 2} y={H - ho} width={bw} height={ho} rx="5" fill="var(--line-strong)" opacity={last ? 1 : 0.75} />
             <text x={cx} y={H + 16} textAnchor="middle" style={last ? { fill: 'var(--ink)', fontWeight: 600 } : undefined}>
-              {MONTHS[parseIso(d.month).getMonth()]}
+              {monthShort(d.month, lang)}
             </text>
           </g>
         )
@@ -76,7 +79,7 @@ export function FlowChart({ data }: { data: { month: string; income: number; exp
   )
 }
 
-export function SavingsLine({ points }: { points: { month: string; total: number }[] }) {
+export function SavingsLine({ points, lang }: { points: { month: string; total: number }[]; lang: Lang }) {
   const W = 520, H = 110
   const vals = points.map((p) => p.total)
   const max = Math.max(...vals) * 1.04 || 1
@@ -86,13 +89,13 @@ export function SavingsLine({ points }: { points: { month: string; total: number
   const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join('')
   const l = pts[pts.length - 1]
   return (
-    <svg className="chart" viewBox={`-6 -6 ${W + 12} ${H + 30}`} role="img" aria-label="Savings growth over 6 months">
+    <svg className="chart" viewBox={`-6 -6 ${W + 12} ${H + 30}`} role="img" aria-label={messages(lang).charts.savings}>
       <path d={`${d}L${W},${H}L0,${H}Z`} fill="var(--brand)" opacity=".09" />
       <path d={d} fill="none" stroke="var(--brand)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
       <circle cx={l[0]} cy={l[1]} r="5" fill="var(--brand)" stroke="var(--surface)" strokeWidth="3" />
       {points.map((p, i) => (
         <text key={p.month} x={pts[i][0]} y={H + 22} textAnchor={i === 0 ? 'start' : i === points.length - 1 ? 'end' : 'middle'}>
-          {MONTHS[parseIso(p.month).getMonth()]}
+          {monthShort(p.month, lang)}
         </text>
       ))}
     </svg>

@@ -2,6 +2,7 @@
 
 import { useClientValue } from './useClientValue'
 import { Icon } from './Icon'
+import { useT } from './i18n'
 import { fmt } from '@/lib/format'
 
 const M = ({ n, sign = '' }: { n: number; sign?: string }) => (
@@ -26,6 +27,7 @@ function subscribeHidden(cb: () => void) {
 
 export function BalanceCard({ available, savings, income, expense, month }: { available: number; savings: number; income: number; expense: number; month: string }) {
   const hidden = useClientValue(readHidden, false, subscribeHidden)
+  const m = useT().balance
   const toggle = () => {
     try {
       localStorage.setItem('mm-hide', hidden ? '0' : '1')
@@ -36,8 +38,8 @@ export function BalanceCard({ available, savings, income, expense, month }: { av
   return (
     <article className={`balance${hidden ? ' masked' : ''}`}>
       <div className="lbl">
-        Net worth
-        <button aria-label={hidden ? 'Show amounts' : 'Hide amounts'} onClick={toggle}>
+        {m.netWorth}
+        <button aria-label={hidden ? m.show : m.hide} onClick={toggle}>
           <Icon name={hidden ? 'eye-off' : 'eye'} />
         </button>
       </div>
@@ -45,11 +47,11 @@ export function BalanceCard({ available, savings, income, expense, month }: { av
         <M n={available + savings} />
       </div>
       <div className="split mask">
-        Available{' '}
+        {m.available}{' '}
         <b className="num">
           <M n={available} />
         </b>{' '}
-        · Savings{' '}
+        · {m.savings}{' '}
         <b className="num">
           <M n={savings} />
         </b>
@@ -60,7 +62,7 @@ export function BalanceCard({ available, savings, income, expense, month }: { av
             <Icon name="arrow-down-left" />
           </span>
           <div style={{ minWidth: 0 }}>
-            <small>Income · {month}</small>
+            <small>{m.incomeIn(month)}</small>
             <strong className="num mask">
               <M n={income} sign="+" />
             </strong>
@@ -71,7 +73,7 @@ export function BalanceCard({ available, savings, income, expense, month }: { av
             <Icon name="arrow-up-right" />
           </span>
           <div style={{ minWidth: 0 }}>
-            <small>Spending · {month}</small>
+            <small>{m.spendingIn(month)}</small>
             <strong className="num mask">
               <M n={expense} sign="−" />
             </strong>

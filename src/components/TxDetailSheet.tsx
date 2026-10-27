@@ -4,14 +4,13 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 import { Icon } from './Icon'
 import { Keypad, pressKey, typedLabel } from './Keypad'
 import { useCurrency } from './currency'
+import { useLang, useT } from './i18n'
 import { useAddSheet } from './AppShell'
 import { usePickers } from './Pickers'
 import { useToast } from './Toast'
 import { deleteTransaction, restoreTransaction, updateTransaction } from '@/lib/actions'
 import { dayLabel, fmt, tint } from '@/lib/format'
 import type { Category, PaletteKey, Pot, Transaction } from '@/lib/types'
-
-const KIND: Record<Transaction['kind'], string> = { expense: 'Expense', income: 'Income', deposit: 'Deposit', withdrawal: 'Withdrawal' }
 
 export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroups }: {
   categories: Category[]
@@ -27,6 +26,9 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
   const toast = useToast()
   const [pending, start] = useTransition()
   const cur = useCurrency()
+  const lang = useLang()
+  const m = useT()
+  const d = m.txDetail
   const [shown, setShown] = useState<Transaction | null>(null)
   const [editing, setEditing] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -72,11 +74,11 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
   const options = isSaving
     ? pots.map((p) => {
         const c = categories.find((c) => c.id === p.category_id)
-        return { id: p.id, name: p.name, icon: c?.icon ?? 'piggy-bank', color: (c?.color ?? 'violet') as PaletteKey, sub: c?.name ?? 'Savings' }
+        return { id: p.id, name: p.name, icon: c?.icon ?? 'piggy-bank', color: (c?.color ?? 'violet') as PaletteKey, sub: c?.name ?? m.common.savings }
       })
-    : categories.filter((c) => c.kind === t.kind).map((c) => ({ id: c.id, name: c.name, icon: c.icon, color: c.color, sub: c.kind === 'income' ? 'Income' : 'Spending' }))
+    : categories.filter((c) => c.kind === t.kind).map((c) => ({ id: c.id, name: c.name, icon: c.icon, color: c.color, sub: c.kind === 'income' ? m.common.income : m.common.spending }))
   const current = options.find((o) => o.id === (editing ? pick : (t.pot_id ?? t.category_id)))
-  const linked = payoutOf ? `Payout · ${payoutOf}` : t.group_id ? groupNames[t.group_id] : null
+  const linked = payoutOf ? d.payoutOf(payoutOf) : t.group_id ? groupNames[t.group_id] : null
   const sign = t.kind === 'income' || t.kind === 'withdrawal' ? '+' : '−'
 
   const save = () =>
@@ -84,7 +86,7 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
       setErr('')
       const res = await updateTransaction({ id: t.id, amount: Number(amt), occurredOn: date, note, categoryId: isSaving ? undefined : pick, potId: isSaving ? pick : undefined })
       if (!res.ok) return setErr(res.error)
-      toast('Changes saved')
+      toast(m.common.changesSaved)
       closeDetail()
     })
 
@@ -93,8 +95,8 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
       const res = await deleteTransaction(t.id)
       if (!res.ok) return setErr(res.error)
       closeDetail()
-      const label = `${KIND[t.kind]} deleted`
-      if (payoutOf) toast(`${label} · the turn is ready to collect again`)
+      const label = d.deleted[t.kind]
+      if (payoutOf) toast(`${label}${d.turnReady}`)
       else toast(label, () => void restoreTransaction(t))
     })
 
@@ -104,8 +106,8 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
       <div className={`sheet${open ? ' on' : ''}`} role="dialog" aria-modal="true" aria-labelledby="tx-title" aria-hidden={!open}>
         <div className="grab" />
         <div className="sheet-h">
-          <h2 id="tx-title">{editing ? `Edit ${KIND[t.kind].toLowerCase()}` : KIND[t.kind]}</h2>
-          <button ref={closeBtn} className="icon-btn" style={{ boxShadow: 'none', background: 'var(--surface-2)' }} aria-label="Close" onClick={closeDetail}>
+          <h2 id="tx-title">{editing ? d.editTitle[t.kind] : m.tx.kind[t.kind]}</h2>
+          <button ref={closeBtn} className="icon-btn" style={{ boxShadow: 'none', background: 'var(--surface-2)' }} aria-label={m.common.close} onClick={closeDetail}>
             <Icon name="x" />
           </button>
         </div>
@@ -122,16 +124,16 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
                 <button
                   className={`pill-btn date-pill${date !== today ? ' past' : ''}`}
                   aria-haspopup="dialog"
-                  aria-label={`Date, ${dayLabel(date, today)}`}
-                  onClick={(e) => openDate({ anchor: e.currentTarget, value: date, today, max: today, title: 'Date', quick: true, onPick: setDate })}
+                  aria-label={`${m.common.date}, ${dayLabel(date, today, lang)}`}
+                  onClick={(e) => openDate({ anchor: e.currentTarget, value: date, today, max: today, title: m.common.date, quick: true, onPick: setDate })}
                 >
                   <Icon name="calendar" />
-                  <span>{dayLabel(date, today)}</span>
+                  <span>{dayLabel(date, today, lang)}</span>
                 </button>
               ) : (
                 <span className="pill-btn">
                   <Icon name="calendar" />
-                  <span>{dayLabel(t.occurred_on, today)}</span>
+                  <span>{dayLabel(t.occurred_on, today, lang)}</span>
                 </span>
               )}
             </div>
@@ -146,8 +148,8 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
                   </span>
                 ) : null}
                 <div className="mid">
-                  <b>{current?.name ?? 'Unknown'}</b>
-                  <small>{isSaving ? `Savings · ${current?.sub ?? ''}` : current?.sub}</small>
+                  <b>{current?.name ?? d.unknown}</b>
+                  <small>{isSaving ? m.tx.savingsIn(current?.sub ?? '') : current?.sub}</small>
                 </div>
               </div>
               {t.note && (
@@ -167,7 +169,7 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
                   </span>
                   <div className="mid">
                     <b>{linked}</b>
-                    <small>Tontine</small>
+                    <small>{m.common.tontine}</small>
                   </div>
                 </div>
               )}
@@ -176,10 +178,10 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
             <>
               {lockedCategory ? (
                 <p className="hint" style={{ marginBottom: 10 }}>
-                  Linked to {linked}, so the category stays the same.
+                  {d.lockedCategory(linked ?? '')}
                 </p>
               ) : (
-                <div className="catpick" role="group" aria-label={isSaving ? 'Pot' : 'Category'}>
+                <div className="catpick" role="group" aria-label={isSaving ? m.common.pot : m.common.category}>
                   {options.map((c) => (
                     <button key={c.id} className="cp" aria-pressed={c.id === pick} onClick={() => setPick(c.id)} style={{ color: `var(--pal-${c.color})` }}>
                       <span className="tile" style={tint(c.color)}>
@@ -192,8 +194,8 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
               )}
               <label className="note">
                 <Icon name="pencil-line" />
-                <span className="sr">Note</span>
-                <input value={note} onChange={(e) => setNote(e.target.value)} maxLength={80} placeholder="Add a note (optional)" autoComplete="off" />
+                <span className="sr">{m.common.note}</span>
+                <input value={note} onChange={(e) => setNote(e.target.value)} maxLength={80} placeholder={m.common.addNote} autoComplete="off" />
               </label>
               <Keypad onKey={(k) => setAmt((a) => pressKey(a, k, cur.decimals))} decimals={cur.decimals} />
             </>
@@ -209,26 +211,26 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
         {editing ? (
           <div style={{ display: 'flex', gap: 10 }}>
             <button className="btn ghost" onClick={() => setEditing(false)} disabled={pending}>
-              Cancel
+              {m.common.cancel}
             </button>
             <button className="btn" style={{ flex: 1 }} disabled={!amt || !pick || pending} onClick={save}>
               <Icon name={pending ? 'loader' : 'check'} />
-              Save changes
+              {m.common.saveChanges}
             </button>
           </div>
         ) : confirmDelete ? (
           <div className="stack" style={{ gap: 10 }}>
             <p className="hint" role="alert">
-              Delete this {KIND[t.kind].toLowerCase()} of {fmt(Number(t.amount))} {cur.symbol}?
-              {payoutOf ? ' Its turn will be ready to collect again, and any savings moved with it is removed.' : ''}
+              {d.confirmDelete[t.kind](`${fmt(Number(t.amount))} ${cur.symbol}`)}
+              {payoutOf ? d.payoutWarning : ''}
             </p>
             <div style={{ display: 'flex', gap: 10 }}>
               <button className="btn ghost" onClick={() => setConfirmDelete(false)} disabled={pending}>
-                Keep it
+                {d.keep}
               </button>
               <button className="btn" style={{ flex: 1, background: 'var(--neg)' }} disabled={pending} onClick={remove}>
                 <Icon name={pending ? 'loader' : 'trash-2'} />
-                Delete
+                {m.common.delete}
               </button>
             </div>
           </div>
@@ -236,12 +238,12 @@ export function TxDetailSheet({ categories, pots, today, groupNames, payoutGroup
           <>
             <button className="btn block" onClick={() => setEditing(true)}>
               <Icon name="pencil" />
-              Edit
+              {m.common.edit}
             </button>
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
               <button className="btn-danger" onClick={() => setConfirmDelete(true)}>
                 <Icon name="trash-2" />
-                Delete
+                {m.common.delete}
               </button>
             </div>
           </>

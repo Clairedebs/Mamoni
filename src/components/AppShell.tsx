@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation'
 import { Suspense, createContext, useCallback, useContext, useState } from 'react'
 import { Icon } from './Icon'
 import { ThemeToggle } from './ThemeToggle'
+import { useT } from './i18n'
+import type { Messages } from '@/lib/i18n'
 import type { Transaction, TransactionKind } from '@/lib/types'
 
 export type SheetRequest = { kind: TransactionKind; categoryId?: string; potId?: string; groupId?: string; amount?: number; nonce: number }
@@ -19,11 +21,11 @@ type SheetCtxValue = {
 const SheetCtx = createContext<SheetCtxValue>({ req: null, open: () => {}, close: () => {}, detail: null, openDetail: () => {}, closeDetail: () => {} })
 export const useAddSheet = () => useContext(SheetCtx)
 
-const NAV = [
-  { href: '/', label: 'Home', icon: 'house' },
-  { href: '/activity', label: 'Activity', icon: 'arrow-left-right' },
-  { href: '/savings', label: 'Savings', icon: 'piggy-bank' },
-  { href: '/settings', label: 'Settings', icon: 'settings-2' },
+const NAV: { href: string; label: keyof Messages['nav']; icon: string }[] = [
+  { href: '/', label: 'home', icon: 'house' },
+  { href: '/activity', label: 'activity', icon: 'arrow-left-right' },
+  { href: '/savings', label: 'savings', icon: 'piggy-bank' },
+  { href: '/settings', label: 'settings', icon: 'settings-2' },
 ]
 
 export function AppShell({ children, sheet }: { children: React.ReactNode; sheet: React.ReactNode }) {
@@ -33,11 +35,12 @@ export function AppShell({ children, sheet }: { children: React.ReactNode; sheet
   const [detail, setDetail] = useState<Transaction | null>(null)
   const openDetail = useCallback((t: Transaction) => setDetail(t), [])
   const closeDetail = useCallback(() => setDetail(null), [])
+  const m = useT().nav
 
   return (
     <SheetCtx.Provider value={{ req, open, close, detail, openDetail, closeDetail }}>
       <div className="app">
-        <aside className="rail" aria-label="Main navigation">
+        <aside className="rail" aria-label={m.main}>
           <div className="brand">
             <svg className="appicon" aria-hidden="true">
               <use href="#logo" />
@@ -46,7 +49,7 @@ export function AppShell({ children, sheet }: { children: React.ReactNode; sheet
           </div>
           <button className="btn add" onClick={() => open()}>
             <Icon name="plus" />
-            Add
+            {m.add}
           </button>
           <Suspense fallback={<NavLinks items={NAV} cls="nav" path={null} />}>
             <ActiveNav items={NAV} cls="nav" />
@@ -57,11 +60,11 @@ export function AppShell({ children, sheet }: { children: React.ReactNode; sheet
 
         <main id="main">{children}</main>
 
-        <nav className="tabbar" aria-label="Navigation">
+        <nav className="tabbar" aria-label={m.tabs}>
           <Suspense fallback={<NavLinks items={NAV.slice(0, 2)} cls="tab" path={null} />}>
             <ActiveNav items={NAV.slice(0, 2)} cls="tab" />
           </Suspense>
-          <button className="fab" onClick={() => open()} aria-label="Add a transaction">
+          <button className="fab" onClick={() => open()} aria-label={m.addTransaction}>
             <Icon name="plus" />
           </button>
           <Suspense fallback={<NavLinks items={NAV.slice(2)} cls="tab" path={null} />}>
@@ -78,10 +81,11 @@ type NavItem = (typeof NAV)[number]
 
 function NavLinks({ items, cls, path }: { items: NavItem[]; cls: string; path: string | null }) {
   const active = (href: string) => path !== null && (href === '/' ? path === '/' : path.startsWith(href))
+  const m = useT().nav
   return items.map((n) => (
     <Link key={n.href} href={n.href} className={cls} aria-current={active(n.href) ? 'page' : undefined}>
       <Icon name={n.icon} />
-      {n.label}
+      {m[n.label]}
     </Link>
   ))
 }

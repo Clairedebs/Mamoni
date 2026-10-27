@@ -1,3 +1,5 @@
+import type { Lang } from './i18n'
+
 /** Country names (English and French) for the zones most users of the app pick. */
 const COUNTRIES: Record<string, string[]> = {
   'Africa/Douala': ['Cameroon', 'Cameroun'],
@@ -41,10 +43,39 @@ const fold = (s: string) =>
     .toLowerCase()
     .trim()
 
+/** French display names where they differ from the first (English) entry above. */
+const FR_COUNTRY: Record<string, string> = {
+  'Africa/Douala': 'Cameroun',
+  'Africa/Dakar': 'Sénégal',
+  'Africa/Porto-Novo': 'Bénin',
+  'Africa/Kinshasa': 'RD Congo',
+  'Africa/Lubumbashi': 'RD Congo',
+  'Africa/Ndjamena': 'Tchad',
+  'Africa/Bangui': 'Centrafrique',
+  'Africa/Malabo': 'Guinée équatoriale',
+  'Africa/Conakry': 'Guinée',
+  'Africa/Casablanca': 'Maroc',
+  'Africa/Algiers': 'Algérie',
+  'Africa/Tunis': 'Tunisie',
+  'Europe/Brussels': 'Belgique',
+  'Europe/Zurich': 'Suisse',
+  'Europe/Berlin': 'Allemagne',
+  'Europe/London': 'Royaume-Uni',
+  'Europe/Madrid': 'Espagne',
+  'Europe/Rome': 'Italie',
+  'America/New_York': 'États-Unis',
+}
+
 export const cityOf = (tz: string) => (tz.split('/').pop() ?? tz).replace(/_/g, ' ')
 
 export function countriesOf(tz: string) {
   return COUNTRIES[tz] ?? []
+}
+
+/** "Douala, Cameroon" / "Douala, Cameroun", or just the city when the country isn't known. */
+export function zoneLabel(tz: string, lang: Lang) {
+  const country = (lang === 'fr' && FR_COUNTRY[tz]) || countriesOf(tz)[0]
+  return country ? `${cityOf(tz)}, ${country}` : cityOf(tz)
 }
 
 /** "UTC+1", "UTC-5", "UTC+5:30", or "UTC" for zero, at the given instant. */

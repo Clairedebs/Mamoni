@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Icon } from './Icon'
 import { useClientValue } from './useClientValue'
-import { allTimeZones, cityOf, countriesOf, offsetLabel, searchTimeZones } from '@/lib/timezones'
+import { useLang, useT } from './i18n'
+import { allTimeZones, cityOf, offsetLabel, searchTimeZones, zoneLabel } from '@/lib/timezones'
 
 const deviceZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone
 
@@ -15,6 +16,9 @@ export function TimeZonePicker({ value, onPick }: { value: string; onPick: (tz: 
   const search = useRef<HTMLInputElement>(null)
   const zones = useMemo(() => (open ? allTimeZones() : []), [open])
   const results = useMemo(() => searchTimeZones(zones, q), [zones, q])
+  const lang = useLang()
+  const m = useT()
+  const t = m.timeZone
 
   useEffect(() => {
     if (!open) return
@@ -32,10 +36,7 @@ export function TimeZonePicker({ value, onPick }: { value: string; onPick: (tz: 
     setQ('')
     if (tz !== value) onPick(tz)
   }
-  const label = (tz: string) => {
-    const country = countriesOf(tz)[0]
-    return country ? `${cityOf(tz)}, ${country}` : cityOf(tz)
-  }
+  const label = (tz: string) => zoneLabel(tz, lang)
 
   return (
     <>
@@ -44,7 +45,7 @@ export function TimeZonePicker({ value, onPick }: { value: string; onPick: (tz: 
           <Icon name="clock-3" />
         </span>
         <div className="mid">
-          <b>Time zone</b>
+          <b>{t.title}</b>
           <small>
             {label(value)} · {offsetLabel(value)}
           </small>
@@ -56,10 +57,10 @@ export function TimeZonePicker({ value, onPick }: { value: string; onPick: (tz: 
       {device && device !== value && (
         <div className="set-row" style={{ borderTop: 0, paddingTop: 0, minHeight: 0 }}>
           <div className="mid">
-            <small>This device is in {label(device)}</small>
+            <small>{t.deviceIn(label(device))}</small>
           </div>
           <button type="button" className="btn-sm" style={{ background: 'var(--brand-soft)', color: 'var(--brand-ink)' }} onClick={() => choose(device)}>
-            Use {cityOf(device)}
+            {t.use(cityOf(device))}
           </button>
         </div>
       )}
@@ -68,26 +69,26 @@ export function TimeZonePicker({ value, onPick }: { value: string; onPick: (tz: 
       <div className={`sheet tz-sheet${open ? ' on' : ''}`} role="dialog" aria-modal="true" aria-labelledby="tz-title" aria-hidden={!open}>
         <div className="grab" />
         <div className="sheet-h">
-          <h2 id="tz-title">Time zone</h2>
-          <button className="icon-btn" style={{ boxShadow: 'none', background: 'var(--surface-2)' }} aria-label="Close" onClick={() => setOpen(false)}>
+          <h2 id="tz-title">{t.title}</h2>
+          <button className="icon-btn" style={{ boxShadow: 'none', background: 'var(--surface-2)' }} aria-label={m.common.close} onClick={() => setOpen(false)}>
             <Icon name="x" />
           </button>
         </div>
         <label className="search" style={{ boxShadow: 'none', background: 'var(--surface-2)', marginBottom: 10 }}>
           <Icon name="search" />
-          <span className="sr">Search a city or country</span>
-          <input ref={search} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a city or country" autoComplete="off" />
+          <span className="sr">{t.search}</span>
+          <input ref={search} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.search} autoComplete="off" />
         </label>
-        <div className="tz-list" role="listbox" aria-label="Time zones">
+        <div className="tz-list" role="listbox" aria-label={t.list}>
           {device && !q && (
             <button type="button" className="row" role="option" aria-selected={device === value} onClick={() => choose(device)}>
               <span className="tile" style={{ background: 'var(--brand-soft)', color: 'var(--brand-ink)' }}>
                 <Icon name="smartphone" />
               </span>
               <span className="mid">
-                <b>Use this device&apos;s time zone</b>
+                <b>{t.useDevice}</b>
                 <small>
-                  {label(device)} (detected) · {offsetLabel(device)}
+                  {t.detected(label(device))} · {offsetLabel(device)}
                 </small>
               </span>
               {device === value && <Icon name="check" style={{ color: 'var(--brand-ink)' }} />}
@@ -107,7 +108,7 @@ export function TimeZonePicker({ value, onPick }: { value: string; onPick: (tz: 
           {open && results.length === 0 && (
             <div className="empty">
               <Icon name="search-x" />
-              <p>No time zone matches “{q}”. Try a nearby big city.</p>
+              <p>{t.noMatch(q)}</p>
             </div>
           )}
         </div>

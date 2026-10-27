@@ -93,7 +93,7 @@ describe('rebase', () => {
 })
 
 describe('statusLine', () => {
-  const opts = { today: '2026-10-22', turnToday: false, label: shortDate }
+  const opts = { today: '2026-10-22', turnToday: false, label: (iso: string) => shortDate(iso, 'en') }
 
   it('shows covered until when paid ahead', () => {
     const c = coverage({ ...W, paid: 20000, today: '2026-10-22', nowMinutes: 600 })
@@ -233,7 +233,7 @@ describe('review fixes', () => {
   it('covered until survives a rebase', () => {
     const c = coverage({ ...W, cycleStart: '2026-09-05', firstDue: '2026-11-21', perPeriod: 6000, paid: 0, today: '2026-10-22', nowMinutes: 600 })
     expect(c.coveredUntil).toBe('2026-11-14')
-    expect(statusLine(c, { today: '2026-10-22', turnToday: false, label: shortDate }, 'weekly').text).toBe('Covered until Sat, Nov 14')
+    expect(statusLine(c, { today: '2026-10-22', turnToday: false, label: (iso: string) => shortDate(iso, 'en') }, 'weekly').text).toBe('Covered until Sat, Nov 14')
   })
   it('turnToday only on the turn date itself', () => {
     const turns = [{ turn_on: '2026-10-20', status: 'upcoming' as const }]
@@ -277,6 +277,6 @@ describe('amounts with cents', () => {
   })
   it('shows the account currency in status lines', () => {
     const c = coverage({ ...W, paid: 0, today: '2026-10-27', nowMinutes: 600 })
-    expect(statusLine(c, { today: '2026-10-27', turnToday: false, label: shortDate, symbol: '€' }, 'weekly').text).toBe('1 week late · 5,000 € due')
+    expect(statusLine(c, { today: '2026-10-27', turnToday: false, label: (iso: string) => shortDate(iso, 'en'), symbol: '€' }, 'weekly').text).toBe('1 week late · 5,000 € due')
   })
 })

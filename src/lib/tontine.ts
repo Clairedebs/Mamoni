@@ -1,5 +1,6 @@
 import { addDays, fmt, isoOf, parseIso } from './format'
 import { isMoney } from './currencies'
+import { DEFAULT_LANG, messages, type Lang } from './i18n'
 
 export type Frequency = 'weekly' | 'monthly'
 
@@ -87,19 +88,21 @@ function priorDeadline(input: { firstDue: string; cycleStart?: string; frequency
 
 export type GroupStatus = { tone: 'ok' | 'soon' | 'late' | 'turn' | 'done'; text: string }
 
-export function statusLine(c: Coverage, opts: { today: string; turnToday: boolean; label: (iso: string) => string; symbol?: string }, frequency: Frequency): GroupStatus {
-  const sym = opts.symbol ?? 'FCFA'
-  if (opts.turnToday) return { tone: 'turn', text: 'Your turn today' }
-  if (c.behindCount > 0) {
-    const unit = frequency === 'weekly' ? 'week' : 'month'
-    return { tone: 'late', text: `${c.behindCount} ${unit}${c.behindCount > 1 ? 's' : ''} late · ${fmt(c.behindAmount)} ${sym} due` }
-  }
-  if (c.fullyPaid) return { tone: 'done', text: 'Fully paid for this cycle' }
-  if (c.nextDue === addDays(opts.today, 1) || c.nextDue === opts.today) {
-    return { tone: 'soon', text: `${fmt(c.nextDueAmount)} ${sym} due ${c.nextDue === opts.today ? 'today' : 'tomorrow'}` }
-  }
-  if (c.coveredUntil) return { tone: 'ok', text: `Covered until ${opts.label(c.coveredUntil)}` }
-  return { tone: 'ok', text: `Due ${opts.label(c.nextDue!)}` }
+export function statusLine(
+  c: Coverage,
+  opts: { today: string; turnToday: boolean; label: (iso: string) => string; symbol?: string },
+  frequency: Frequency,
+  lang: Lang = DEFAULT_LANG,
+): GroupStatus {
+  const t = messages(lang).status
+  const money = (n: number) => `${fmt(n)} ${opts.symbol ?? 'FCFA'}`
+  if (opts.turnToday) return { tone: 'turn', text: t.turnToday }
+  if (c.behindCount > 0) return { tone: 'late', text: t.late(c.behindCount, frequency === 'weekly', money(c.behindAmount)) }
+  if (c.fullyPaid) return { tone: 'done', text: t.fullyPaid }
+  if (c.nextDue === opts.today) return { tone: 'soon', text: t.dueToday(money(c.nextDueAmount)) }
+  if (c.nextDue === addDays(opts.today, 1)) return { tone: 'soon', text: t.dueTomorrow(money(c.nextDueAmount)) }
+  if (c.coveredUntil) return { tone: 'ok', text: t.coveredUntil(opts.label(c.coveredUntil)) }
+  return { tone: 'ok', text: t.due(opts.label(c.nextDue!)) }
 }
 
 /** Starting point for a schedule change: keep what is already covered and the leftover credit. */
@@ -107,9 +110,10 @@ export function rebase(c: Coverage): { firstDue: string; openingCredit: number }
   return { firstDue: c.missedDeadlines[0] ?? c.nextDue ?? c.coveredUntil!, openingCredit: c.credit }
 }
 
-export function validatePayout(amount: number, saveAmount: number): string | null {
-  if (!(amount > 0)) return 'Enter the payout amount.'
-  if (saveAmount < 0 || saveAmount > amount) return 'You can move at most the payout amount.'
+export function validatePayout(amount: number, saveAmount: number, lang: Lang = DEFAULT_LANG): string | null {
+  const e = messages(lang).errors
+  if (!(amount > 0)) return e.payoutAmount
+  if (saveAmount < 0 || saveAmount > amount) return e.payoutMax
   return null
 }
 
@@ -129,19 +133,20 @@ export type GroupInput = {
 const ISO = /^\d{4}-\d{2}-\d{2}$/
 const isInt = (n: number, min: number, max: number) => Number.isInteger(n) && n >= min && n <= max
 
-export function validateGroupInput(g: GroupInput): string | null {
-  if (!g.name.trim()) return 'Give your group a name.'
-  if (!isMoney(g.amountPerName)) return 'Enter the amount each name pays.'
-  if (!isInt(g.namesTotal, 2, 200)) return 'A group has between 2 and 200 names.'
-  if (!isInt(g.namesHeld, 1, 200)) return 'You hold at least one name.'
-  if (g.namesHeld > g.namesTotal) return 'You can’t hold more names than the group has.'
-  if (g.frequency !== 'weekly' && g.frequency !== 'monthly') return 'Pick weekly or monthly.'
-  if (!/^\d{2}:\d{2}$/.test(g.deadlineTime)) return 'Pick a deadline time.'
-  if (![g.cycleStart, g.cycleEnd, g.firstDue].every((d) => ISO.test(d))) return 'Pick valid dates.'
-  if (g.cycleEnd < g.cycleStart) return 'The cycle end must be after its start.'
-  if (g.firstDue < g.cycleStart || g.firstDue > g.cycleEnd) return 'Your next due date must be within the cycle.'
-  if (g.turns.length !== g.namesHeld) return 'Add one turn for each name you hold.'
-  if (g.turns.some((t) => !ISO.test(t.turnOn) || t.turnOn < g.cycleStart || t.turnOn > g.cycleEnd)) return 'Each turn must fall within the cycle.'
+export function validateGroupInput(g: GroupInput, lang: Lang = DEFAULT_LANG): string | null {
+  const e = messages(lang).errors
+  if (!g.name.trim()) return e.groupName
+  if (!isMoney(g.amountPerName)) return e.amountPerName
+  if (!isInt(g.namesTotal, 2, 200)) return e.namesRange
+  if (!isInt(g.namesHeld, 1, 200)) return e.heldMin
+  if (g.namesHeld > g.namesTotal) return e.heldMax
+  if (g.frequency !== 'weekly' && g.frequency !== 'monthly') return e.frequency
+  if (!/^\d{2}:\d{2}$/.test(g.deadlineTime)) return e.deadline
+  if (![g.cycleStart, g.cycleEnd, g.firstDue].every((d) => ISO.test(d))) return e.dates
+  if (g.cycleEnd < g.cycleStart) return e.cycleOrder
+  if (g.firstDue < g.cycleStart || g.firstDue > g.cycleEnd) return e.firstDueRange
+  if (g.turns.length !== g.namesHeld) return e.turnsCount
+  if (g.turns.some((t) => !ISO.test(t.turnOn) || t.turnOn < g.cycleStart || t.turnOn > g.cycleEnd)) return e.turnsRange
   return null
 }
 
@@ -160,9 +165,11 @@ export function planTontineReminders(input: {
   lastBehindFor: string | null
   turns: { id: string; turnOn: string; status: 'upcoming' | 'collected' | 'before_app'; notifiedOn: string | null; expectedAmount: number }[]
   symbol?: string
+  lang?: Lang
 }): { pushes: ReminderPush[]; dueFor?: string; behindFor?: string; notifiedTurns: string[] } {
   const { coverage: c, today, nowMinutes } = input
-  const sym = input.symbol ?? 'FCFA'
+  const t = messages(input.lang ?? DEFAULT_LANG).notifications
+  const money = (n: number) => `${fmt(n)} ${input.symbol ?? 'FCFA'}`
   const url = `/tontines/${input.groupId}`
   const pushes: ReminderPush[] = []
   const out: { pushes: ReminderPush[]; dueFor?: string; behindFor?: string; notifiedTurns: string[] } = { pushes, notifiedTurns: [] }
@@ -170,21 +177,21 @@ export function planTontineReminders(input: {
 
   const inSlot = nowMinutes >= input.reminderMinutes && nowMinutes - input.reminderMinutes <= 180
   if (inSlot && c.behindCount === 0 && c.nextDue && c.nextDue === addDays(today, 1) && input.lastDueFor !== c.nextDue) {
-    pushes.push({ title: `${input.name}: payment due tomorrow`, body: `${fmt(c.nextDueAmount)} ${sym} before ${input.deadlineTime}.`, url, tag: `tontine-due-${input.groupId}-${c.nextDue}` })
+    pushes.push({ title: t.dueTomorrowTitle(input.name), body: t.dueTomorrowBody(money(c.nextDueAmount), input.deadlineTime), url, tag: `tontine-due-${input.groupId}-${c.nextDue}` })
     out.dueFor = c.nextDue
   }
 
   const newestMissed = c.missedDeadlines.at(-1)
   if (morning && newestMissed && newestMissed < today && input.lastBehindFor !== newestMissed) {
-    pushes.push({ title: `${input.name}: payment missed`, body: `${fmt(c.behindAmount)} ${sym} is due.`, url, tag: `tontine-behind-${input.groupId}-${newestMissed}` })
+    pushes.push({ title: t.missedTitle(input.name), body: t.missedBody(money(c.behindAmount)), url, tag: `tontine-behind-${input.groupId}-${newestMissed}` })
     out.behindFor = newestMissed
   }
 
   if (morning) {
-    for (const t of input.turns) {
-      if (t.status !== 'upcoming' || t.turnOn !== today || t.notifiedOn) continue
-      pushes.push({ title: `It’s your turn: ${fmt(t.expectedAmount)} ${sym} from ${input.name}`, body: 'Tap to record it and choose how much to save.', url, tag: `tontine-turn-${t.id}` })
-      out.notifiedTurns.push(t.id)
+    for (const turn of input.turns) {
+      if (turn.status !== 'upcoming' || turn.turnOn !== today || turn.notifiedOn) continue
+      pushes.push({ title: t.turnTitle(money(turn.expectedAmount), input.name), body: t.turnBody, url, tag: `tontine-turn-${turn.id}` })
+      out.notifiedTurns.push(turn.id)
     }
   }
   return out
@@ -229,12 +236,10 @@ export function nextRoundStart(g: { cycle_end: string; frequency: Frequency; anc
   return addPeriods(g.cycle_end, g.frequency, 1, g.frequency === 'monthly' ? g.anchor_day : undefined)
 }
 
-export function categoryDeleteBlock(c: { role: string | null; usage: number; isLast: boolean; kind: 'expense' | 'income' | 'saving' }): string | null {
-  if (c.role) return 'Moni yem needs this category for tontines.'
-  if (c.isLast) return 'You need at least one category of this type.'
-  if (c.usage > 0) {
-    const what = c.kind === 'saving' ? 'pot' : 'transaction'
-    return `Used by ${c.usage} ${what}${c.usage > 1 ? 's' : ''}. Move or delete ${c.kind === 'saving' ? 'them' : 'those'} first.`
-  }
+export function categoryDeleteBlock(c: { role: string | null; usage: number; isLast: boolean; kind: 'expense' | 'income' | 'saving' }, lang: Lang = DEFAULT_LANG): string | null {
+  const t = messages(lang).categories
+  if (c.role) return t.neededForTontines
+  if (c.isLast) return t.lastOfType
+  if (c.usage > 0) return t.usedBy(c.usage, c.kind === 'saving')
   return null
 }

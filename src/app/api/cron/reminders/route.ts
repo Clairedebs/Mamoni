@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { addDays } from '@/lib/format'
 import { groupCoverage, planTontineReminders } from '@/lib/tontine'
 import { currencyOf } from '@/lib/currencies'
+import { DEFAULT_LANG, isLang, messages } from '@/lib/i18n'
 
 /**
  * Sends reminder pushes. Call it every 15 minutes with `Authorization: Bearer $CRON_SECRET`
@@ -43,6 +44,8 @@ export async function GET(request: NextRequest) {
   }
 
   for (const p of profiles ?? []) {
+    const lang = isLang(p.language) ? p.language : DEFAULT_LANG
+    const t = messages(lang).notifications
     const parts = Object.fromEntries(
       new Intl.DateTimeFormat('en-CA', { timeZone: p.timezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hourCycle: 'h23' })
         .formatToParts(new Date())
@@ -58,7 +61,7 @@ export async function GET(request: NextRequest) {
       const day = parts.weekday as string
       const freqOk = p.reminder_frequency === 'daily' || (p.reminder_frequency === 'weekly' ? day === 'Sun' : ['Mon', 'Wed', 'Fri'].includes(day))
       if (p.reminder_enabled && freqOk) {
-        await push(p.id, { title: 'Time for a quick check-in?', body: 'Take 30 seconds to log today’s spending.', url: '/', tag: `daily-${today}` })
+        await push(p.id, { title: t.dailyTitle, body: t.dailyBody, url: '/', tag: `daily-${today}` })
       }
 
       await db.from('profiles').update({ last_reminded_on: today }).eq('id', p.id)
@@ -83,6 +86,7 @@ export async function GET(request: NextRequest) {
         lastDueFor: g.last_due_reminder_for,
         lastBehindFor: g.last_behind_reminder_for,
         symbol: currencyOf(p.currency).symbol,
+        lang,
         turns: (turns ?? [])
           .filter((t) => t.group_id === g.id)
           .map((t) => ({ id: t.id, turnOn: t.turn_on, status: t.status, notifiedOn: t.notified_on, expectedAmount: Number(t.expected_amount) })),
@@ -101,7 +105,7 @@ export async function GET(request: NextRequest) {
       if (Date.now() - lastNudge > 24 * 3600e3) {
         const { data: last } = await db.from('transactions').select('occurred_on').eq('user_id', p.id).order('occurred_on', { ascending: false }).limit(1)
         if (last?.[0] && last[0].occurred_on <= addDays(today, -2)) {
-          await push(p.id, { title: 'Time to catch up?', body: 'Nothing logged for 2 days. Take 30 seconds to catch up.', url: '/', tag: 'nudge' })
+          await push(p.id, { title: t.nudgeTitle, body: t.nudgeBody, url: '/', tag: 'nudge' })
           await db.from('profiles').update({ last_nudged_at: new Date().toISOString() }).eq('id', p.id)
         }
       }

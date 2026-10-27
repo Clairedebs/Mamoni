@@ -7,6 +7,7 @@ import { Icon } from './Icon'
 import { Tile } from './ui'
 import { useToast } from './Toast'
 import { useCurrency } from './currency'
+import { useLang, useT } from './i18n'
 import { sanitizeMoney, typedLabel } from './Keypad'
 import { saveStartingBalances } from '@/lib/actions'
 import { sinceLabel } from '@/lib/format'
@@ -17,6 +18,9 @@ export function SetupForm({ cats, pots, openingCash, welcome }: { cats: Category
   const router = useRouter()
   const toast = useToast()
   const cur = useCurrency()
+  const lang = useLang()
+  const m = useT()
+  const t = m.balances
   const [pending, start] = useTransition()
   const [cash, setCash] = useState(String(openingCash || ''))
   const [vals, setVals] = useState<Record<string, string>>(() => Object.fromEntries(pots.map((p) => [p.id, String(p.initial_amount || '')])))
@@ -26,7 +30,7 @@ export function SetupForm({ cats, pots, openingCash, welcome }: { cats: Category
     start(async () => {
       const res = await saveStartingBalances({ openingCash: Number(cash || 0), pots: pots.map((p) => ({ id: p.id, initial: Number(vals[p.id] || 0) })) })
       if (!res.ok) return setErr(res.error)
-      toast('Starting balances saved')
+      toast(t.saved)
       router.push(welcome ? '/' : '/savings')
     })
 
@@ -37,13 +41,13 @@ export function SetupForm({ cats, pots, openingCash, welcome }: { cats: Category
           <div className="field" style={{ borderTop: 0, paddingTop: 0 }}>
             <label htmlFor="cash">
               <Tile icon="wallet" color="violet" />
-              Cash and current account
+              {t.cash}
             </label>
             <div className="money">
               <input id="cash" inputMode={cur.decimals ? 'decimal' : 'numeric'} value={cash ? typedLabel(cash) : ''} onChange={(e) => setCash(sanitizeMoney(e.target.value, cur.decimals))} placeholder="0" />
               <span className="cur-label" />
             </div>
-            <span className="hint">Money you can spend today. It becomes your “Available” balance.</span>
+            <span className="hint">{t.cashHint}</span>
           </div>
         </div>
         {cats.map((g) => {
@@ -64,12 +68,12 @@ export function SetupForm({ cats, pots, openingCash, welcome }: { cats: Category
                     <input id={`in-${p.id}`} inputMode={cur.decimals ? 'decimal' : 'numeric'} value={vals[p.id] ? typedLabel(vals[p.id]) : ''} onChange={(e) => setVals({ ...vals, [p.id]: sanitizeMoney(e.target.value, cur.decimals) })} placeholder="0" />
                     <span className="cur-label" />
                   </div>
-                  <span className="hint">As of {sinceLabel(p.started_on)}</span>
+                  <span className="hint">{t.asOf(sinceLabel(p.started_on, lang))}</span>
                 </div>
               ))}
               <Link className="pocket" style={{ color: 'var(--brand-ink)', fontWeight: 560, gap: 10 }} href={`/savings/pots/new?category=${g.id}`}>
                 <Icon name="plus" size={18} />
-                {mine.length ? `Add another ${g.name.toLowerCase()} pot` : `Add a ${g.name.toLowerCase()} pot`}
+                {mine.length ? m.savings.addAnotherPot(g.name) : m.savings.addPot(g.name)}
               </Link>
             </div>
           )
@@ -82,11 +86,11 @@ export function SetupForm({ cats, pots, openingCash, welcome }: { cats: Category
       )}
       <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
         <Link className="btn ghost" href={welcome ? '/' : '/savings'}>
-          {welcome ? 'Skip for now' : 'Cancel'}
+          {welcome ? t.skip : m.common.cancel}
         </Link>
         <button className="btn" style={{ flex: 1 }} disabled={pending} onClick={save}>
           <Icon name={pending ? 'loader' : 'check'} />
-          Save balances
+          {t.save}
         </button>
       </div>
     </>
