@@ -7,18 +7,21 @@ import { Icon } from './Icon'
 import { ICON_NAMES } from './icon-names'
 import { useAddSheet } from './AppShell'
 import { useToast } from './Toast'
+import { useLang, useT } from './i18n'
 import { deleteCategory, saveCategory } from '@/lib/actions'
 import { tint } from '@/lib/format'
 import { categoryDeleteBlock } from '@/lib/tontine'
 import { PALETTE, type Category, type CategoryKind, type PaletteKey } from '@/lib/types'
-
-const TYPE_N: Record<CategoryKind, string> = { expense: 'Spending', income: 'Income', saving: 'Savings' }
 
 export function CategoryEditor({ kind, category, siblings, usage, from }: { kind: CategoryKind; category?: Category; siblings: string[]; usage: number; from?: string }) {
   const router = useRouter()
   const toast = useToast()
   const { open } = useAddSheet()
   const [pending, start] = useTransition()
+  const lang = useLang()
+  const m = useT()
+  const c = m.categories
+  const typeName = c.tabs[kind]
   const [name, setName] = useState(category?.name ?? '')
   const [desc, setDesc] = useState(category?.description ?? '')
   const [icon, setIcon] = useState(category?.icon ?? (kind === 'income' ? 'briefcase' : kind === 'saving' ? 'piggy-bank' : 'shopping-cart'))
@@ -30,14 +33,14 @@ export function CategoryEditor({ kind, category, siblings, usage, from }: { kind
   const back = from === 'sheet' ? '/' : `/settings/categories${kind === 'expense' ? '' : `?tab=${kind}`}`
   const t = tint(color)
   const last = !!category && siblings.length === 0
-  const block = category ? categoryDeleteBlock({ role: category.role, usage, isLast: last, kind }) : null
+  const block = category ? categoryDeleteBlock({ role: category.role, usage, isLast: last, kind }, lang) : null
 
   const save = () =>
     start(async () => {
       setErr('')
       const res = await saveCategory({ id: category?.id, kind, name: trimmed, icon, color, description: desc })
       if (!res.ok) return setErr(res.error)
-      toast(category ? 'Changes saved' : `Category “${trimmed}” created`)
+      toast(category ? m.common.changesSaved : c.created(trimmed))
       if (from === 'sheet' && (kind === 'expense' || kind === 'income')) {
         router.push('/')
         open({ kind, categoryId: res.data.id })
@@ -48,7 +51,7 @@ export function CategoryEditor({ kind, category, siblings, usage, from }: { kind
     start(async () => {
       const res = await deleteCategory(category!.id)
       if (!res.ok) return setErr(res.error)
-      toast(`“${category!.name}” deleted`)
+      toast(m.common.deleted(category!.name))
       router.push(back)
     })
 
@@ -56,11 +59,11 @@ export function CategoryEditor({ kind, category, siblings, usage, from }: { kind
     <>
       <Link className="back" href={back}>
         <Icon name="chevron-left" />
-        {from === 'sheet' ? 'Back' : 'Categories'}
+        {from === 'sheet' ? m.common.back : m.meta.categories}
       </Link>
       <header className="top" style={{ paddingTop: 8 }}>
         <div className="grow">
-          <h1>{category ? 'Edit category' : `New ${TYPE_N[kind].toLowerCase()} category`}</h1>
+          <h1>{category ? m.meta.editCategory : c.newOf[kind]}</h1>
         </div>
       </header>
       <div className="panel ce-preview" aria-hidden="true">
@@ -68,40 +71,40 @@ export function CategoryEditor({ kind, category, siblings, usage, from }: { kind
           <Icon name={icon} />
         </span>
         <div style={{ minWidth: 0 }}>
-          <b style={trimmed ? undefined : { color: 'var(--ink-3)' }}>{trimmed || 'Category name'}</b>
+          <b style={trimmed ? undefined : { color: 'var(--ink-3)' }}>{trimmed || c.namePlaceholder}</b>
           <small>
-            {TYPE_N[kind]}
+            {typeName}
             {kind === 'saving' && desc.trim() ? ` · ${desc.trim()}` : ''}
           </small>
         </div>
       </div>
       <div className="panel stack" style={{ marginTop: 14 }}>
         <div className="fld">
-          <label htmlFor="ce-name">Name</label>
+          <label htmlFor="ce-name">{m.common.name}</label>
           <div className="money">
-            <input id="ce-name" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && trimmed && !dup && save()} maxLength={24} placeholder="e.g. Hair salon" autoComplete="off" autoFocus={!category} />
+            <input id="ce-name" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && trimmed && !dup && save()} maxLength={24} placeholder={c.nameExample} autoComplete="off" autoFocus={!category} />
           </div>
           <span className="err" role="alert">
-            {dup ? `You already have a ${TYPE_N[kind].toLowerCase()} category called “${trimmed}”.` : err}
+            {dup ? c.duplicate(typeName, trimmed) : err}
           </span>
         </div>
         {kind === 'saving' && (
           <div className="fld">
             <label htmlFor="ce-desc">
-              Short description <span className="muted" style={{ fontWeight: 450 }}>(optional)</span>
+              {c.description} <span className="muted" style={{ fontWeight: 450 }}>{m.common.optional}</span>
             </label>
             <div className="money">
-              <input id="ce-desc" value={desc} onChange={(e) => setDesc(e.target.value)} maxLength={48} placeholder="e.g. Savings group with neighbours" autoComplete="off" />
+              <input id="ce-desc" value={desc} onChange={(e) => setDesc(e.target.value)} maxLength={48} placeholder={c.descriptionExample} autoComplete="off" />
             </div>
           </div>
         )}
       </div>
 
       <div className="section-h">
-        <h2>Icon</h2>
+        <h2>{c.icon}</h2>
       </div>
       <div className="panel">
-        <div className="icon-grid" role="radiogroup" aria-label="Icon" style={{ ['--sel' as string]: t.color }}>
+        <div className="icon-grid" role="radiogroup" aria-label={c.icon} style={{ ['--sel' as string]: t.color }}>
           {ICON_NAMES.map((i) => (
             <button key={i} className="ic" role="radio" aria-checked={i === icon} aria-label={i.replace(/-/g, ' ')} onClick={() => setIcon(i)}>
               <Icon name={i} />
@@ -111,12 +114,12 @@ export function CategoryEditor({ kind, category, siblings, usage, from }: { kind
       </div>
 
       <div className="section-h">
-        <h2>Color</h2>
+        <h2>{c.color}</h2>
       </div>
       <div className="panel">
-        <div className="swatches" role="radiogroup" aria-label="Color">
+        <div className="swatches" role="radiogroup" aria-label={c.color}>
           {PALETTE.map((k) => (
-            <button key={k} className="sw-b" role="radio" aria-checked={k === color} aria-label={k} onClick={() => setColor(k)} style={{ background: `var(--pal-${k})`, ['--ring' as string]: `var(--pal-${k})` }}>
+            <button key={k} className="sw-b" role="radio" aria-checked={k === color} aria-label={m.colors[k]} onClick={() => setColor(k)} style={{ background: `var(--pal-${k})`, ['--ring' as string]: `var(--pal-${k})` }}>
               <Icon name="check" />
             </button>
           ))}
@@ -125,18 +128,16 @@ export function CategoryEditor({ kind, category, siblings, usage, from }: { kind
 
       <button className="btn block" style={{ marginTop: 20 }} disabled={!trimmed || !!dup || pending} onClick={save}>
         <Icon name={pending ? 'loader' : 'check'} />
-        {category ? 'Save changes' : 'Create category'}
+        {category ? m.common.saveChanges : c.create}
       </button>
 
       {category && (
         <div className="danger-zone">
           <button className="btn-danger" disabled={!!block || pending} onClick={remove}>
             <Icon name="trash-2" />
-            Delete category
+            {c.delete}
           </button>
-          <span className="hint">
-            {block ?? 'This can’t be undone.'}
-          </span>
+          <span className="hint">{block ?? c.cantUndo}</span>
         </div>
       )}
     </>

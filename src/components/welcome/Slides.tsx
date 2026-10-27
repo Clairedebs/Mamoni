@@ -3,6 +3,7 @@
 import { BalanceCard } from '../BalanceCard'
 import { Icon } from '../Icon'
 import { Keypad } from '../Keypad'
+import { useT } from '../i18n'
 import { tint } from '@/lib/format'
 
 /** Illustrations built from the app's real pieces, filled with sample numbers. Purely decorative. */
@@ -15,18 +16,20 @@ function Frame({ children }: { children: React.ReactNode }) {
 }
 
 function MoneyIllo() {
+  const m = useT()
   return (
     <Frame>
-      <BalanceCard available={578750} savings={2433500} income={485000} expense={300750} month="Oct" />
+      <BalanceCard available={578750} savings={2433500} income={485000} expense={300750} month={m.date.months[9]} />
     </Frame>
   )
 }
 
 function LogIllo() {
+  const names = useT().welcome.illo.categories
   const cats = [
-    ['Groceries', 'shopping-basket', 'green'],
-    ['Transport', 'bus', 'cyan'],
-    ['Housing', 'house-plug', 'purple'],
+    [names[0], 'shopping-basket', 'green'],
+    [names[1], 'bus', 'cyan'],
+    [names[2], 'house-plug', 'purple'],
   ] as const
   return (
     <Frame>
@@ -54,10 +57,11 @@ function LogIllo() {
 }
 
 function SavingsIllo() {
+  const names = useT().welcome.illo.pots
   const pots = [
-    ['Savings account', 'Bank', 'landmark', 'blue', '1,150,000', 76],
-    ['Family pot', 'Family', 'users', 'coral', '238,500', 40],
-    ['New motorbike', 'Project', 'piggy-bank', 'violet', '150,000', 30],
+    [names[0][0], names[0][1], 'landmark', 'blue', '1,150,000', 76],
+    [names[1][0], names[1][1], 'users', 'coral', '238,500', 40],
+    [names[2][0], names[2][1], 'piggy-bank', 'violet', '150,000', 30],
   ] as const
   return (
     <Frame>
@@ -88,6 +92,7 @@ function SavingsIllo() {
 }
 
 function TontineIllo() {
+  const t = useT().welcome.illo
   return (
     <Frame>
       <div className="panel wl-mini" style={{ padding: '6px 16px 8px' }}>
@@ -96,8 +101,8 @@ function TontineIllo() {
             <Icon name="hand-coins" />
           </span>
           <span className="mid">
-            <b>Friday tontine</b>
-            <small>Covered until Fri, Nov 14</small>
+            <b>{t.tontineName}</b>
+            <small>{t.coveredUntil}</small>
           </span>
         </div>
         <div className="row">
@@ -105,9 +110,9 @@ function TontineIllo() {
             <Icon name="calendar" />
           </span>
           <span className="mid">
-            <b>Your turn · Fri, Dec 5</b>
+            <b>{t.yourTurn}</b>
             <small style={{ color: 'var(--brand-ink)', fontWeight: 600 }}>
-              Payout 50,000 <span className="cur" />
+              {t.payout} 50,000 <span className="cur" />
             </small>
           </span>
         </div>
@@ -116,8 +121,8 @@ function TontineIllo() {
             <Icon name="bell-ring" />
           </span>
           <span className="mid">
-            <b>Reminder the evening before</b>
-            <small>Only when you&apos;re not paid ahead</small>
+            <b>{t.reminder}</b>
+            <small>{t.reminderHint}</small>
           </span>
         </div>
       </div>
@@ -125,26 +130,5 @@ function TontineIllo() {
   )
 }
 
-export const SLIDES = [
-  {
-    title: 'Your money, at a glance',
-    body: 'See what you own, what came in and what went out this month — all on one card.',
-    illo: <MoneyIllo />,
-  },
-  {
-    title: 'Log in seconds',
-    body: 'Tap + to add an expense or an income and pick a category. Made a mistake? Tap the line later to fix or delete it.',
-    illo: <LogIllo />,
-  },
-  {
-    title: 'Savings in pots',
-    body: 'Keep pots for the bank, the family or a project, with a starting balance and an optional goal.',
-    illo: <SavingsIllo />,
-  },
-  {
-    title: 'Tontines without the stress',
-    body: 'Set how much you pay, how often and on which day, the names in the group and yours, and your collection dates. Moni yem shows how far ahead you’ve paid and reminds you.',
-    illo: <TontineIllo />,
-    hint: 'You’ll find Tontines on the Savings page.',
-  },
-]
+/** Pictures for each slide, in order; titles and text come from `welcome.slides`. */
+export const SLIDE_ILLOS = [<MoneyIllo key="money" />, <LogIllo key="log" />, <SavingsIllo key="savings" />, <TontineIllo key="tontine" />]

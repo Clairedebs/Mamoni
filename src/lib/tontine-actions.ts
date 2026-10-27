@@ -6,16 +6,27 @@ import { getTontineGroup, getToday } from './data'
 import { rebaseOnEdit, validateGroupInput, validatePayout, type GroupInput } from './tontine'
 import { parseIso } from './format'
 import { roundMoney } from './currencies'
+import { messages, type Messages } from './i18n'
+import { requestLang, requestT } from './i18n/server'
 
 type Result<T = null> = { ok: true; data: T } | { ok: false; error: string }
 const fail = (error: string): Result<never> => ({ ok: false, error })
-const GENERIC = 'Something went wrong. Please try again.'
+
+/** Messages raised by collect_payout(), shown in the reader's language. */
+const SQL_ERRORS: Record<string, keyof Messages['errors']> = {
+  'Enter the payout amount.': 'payoutAmount',
+  'You can move at most the payout amount.': 'payoutMax',
+  'Turn not found.': 'turnNotFound',
+  'This turn is already collected.': 'turnCollected',
+  'The Tontine payout category is missing.': 'payoutCategory',
+}
 
 export async function saveTontineGroup(
   input: Omit<GroupInput, 'turns'> & { id?: string; turns: { id?: string; turnOn: string; beforeApp: boolean }[]; openingCredit?: number },
 ): Promise<Result<{ id: string }>> {
-  const { supabase } = await requireUser()
-  const invalid = validateGroupInput(input)
+  const [{ supabase }, lang] = await Promise.all([requireUser(), requestLang()])
+  const GENERIC = messages(lang).errors.generic
+  const invalid = validateGroupInput(input, lang)
   if (invalid) return fail(invalid)
   const payout = input.amountPerName * input.namesTotal
   const base = {
@@ -45,7 +56,7 @@ export async function saveTontineGroup(
     id = data.id as string
   } else {
     const current = await getTontineGroup(id)
-    if (!current) return fail('Group not found.')
+    if (!current) return fail(messages(lang).errors.groupNotFound)
     const g = current.group
     const patch: Record<string, unknown> = { ...base }
     const r =
@@ -85,12 +96,13 @@ export async function saveTontineGroup(
 }
 
 export async function collectTontinePayout(input: { turnId: string; amount: number; occurredOn: string; savePotId?: string; saveAmount?: number }): Promise<Result<{ id: string }>> {
-  const { supabase } = await requireUser()
+  const [{ supabase }, lang] = await Promise.all([requireUser(), requestLang()])
+  const t = messages(lang)
   const amount = roundMoney(input.amount)
   const save = input.savePotId ? roundMoney(input.saveAmount ?? 0) : 0
-  const invalid = validatePayout(amount, save)
+  const invalid = validatePayout(amount, save, lang)
   if (invalid) return fail(invalid)
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(input.occurredOn)) return fail('Pick a valid date.')
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(input.occurredOn)) return fail(t.errors.date)
   const { data, error } = await supabase.rpc('collect_payout', {
     p_turn_id: input.turnId,
     p_amount: amount,
@@ -98,7 +110,8 @@ export async function collectTontinePayout(input: { turnId: string; amount: numb
     p_save_pot_id: input.savePotId ?? null,
     p_save_amount: save,
   })
-  if (error) return fail(error.message?.endsWith('.') ? error.message : GENERIC)
+  const known = SQL_ERRORS[error?.message ?? '']
+  if (error) return fail(known ? (t.errors[known] as string) : t.errors.generic)
   refresh()
   return { ok: true, data: { id: data as string } }
 }
@@ -107,7 +120,7 @@ export async function endTontineCycle(id: string): Promise<Result> {
   const { supabase } = await requireUser()
   const today = await getToday()
   const { error } = await supabase.from('tontine_groups').update({ status: 'ended', ended_on: today }).eq('id', id)
-  if (error) return fail(GENERIC)
+  if (error) return fail((await requestT()).errors.generic)
   refresh()
   return { ok: true, data: null }
 }
@@ -115,7 +128,7 @@ export async function endTontineCycle(id: string): Promise<Result> {
 export async function setTontineReminders(id: string, enabled: boolean): Promise<Result> {
   const { supabase } = await requireUser()
   const { error } = await supabase.from('tontine_groups').update({ reminders_enabled: enabled }).eq('id', id)
-  if (error) return fail(GENERIC)
+  if (error) return fail((await requestT()).errors.generic)
   refresh()
   return { ok: true, data: null }
 }

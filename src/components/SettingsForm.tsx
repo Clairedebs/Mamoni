@@ -8,18 +8,16 @@ import { PushToggle } from './PushToggle'
 import { CurrencyPicker } from './CurrencyPicker'
 import { TimeZonePicker } from './TimeZonePicker'
 import { useToast } from './Toast'
+import { useLang, useT } from './i18n'
 import { applyTheme, readTheme, type ThemeChoice } from './theme'
 import { useClientValue } from './useClientValue'
-import { signOut, updateSettings } from '@/lib/actions'
+import { changeLanguage, signOut, updateSettings } from '@/lib/actions'
+import { LANGS, LANG_NAMES, type Lang } from '@/lib/i18n'
 import type { Profile, ReminderFrequency } from '@/lib/types'
 
 type Props = { profile: Profile; counts: { expense: number; income: number; saving: number }; email: string | null }
 
-const FREQ: [ReminderFrequency, string][] = [
-  ['daily', 'Every day'],
-  ['thrice_weekly', '3 times a week'],
-  ['weekly', 'Every Sunday'],
-]
+const FREQ: ReminderFrequency[] = ['daily', 'thrice_weekly', 'weekly']
 
 function Switch({ on, label, onChange }: { on: boolean; label: string; onChange: (v: boolean) => void }) {
   return <button className="switch" role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)} />
@@ -32,6 +30,9 @@ export function SettingsForm({ profile, counts, email }: Props) {
   const [p, setP] = useState(profile)
   const theme = useClientValue<ThemeChoice>(readTheme, 'system', subscribeTheme)
   const [name, setName] = useState(profile.display_name ?? '')
+  const lang = useLang()
+  const m = useT()
+  const s = m.settings
 
   const patch = (u: Partial<Profile>) => {
     setP((cur) => ({ ...cur, ...u }))
@@ -48,7 +49,7 @@ export function SettingsForm({ profile, counts, email }: Props) {
   return (
     <div className="set-wrap">
       <div className="section-h" style={{ marginTop: 4 }}>
-        <h2>Reminders</h2>
+        <h2>{s.reminders}</h2>
       </div>
       <div className="set-group">
         <PushToggle />
@@ -57,17 +58,17 @@ export function SettingsForm({ profile, counts, email }: Props) {
             <Icon name="bell-ring" />
           </span>
           <div className="mid">
-            <b>Update reminder</b>
-            <small>A notification so you remember to log your transactions</small>
+            <b>{s.updateReminder}</b>
+            <small>{s.updateReminderHint}</small>
           </div>
-          <Switch on={p.reminder_enabled} label="Update reminder" onChange={(v) => patch({ reminder_enabled: v })} />
+          <Switch on={p.reminder_enabled} label={s.updateReminder} onChange={(v) => patch({ reminder_enabled: v })} />
         </div>
         {p.reminder_enabled && (
           <>
-            <div className="chips" role="group" aria-label="Frequency">
-              {FREQ.map(([k, l]) => (
+            <div className="chips" role="group" aria-label={s.frequency}>
+              {FREQ.map((k) => (
                 <button key={k} className="chipsel" aria-pressed={p.reminder_frequency === k} onClick={() => patch({ reminder_frequency: k })}>
-                  {l}
+                  {s.frequencies[k]}
                 </button>
               ))}
             </div>
@@ -76,13 +77,13 @@ export function SettingsForm({ profile, counts, email }: Props) {
                 <Icon name="clock-3" />
               </span>
               <div className="mid">
-                <b>Reminder time</b>
+                <b>{s.reminderTime}</b>
               </div>
               <button
                 className="time"
                 aria-haspopup="dialog"
-                aria-label={`Reminder time, ${p.reminder_time}`}
-                onClick={(e) => openTime({ anchor: e.currentTarget, value: p.reminder_time, title: 'Reminder time', onPick: (v) => patch({ reminder_time: v }) })}
+                aria-label={s.reminderTimeAria(p.reminder_time)}
+                onClick={(e) => openTime({ anchor: e.currentTarget, value: p.reminder_time, title: s.reminderTime, onPick: (v) => patch({ reminder_time: v }) })}
               >
                 <Icon name="clock-3" />
                 <span className="num">{p.reminder_time}</span>
@@ -95,15 +96,15 @@ export function SettingsForm({ profile, counts, email }: Props) {
             <Icon name="calendar-clock" />
           </span>
           <div className="mid">
-            <b>Nudge when nothing is logged</b>
-            <small>After 2 days with no transactions</small>
+            <b>{s.nudge}</b>
+            <small>{s.nudgeHint}</small>
           </div>
-          <Switch on={p.nudge_enabled} label="Nudge when nothing is logged" onChange={(v) => patch({ nudge_enabled: v })} />
+          <Switch on={p.nudge_enabled} label={s.nudge} onChange={(v) => patch({ nudge_enabled: v })} />
         </div>
       </div>
 
       <div className="section-h">
-        <h2>Preferences</h2>
+        <h2>{s.preferences}</h2>
       </div>
       <div className="set-group">
         <div className="set-row">
@@ -111,25 +112,26 @@ export function SettingsForm({ profile, counts, email }: Props) {
             <Icon name="pencil" />
           </span>
           <div className="mid">
-            <b>Your name</b>
+            <b>{s.yourName}</b>
           </div>
           <input
             className="time"
             style={{ width: 150, textAlign: 'right', fontSize: 16 }}
             value={name}
             maxLength={40}
-            placeholder="Add your name"
-            aria-label="Your name"
+            placeholder={s.addName}
+            aria-label={s.yourName}
             onChange={(e) => setName(e.target.value)}
             onBlur={() => name !== (p.display_name ?? '') && patch({ display_name: name })}
           />
         </div>
+        <LanguageRow value={lang} />
         <CurrencyPicker value={profile.currency} />
         <TimeZonePicker
           value={p.timezone}
           onPick={(tz) => {
             patch({ timezone: tz })
-            toast('Time zone updated')
+            toast(s.timeZoneUpdated)
           }}
         />
         <div className="set-row" style={{ flexWrap: 'wrap' }}>
@@ -137,9 +139,9 @@ export function SettingsForm({ profile, counts, email }: Props) {
             <Icon name="sun-moon" />
           </span>
           <div className="mid">
-            <b>Appearance</b>
+            <b>{s.appearance}</b>
           </div>
-          <div className="seg" id="theme-seg" style={{ margin: 0, width: 220 }} role="group" aria-label="Appearance">
+          <div className="seg" id="theme-seg" style={{ margin: 0, width: 220 }} role="group" aria-label={s.appearance}>
             <span className="thumb" style={{ width: 'calc((100% - 6px)/3)', transform: `translateX(${themeIdx * 100}%)` }} />
             {(['system', 'light', 'dark'] as const).map((t) => (
               <button
@@ -147,7 +149,7 @@ export function SettingsForm({ profile, counts, email }: Props) {
                 aria-pressed={theme === t}
                 onClick={() => applyTheme(t)}
               >
-                {t[0].toUpperCase() + t.slice(1)}
+                {s.themes[t]}
               </button>
             ))}
           </div>
@@ -157,7 +159,7 @@ export function SettingsForm({ profile, counts, email }: Props) {
             <Icon name="piggy-bank" />
           </span>
           <div className="mid">
-            <b>Starting balances</b>
+            <b>{m.savings.balances}</b>
           </div>
           <span className="val">
             <Icon name="chevron-right" />
@@ -168,10 +170,8 @@ export function SettingsForm({ profile, counts, email }: Props) {
             <Icon name="tags" />
           </span>
           <div className="mid">
-            <b>Categories</b>
-            <small>
-              {counts.expense} spending · {counts.income} income · {counts.saving} savings
-            </small>
+            <b>{m.meta.categories}</b>
+            <small>{s.categoryCounts(counts.expense, counts.income, counts.saving)}</small>
           </div>
           <span className="val">
             <Icon name="chevron-right" />
@@ -180,7 +180,7 @@ export function SettingsForm({ profile, counts, email }: Props) {
       </div>
 
       <div className="section-h">
-        <h2>Device</h2>
+        <h2>{s.device}</h2>
       </div>
       <div className="set-group">
         <InstallRow />
@@ -190,15 +190,16 @@ export function SettingsForm({ profile, counts, email }: Props) {
           </span>
           <div className="mid">
             <b>
-              Offline mode<span className="soon">Soon</span>
+              {s.offline}
+              <span className="soon">{s.soon}</span>
             </b>
-            <small>Log without a connection, synced when you are back online</small>
+            <small>{s.offlineHint}</small>
           </div>
         </div>
       </div>
 
       <div className="section-h">
-        <h2>Help</h2>
+        <h2>{s.help}</h2>
       </div>
       <div className="set-group">
         <Link className="set-row" href="/welcome?replay=1">
@@ -206,8 +207,8 @@ export function SettingsForm({ profile, counts, email }: Props) {
             <Icon name="sparkles" />
           </span>
           <div className="mid">
-            <b>Replay the tour</b>
-            <small>How transactions, savings and tontines work</small>
+            <b>{s.replay}</b>
+            <small>{s.replayHint}</small>
           </div>
           <span className="val">
             <Icon name="chevron-right" />
@@ -216,7 +217,7 @@ export function SettingsForm({ profile, counts, email }: Props) {
       </div>
 
       <div className="section-h">
-        <h2>Account</h2>
+        <h2>{s.account}</h2>
       </div>
       <div className="set-group">
         <div className="set-row">
@@ -224,16 +225,57 @@ export function SettingsForm({ profile, counts, email }: Props) {
             <Icon name="users" />
           </span>
           <div className="mid">
-            <b>Signed in</b>
+            <b>{s.signedIn}</b>
             <small>{email ?? ''}</small>
           </div>
           <form action={signOut}>
             <button className="btn-sm" style={{ background: 'var(--surface-2)' }}>
               <Icon name="log-out" size={15} />
-              Sign out
+              {s.signOut}
             </button>
           </form>
         </div>
+      </div>
+    </div>
+  )
+}
+
+/** Two-way switch; the whole app reloads in the new language. */
+function LanguageRow({ value }: { value: Lang }) {
+  const toast = useToast()
+  const s = useT().settings
+  const [pending, start] = useTransition()
+  const [picked, setPicked] = useState(value)
+  const idx = LANGS.indexOf(picked)
+
+  const pick = (l: Lang) => {
+    if (l === picked || pending) return
+    setPicked(l)
+    start(async () => {
+      const res = await changeLanguage(l)
+      if (!res.ok) {
+        setPicked(value)
+        return toast(res.error)
+      }
+      window.location.reload()
+    })
+  }
+
+  return (
+    <div className="set-row" style={{ flexWrap: 'wrap' }}>
+      <span className="tile" style={{ background: 'var(--surface-2)', color: 'var(--ink-2)' }}>
+        <Icon name={pending ? 'loader' : 'languages'} />
+      </span>
+      <div className="mid">
+        <b>{s.language}</b>
+      </div>
+      <div className="seg" style={{ margin: 0, width: 220 }} role="group" aria-label={s.language}>
+        <span className="thumb" style={{ width: `calc((100% - 6px)/${LANGS.length})`, transform: `translateX(${idx * 100}%)` }} />
+        {LANGS.map((l) => (
+          <button key={l} lang={l} aria-pressed={picked === l} disabled={pending} onClick={() => pick(l)}>
+            {LANG_NAMES[l]}
+          </button>
+        ))}
       </div>
     </div>
   )
@@ -252,6 +294,7 @@ function InstallRow() {
   const standalone = useClientValue(() => matchMedia('(display-mode: standalone)').matches, false)
   const ios = useClientValue(() => /iPad|iPhone|iPod/.test(navigator.userAgent), false)
   const installed = standalone || justInstalled
+  const s = useT().settings
   useEffect(() => {
     const on = (e: Event) => {
       e.preventDefault()
@@ -268,8 +311,8 @@ function InstallRow() {
         <Icon name="smartphone" />
       </span>
       <div className="mid">
-        <b>Add to home screen</b>
-        <small>{installed ? 'Installed on this device' : ios ? 'In Safari: Share › Add to Home Screen' : 'Open Moni yem like a native app'}</small>
+        <b>{s.addToHome}</b>
+        <small>{installed ? s.installed : ios ? s.iosInstall : s.nativeApp}</small>
       </div>
       {evt && !installed && (
         <button
@@ -280,7 +323,7 @@ function InstallRow() {
             setEvt(null)
           }}
         >
-          Install
+          {s.install}
         </button>
       )}
     </div>

@@ -1,3 +1,5 @@
+import type { Lang } from './i18n'
+
 export type CategoryKind = 'expense' | 'income' | 'saving'
 export type TransactionKind = 'expense' | 'income' | 'deposit' | 'withdrawal'
 export type Repeat = 'weekly' | 'monthly' | 'once'
@@ -47,6 +49,7 @@ export type Profile = {
   id: string
   display_name: string | null
   currency: string
+  language: Lang
   timezone: string
   opening_cash: number
   reminder_enabled: boolean

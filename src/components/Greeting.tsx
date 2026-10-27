@@ -1,6 +1,7 @@
 'use client'
 
 import { useSyncExternalStore } from 'react'
+import { useLang } from './i18n'
 import { greetingFor } from '@/lib/format'
 
 /** Re-renders at the top of every hour and when the app comes back to the foreground. */
@@ -25,5 +26,6 @@ function subscribe(onChange: () => void) {
 
 /** Greeting from the device's local clock; `initial` is the server's guess from the profile time zone. */
 export function Greeting({ initial }: { initial: string }) {
-  return useSyncExternalStore(subscribe, () => greetingFor(new Date().getHours()), () => initial)
+  const lang = useLang()
+  return useSyncExternalStore(subscribe, () => greetingFor(new Date().getHours(), lang), () => initial)
 }

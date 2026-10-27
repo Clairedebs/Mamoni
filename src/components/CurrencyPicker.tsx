@@ -4,8 +4,9 @@ import { useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { Icon } from './Icon'
 import { useToast } from './Toast'
 import { applyCurrency } from './currency'
+import { useLang, useT } from './i18n'
 import { changeCurrency } from '@/lib/actions'
-import { CURRENCIES, currencyOf, searchCurrencies, type Currency } from '@/lib/currencies'
+import { CURRENCIES, currencyName, currencyOf, searchCurrencies, type Currency } from '@/lib/currencies'
 
 /** Settings row for the account currency; picking another one asks to confirm the relabel. */
 export function CurrencyPicker({ value }: { value: string }) {
@@ -17,6 +18,10 @@ export function CurrencyPicker({ value }: { value: string }) {
   const search = useRef<HTMLInputElement>(null)
   const current = currencyOf(value)
   const results = useMemo(() => searchCurrencies(CURRENCIES, q), [q])
+  const lang = useLang()
+  const m = useT()
+  const t = m.currency
+  const name = (c: Currency) => currencyName(c, lang)
 
   useEffect(() => {
     if (!open) return
@@ -41,7 +46,7 @@ export function CurrencyPicker({ value }: { value: string }) {
       if (!res.ok) return toast(res.error)
       applyCurrency(c.code)
       close()
-      toast(`Amounts are now shown in ${c.name}`)
+      toast(t.nowShownIn(name(c)))
     })
 
   return (
@@ -51,9 +56,9 @@ export function CurrencyPicker({ value }: { value: string }) {
           <Icon name="coins" />
         </span>
         <div className="mid">
-          <b>Currency</b>
+          <b>{t.title}</b>
           <small>
-            {current.name} ({current.symbol})
+            {name(current)} ({current.symbol})
           </small>
         </div>
         <span className="val">
@@ -65,8 +70,8 @@ export function CurrencyPicker({ value }: { value: string }) {
       <div className={`sheet tz-sheet${open ? ' on' : ''}`} role="dialog" aria-modal="true" aria-labelledby="cur-title" aria-hidden={!open}>
         <div className="grab" />
         <div className="sheet-h">
-          <h2 id="cur-title">{confirm ? `Switch to ${confirm.name}?` : 'Currency'}</h2>
-          <button className="icon-btn" style={{ boxShadow: 'none', background: 'var(--surface-2)' }} aria-label="Close" onClick={close}>
+          <h2 id="cur-title">{confirm ? t.switchTitle(name(confirm)) : t.title}</h2>
+          <button className="icon-btn" style={{ boxShadow: 'none', background: 'var(--surface-2)' }} aria-label={m.common.close} onClick={close}>
             <Icon name="x" />
           </button>
         </div>
@@ -75,17 +80,15 @@ export function CurrencyPicker({ value }: { value: string }) {
           <div className="stack" style={{ gap: 14 }}>
             <div className="notice">
               <Icon name="tag" />
-              <span>
-                Your amounts stay the same numbers: 12,500 {current.symbol} becomes 12,500 {confirm.symbol}. Nothing is converted. Use this if you picked the wrong currency.
-              </span>
+              <span>{t.relabel(current.symbol, confirm.symbol)}</span>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button className="btn ghost" onClick={() => setConfirm(null)} disabled={pending}>
-                Keep {current.symbol}
+                {t.keep(current.symbol)}
               </button>
               <button className="btn" style={{ flex: 1 }} onClick={() => switchTo(confirm)} disabled={pending}>
                 <Icon name={pending ? 'loader' : 'check'} />
-                Switch to {confirm.symbol}
+                {t.switchTo(confirm.symbol)}
               </button>
             </div>
           </div>
@@ -93,19 +96,19 @@ export function CurrencyPicker({ value }: { value: string }) {
           <>
             <label className="search" style={{ boxShadow: 'none', background: 'var(--surface-2)', marginBottom: 10 }}>
               <Icon name="search" />
-              <span className="sr">Search a currency</span>
-              <input ref={search} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a currency" autoComplete="off" />
+              <span className="sr">{t.search}</span>
+              <input ref={search} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.search} autoComplete="off" />
             </label>
-            <div className="tz-list" role="listbox" aria-label="Currencies">
+            <div className="tz-list" role="listbox" aria-label={t.list}>
               {results.map((c) => (
                 <button key={c.code} type="button" className="row" role="option" aria-selected={c.code === current.code} onClick={() => (c.code === current.code ? close() : setConfirm(c))}>
                   <span className="tile cur-tile" aria-hidden="true">
                     {c.symbol}
                   </span>
                   <span className="mid">
-                    <b>{c.name}</b>
+                    <b>{name(c)}</b>
                     <small>
-                      {c.code} · {c.decimals ? 'with cents' : 'no cents'}
+                      {c.code} · {c.decimals ? t.withCents : t.noCents}
                     </small>
                   </span>
                   {c.code === current.code && <Icon name="check" style={{ color: 'var(--brand-ink)' }} />}
@@ -114,7 +117,7 @@ export function CurrencyPicker({ value }: { value: string }) {
               {results.length === 0 && (
                 <div className="empty">
                   <Icon name="search-x" />
-                  <p>No currency matches “{q}”.</p>
+                  <p>{t.noMatch(q)}</p>
                 </div>
               )}
             </div>

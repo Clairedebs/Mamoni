@@ -1,6 +1,7 @@
 'use client'
 
 import { Icon } from './Icon'
+import { useT } from './i18n'
 
 /** Applies one keypad key to an amount string: digits, at most one ".", `decimals` digits after it. */
 export function pressKey(amount: string, k: string, decimals = 0) {
@@ -36,10 +37,11 @@ export function sanitizeMoney(raw: string, decimals = 0) {
 
 export function Keypad({ onKey, decimals = 0 }: { onKey: (k: string) => void; decimals?: number }) {
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', decimals ? '.' : '000', '0', 'del']
+  const m = useT()
   return (
     <div className="pad">
       {keys.map((k) => (
-        <button key={k} type="button" className="key" aria-label={k === 'del' ? 'Delete' : k === '.' ? 'Decimal point' : k} onClick={() => onKey(k)}>
+        <button key={k} type="button" className="key" aria-label={k === 'del' ? m.keypad.delete : k === '.' ? m.keypad.decimal : k} onClick={() => onKey(k)}>
           {k === 'del' ? <Icon name="delete" /> : k === '000' ? <small>000</small> : k === '.' ? <span aria-hidden="true">.</span> : k}
         </button>
       ))}

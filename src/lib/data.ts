@@ -5,6 +5,8 @@ import { requireUser } from './supabase/server'
 import { addDays, minutesIn, monthRange, shortDate, todayIn } from './format'
 import { groupCoverage, hasTurnToday, statusLine, type Coverage, type GroupStatus } from './tontine'
 import { currencyOf } from './currencies'
+import { localizeCategory, messages } from './i18n'
+import { requestLang } from './i18n/server'
 import type { Category, Pot, Profile, TontineGroup, TontineTurn, Transaction } from './types'
 
 export const getProfile = cache(async (): Promise<Profile> => {
@@ -21,14 +23,14 @@ export const getToday = cache(async () => {
 })
 
 export const getCategories = cache(async (): Promise<Category[]> => {
-  const { supabase } = await requireUser()
+  const [{ supabase }, lang] = await Promise.all([requireUser(), requestLang()])
   const { data, error } = await supabase
     .from('categories')
     .select('id, kind, name, icon, color, description, is_default, position, role')
     .order('position')
     .order('created_at')
   if (error) throw error
-  return data as Category[]
+  return (data as Category[]).map((c) => localizeCategory(c, lang))
 })
 
 export const getPots = cache(async (): Promise<Pot[]> => {
@@ -132,8 +134,9 @@ const TONE_ORDER: GroupStatus['tone'][] = ['turn', 'late', 'soon', 'ok', 'done']
 
 export const getTontineGroups = cache(async (): Promise<TontineView[]> => {
   const { supabase } = await requireUser()
-  const [profile, today] = await Promise.all([getProfile(), getToday()])
+  const [profile, today, lang] = await Promise.all([getProfile(), getToday(), requestLang()])
   const nowMinutes = minutesIn(profile.timezone)
+  const label = (iso: string) => shortDate(iso, lang)
   const [groups, turns, txs] = await Promise.all([
     supabase.from('tontine_groups').select('*').order('created_at'),
     supabase.from('tontine_turns').select('id, group_id, turn_on, expected_amount, status, transaction_id').order('turn_on'),
@@ -152,8 +155,8 @@ export const getTontineGroups = cache(async (): Promise<TontineView[]> => {
     const turnToday = hasTurnToday(groupTurns, today)
     const status: GroupStatus =
       group.status === 'ended'
-        ? { tone: 'done', text: `Ended ${shortDate(group.ended_on ?? today)}` }
-        : statusLine(c, { today, turnToday, label: shortDate, symbol: currencyOf(profile.currency).symbol }, group.frequency)
+        ? { tone: 'done', text: messages(lang).status.ended(label(group.ended_on ?? today)) }
+        : statusLine(c, { today, turnToday, label, symbol: currencyOf(profile.currency).symbol }, group.frequency, lang)
     return { group, turns: groupTurns, paid, paidTotal, collected, coverage: c, status }
   })
 

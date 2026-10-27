@@ -1,9 +1,5 @@
 import type { PaletteKey } from './types'
-
-export const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-export const LONG_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-export const LONG_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+import { messages, type Lang } from './i18n'
 
 /** 3012250 -> "3,012,250" */
 const group = (digits: string) => digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -31,20 +27,33 @@ export function todayIn(timeZone: string) {
   return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
 }
 
-export function shortDate(iso: string) {
+/** "Mon, Oct 27" / "lun. 27 oct." */
+export function shortDate(iso: string, lang: Lang) {
   const d = parseIso(iso)
-  return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`
+  const t = messages(lang).date
+  return t.short(t.days[d.getDay()], d.getDate(), t.months[d.getMonth()])
 }
 
-export function dayLabel(iso: string, today: string) {
-  if (iso === today) return 'Today'
-  if (iso === addDays(today, -1)) return 'Yesterday'
-  return shortDate(iso)
+/** "Monday, October 27, 2026" / "lundi 27 octobre 2026" */
+export function fullDate(iso: string, lang: Lang) {
+  const d = parseIso(iso)
+  const t = messages(lang).date
+  return t.full(t.longDays[d.getDay()], d.getDate(), t.longMonths[d.getMonth()], d.getFullYear())
 }
 
-export function monthLabel(iso: string) {
-  const d = parseIso(iso)
-  return `${LONG_MONTHS[d.getMonth()]} ${d.getFullYear()}`
+export function dayLabel(iso: string, today: string, lang: Lang) {
+  if (iso === today) return messages(lang).date.today
+  if (iso === addDays(today, -1)) return messages(lang).date.yesterday
+  return shortDate(iso, lang)
+}
+
+export const monthShort = (iso: string, lang: Lang) => messages(lang).date.months[parseIso(iso).getMonth()]
+export const monthLong = (iso: string, lang: Lang) => messages(lang).date.longMonths[parseIso(iso).getMonth()]
+export const weekdayLong = (iso: string, lang: Lang) => messages(lang).date.longDays[parseIso(iso).getDay()]
+
+/** "October 2026" / "Octobre 2026" */
+export function monthLabel(iso: string, lang: Lang) {
+  return messages(lang).date.monthYear(monthLong(iso, lang), parseIso(iso).getFullYear())
 }
 
 export function monthRange(iso: string) {
@@ -58,17 +67,9 @@ export function daysUntil(iso: string, today: string) {
   return Math.round((parseIso(iso).getTime() - parseIso(today).getTime()) / 864e5)
 }
 
-export function dueIn(iso: string, today: string) {
-  const n = daysUntil(iso, today)
-  if (n < 0) return 'Overdue'
-  if (n === 0) return 'Due today'
-  if (n === 1) return 'Due tomorrow'
-  return `Due in ${n} days`
-}
-
-export function sinceLabel(iso: string) {
-  const d = parseIso(iso)
-  return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`
+/** "Oct 2026" / "oct. 2026" */
+export function sinceLabel(iso: string, lang: Lang) {
+  return `${monthShort(iso, lang)} ${parseIso(iso).getFullYear()}`
 }
 
 export const tint = (k: PaletteKey) => ({
@@ -76,14 +77,15 @@ export const tint = (k: PaletteKey) => ({
   background: `color-mix(in oklab, var(--pal-${k}) 14%, transparent)`,
 })
 
-export function greetingFor(hour: number) {
-  if (hour >= 5 && hour < 12) return 'Good morning,'
-  if (hour >= 12 && hour < 18) return 'Good afternoon,'
-  return 'Good evening,'
+export function greetingFor(hour: number, lang: Lang) {
+  const t = messages(lang).greeting
+  if (hour >= 5 && hour < 12) return t.morning
+  if (hour >= 12 && hour < 18) return t.afternoon
+  return t.evening
 }
 
-export function greeting(timeZone: string) {
-  return greetingFor(Number(new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', hourCycle: 'h23' }).format(new Date())))
+export function greeting(timeZone: string, lang: Lang) {
+  return greetingFor(Number(new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', hourCycle: 'h23' }).format(new Date())), lang)
 }
 
 /** Minutes since local midnight in the given IANA time zone. */

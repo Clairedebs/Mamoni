@@ -6,6 +6,7 @@ import { Icon } from './Icon'
 import { usePickers } from './Pickers'
 import { useToast } from './Toast'
 import { useCurrency } from './currency'
+import { useLang, useT } from './i18n'
 import { sanitizeMoney, typedLabel } from './Keypad'
 import { deletePot, savePot } from '@/lib/actions'
 import { shortDate, tint } from '@/lib/format'
@@ -17,6 +18,9 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
   const toast = useToast()
   const cur = useCurrency()
   const { openDate } = usePickers()
+  const lang = useLang()
+  const m = useT()
+  const t = m.potForm
   const [pending, start] = useTransition()
   const [cat, setCat] = useState(pot?.category_id ?? categoryId ?? cats[0]?.id ?? '')
   const [name, setName] = useState(pot?.name ?? '')
@@ -39,7 +43,7 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
         goalAmount: goal ? Number(goal) : null,
       })
       if (!res.ok) return setErr(res.error)
-      toast(pot ? 'Changes saved' : `Pot “${name.trim()}” created`)
+      toast(pot ? m.common.changesSaved : t.created(name.trim()))
       router.replace(`/savings/${res.data.id}`)
     })
 
@@ -47,7 +51,7 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
     start(async () => {
       const res = await deletePot(pot!.id)
       if (!res.ok) return setErr(res.error)
-      toast(`“${pot!.name}” deleted`)
+      toast(m.common.deleted(pot!.name))
       router.replace('/savings')
     })
 
@@ -55,8 +59,8 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
     <>
       <div className="panel stack">
         <div className="fld">
-          <label>Category</label>
-          <div className="chips" style={{ padding: 0 }} role="group" aria-label="Savings category">
+          <label>{m.common.category}</label>
+          <div className="chips" style={{ padding: 0 }} role="group" aria-label={t.savingsCategory}>
             {cats.map((c) => (
               <button key={c.id} type="button" className="chipsel" aria-pressed={cat === c.id} onClick={() => setCat(c.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                 <Icon name={c.icon} size={15} style={{ color: tint(c.color).color }} />
@@ -66,47 +70,47 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
           </div>
         </div>
         <div className="fld">
-          <label htmlFor="pot-name">Name</label>
+          <label htmlFor="pot-name">{m.common.name}</label>
           <div className="text-in">
-            <input id="pot-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={32} placeholder="e.g. Girlfriends tontine" autoComplete="off" />
+            <input id="pot-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={32} placeholder={t.namePlaceholder} autoComplete="off" />
           </div>
         </div>
         <div className="fld">
           <label htmlFor="pot-note">
-            Note <span className="muted" style={{ fontWeight: 450 }}>(optional)</span>
+            {m.common.note} <span className="muted" style={{ fontWeight: 450 }}>{m.common.optional}</span>
           </label>
           <div className="text-in">
-            <input id="pot-note" value={note} onChange={(e) => setNote(e.target.value)} maxLength={60} placeholder="e.g. 25,000 / month · round 7 of 12" autoComplete="off" />
+            <input id="pot-note" value={note} onChange={(e) => setNote(e.target.value)} maxLength={60} placeholder={t.notePlaceholder} autoComplete="off" />
           </div>
         </div>
       </div>
 
       <div className="section-h">
-        <h2>Starting balance</h2>
+        <h2>{m.pot.startingBalance}</h2>
       </div>
       <div className="panel stack">
         <div className="fld">
-          <label htmlFor="pot-init">What&apos;s already in it</label>
+          <label htmlFor="pot-init">{t.alreadyIn}</label>
           <div className="money">
             <input id="pot-init" inputMode={cur.decimals ? 'decimal' : 'numeric'} value={initial ? typedLabel(initial) : ''} onChange={(e) => setInitial(sanitizeMoney(e.target.value, cur.decimals))} placeholder="0" />
             <span className="cur-label" />
           </div>
         </div>
         <div className="fld">
-          <label>As of</label>
+          <label>{t.asOf}</label>
           <div>
-            <button type="button" className="time" aria-haspopup="dialog" onClick={(e) => openDate({ anchor: e.currentTarget, value: startedOn, today, max: today, title: 'Starting balance date', onPick: setStartedOn })}>
+            <button type="button" className="time" aria-haspopup="dialog" onClick={(e) => openDate({ anchor: e.currentTarget, value: startedOn, today, max: today, title: t.dateTitle, onPick: setStartedOn })}>
               <Icon name="calendar" />
-              {shortDate(startedOn)}
+              {shortDate(startedOn, lang)}
             </button>
           </div>
         </div>
         <div className="fld">
           <label htmlFor="pot-goal">
-            Goal <span className="muted" style={{ fontWeight: 450 }}>(optional)</span>
+            {m.pot.goal} <span className="muted" style={{ fontWeight: 450 }}>{m.common.optional}</span>
           </label>
           <div className="money">
-            <input id="pot-goal" inputMode={cur.decimals ? 'decimal' : 'numeric'} value={goal ? typedLabel(goal) : ''} onChange={(e) => setGoal(sanitizeMoney(e.target.value, cur.decimals))} placeholder="No goal" />
+            <input id="pot-goal" inputMode={cur.decimals ? 'decimal' : 'numeric'} value={goal ? typedLabel(goal) : ''} onChange={(e) => setGoal(sanitizeMoney(e.target.value, cur.decimals))} placeholder={t.noGoal} />
             <span className="cur-label" />
           </div>
         </div>
@@ -119,16 +123,16 @@ export function PotForm({ cats, pot, categoryId, today, hasMoves }: { cats: Cate
       )}
       <button className="btn block" style={{ marginTop: 18 }} disabled={!name.trim() || !cat || pending} onClick={submit}>
         <Icon name={pending ? 'loader' : 'check'} />
-        {pot ? 'Save changes' : 'Create pot'}
+        {pot ? m.common.saveChanges : t.create}
       </button>
 
       {pot && (
         <div className="danger-zone">
           <button className="btn-danger" disabled={hasMoves || pending} onClick={remove}>
             <Icon name="trash-2" />
-            Delete pot
+            {t.delete}
           </button>
-          <span className="hint">{hasMoves ? 'This pot has deposits or withdrawals. Delete those first.' : 'This removes the pot and its starting balance.'}</span>
+          <span className="hint">{hasMoves ? t.hasMoves : t.deleteHint}</span>
         </div>
       )}
     </>

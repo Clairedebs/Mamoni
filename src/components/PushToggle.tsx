@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from 'react'
 import { Icon } from './Icon'
 import { useToast } from './Toast'
+import { useT } from './i18n'
 import { removePushSubscription, savePushSubscription, sendTestNotification } from '@/lib/actions'
 
 function urlB64(base64: string) {
@@ -18,6 +19,7 @@ export function PushToggle() {
   const toast = useToast()
   const [state, setState] = useState<State>('loading')
   const [pending, start] = useTransition()
+  const t = useT().push
 
   useEffect(() => {
     ;(async () => {
@@ -34,7 +36,7 @@ export function PushToggle() {
   const enable = () =>
     start(async () => {
       const key = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-      if (!key) return toast('Push keys are missing on the server.')
+      if (!key) return toast(t.missingKeys)
       const perm = await Notification.requestPermission()
       if (perm !== 'granted') return setState(perm === 'denied' ? 'denied' : 'off')
       const reg = (await navigator.serviceWorker.getRegistration()) ?? (await navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' }))
@@ -43,7 +45,7 @@ export function PushToggle() {
       const res = await savePushSubscription(JSON.parse(JSON.stringify(sub)))
       if (!res.ok) return toast(res.error)
       setState('on')
-      toast('Notifications are on for this device')
+      toast(t.enabled)
     })
 
   const disable = () =>
@@ -60,17 +62,17 @@ export function PushToggle() {
   const test = () =>
     start(async () => {
       const res = await sendTestNotification()
-      toast(res.ok ? 'Test notification sent' : res.error)
+      toast(res.ok ? t.testSent : res.error)
     })
 
   const sub =
     state === 'ios-install'
-      ? 'On iPhone, add Moni yem to your Home Screen first (Share › Add to Home Screen).'
+      ? t.iosInstall
       : state === 'unsupported'
-        ? 'This browser can’t receive notifications.'
+        ? t.unsupported
         : state === 'denied'
-          ? 'Notifications are blocked. Allow them in your browser settings.'
-          : 'Reminders arrive even when the app is closed'
+          ? t.denied
+          : t.hint
 
   return (
     <>
@@ -79,11 +81,11 @@ export function PushToggle() {
           <Icon name="bell" />
         </span>
         <div className="mid">
-          <b>Notifications on this device</b>
+          <b>{t.title}</b>
           <small>{sub}</small>
         </div>
         {(state === 'on' || state === 'off') && (
-          <button className="switch" role="switch" aria-checked={state === 'on'} aria-label="Notifications on this device" disabled={pending} onClick={state === 'on' ? disable : enable} />
+          <button className="switch" role="switch" aria-checked={state === 'on'} aria-label={t.title} disabled={pending} onClick={state === 'on' ? disable : enable} />
         )}
       </div>
       {state === 'on' && (
@@ -92,7 +94,7 @@ export function PushToggle() {
             <Icon name="send" />
           </span>
           <div className="mid">
-            <b>Send a test notification</b>
+            <b>{t.test}</b>
           </div>
           <span className="val">
             <Icon name={pending ? 'loader' : 'chevron-right'} />

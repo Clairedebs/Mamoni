@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Icon } from './Icon'
+import { useT } from './i18n'
 
 type ToastItem = { id: number; msg: string; undo?: () => void; leaving?: boolean }
 const Ctx = createContext<(msg: string, undo?: () => void) => void>(() => {})
@@ -10,6 +11,7 @@ export const useToast = () => useContext(Ctx)
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [t, setT] = useState<ToastItem | null>(null)
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const m = useT()
 
   const dismiss = useCallback(() => {
     setT((cur) => (cur ? { ...cur, leaving: true } : cur))
@@ -41,7 +43,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 dismiss()
               }}
             >
-              Undo
+              {m.toast.undo}
             </button>
           )}
         </div>

@@ -1,7 +1,7 @@
 'use server'
 
 import { refresh } from 'next/cache'
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import webpush from 'web-push'
 import { createClient, requireUser } from './supabase/server'
@@ -10,6 +10,8 @@ import { validateTxEdit } from './tx'
 import { CURRENCIES, isMoney } from './currencies'
 import { PALETTE, type CategoryKind, type PaletteKey, type ReminderFrequency, type TransactionKind } from './types'
 import { ICON_NAMES } from '@/components/icon-names'
+import { LANG_COOKIE, isLang, messages, type Messages } from './i18n'
+import { requestLang, requestT } from './i18n/server'
 
 type Result<T = null> = { ok: true; data: T } | { ok: false; error: string }
 const fail = (error: string): Result<never> => ({ ok: false, error })
@@ -18,17 +20,17 @@ const clean = (s: unknown, max: number) => (typeof s === 'string' ? s.trim().sli
 const amountOk = (n: unknown): n is number => typeof n === 'number' && isMoney(n)
 const zeroOrMoney = (n: unknown) => n === 0 || amountOk(n)
 
-function dbError(e: { code?: string; message: string }) {
-  if (e.code === '23505') return 'That name is already used.'
-  if (e.code === '23503') return 'This is still used elsewhere, so it can’t be removed.'
-  return 'Something went wrong. Please try again.'
+function dbError(e: { code?: string; message: string }, t: Messages) {
+  if (e.code === '23505') return t.errors.duplicateName
+  if (e.code === '23503') return t.errors.stillUsed
+  return t.errors.generic
 }
 
 // ---------------------------------------------------------------- auth
 export async function signIn(_: unknown, form: FormData): Promise<Result | undefined> {
-  const supabase = await createClient()
+  const [supabase, t] = await Promise.all([createClient(), requestT()])
   const { data: auth, error } = await supabase.auth.signInWithPassword({ email: clean(form.get('email'), 200), password: String(form.get('password') ?? '') })
-  if (error) return fail(error.message === 'Invalid login credentials' ? 'Wrong email or password.' : error.message)
+  if (error) return fail(error.message === 'Invalid login credentials' ? t.errors.wrongCredentials : error.message)
   const { data: profile } = await supabase.from('profiles').select('onboarded_at').eq('id', auth.user.id).single()
   if (profile && !profile.onboarded_at) redirect('/welcome')
   const next = clean(form.get('next'), 200)
@@ -36,10 +38,10 @@ export async function signIn(_: unknown, form: FormData): Promise<Result | undef
 }
 
 export async function signUp(_: unknown, form: FormData): Promise<Result<{ confirm: boolean }>> {
-  const supabase = await createClient()
+  const [supabase, t] = await Promise.all([createClient(), requestT()])
   const name = clean(form.get('name'), 40)
   const password = String(form.get('password') ?? '')
-  if (password.length < 8) return fail('Use at least 8 characters for your password.')
+  if (password.length < 8) return fail(t.errors.shortPassword)
   const origin = (await headers()).get('origin') ?? ''
   const { data, error } = await supabase.auth.signUp({
     email: clean(form.get('email'), 200),
@@ -59,9 +61,10 @@ export async function signOut() {
 
 /** Marks the welcome tour as done (finished or skipped), so it doesn't open again on its own. */
 export async function completeOnboarding(): Promise<Result> {
-  const { supabase, userId } = await requireUser()
-  const { error } = await supabase.from('profiles').update({ onboarded_at: new Date().toISOString() }).eq('id', userId).is('onboarded_at', null)
-  if (error) return fail(dbError(error))
+  const [{ supabase, userId }, lang] = await Promise.all([requireUser(), requestLang()])
+  // New accounts keep the language they signed up in, so their reminders arrive in it too.
+  const { error } = await supabase.from('profiles').update({ onboarded_at: new Date().toISOString(), language: lang }).eq('id', userId).is('onboarded_at', null)
+  if (error) return fail(dbError(error, await requestT()))
   return { ok: true, data: null }
 }
 
@@ -75,9 +78,9 @@ export async function addTransaction(input: {
   note?: string
   groupId?: string
 }): Promise<Result<{ id: string }>> {
-  const { supabase } = await requireUser()
-  if (!amountOk(input.amount)) return fail('Enter an amount.')
-  if (!ISO.test(input.occurredOn)) return fail('Pick a valid date.')
+  const [{ supabase }, t] = await Promise.all([requireUser(), requestT()])
+  if (!amountOk(input.amount)) return fail(t.errors.amount)
+  if (!ISO.test(input.occurredOn)) return fail(t.errors.date)
   const isSaving = input.kind === 'deposit' || input.kind === 'withdrawal'
   const { data, error } = await supabase
     .from('transactions')
@@ -92,7 +95,7 @@ export async function addTransaction(input: {
     })
     .select('id')
     .single()
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, t))
   refresh()
   return { ok: true, data: { id: data.id } }
 }
@@ -100,17 +103,18 @@ export async function addTransaction(input: {
 export async function deleteTransaction(id: string): Promise<Result> {
   const { supabase } = await requireUser()
   const { error } = await supabase.from('transactions').delete().eq('id', id)
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, await requestT()))
   refresh()
   return { ok: true, data: null }
 }
 
 export async function updateTransaction(input: { id: string; amount: number; occurredOn: string; note?: string; categoryId?: string; potId?: string }): Promise<Result> {
-  const { supabase } = await requireUser()
-  const invalid = validateTxEdit({ amount: input.amount, occurredOn: input.occurredOn, today: await getToday() })
+  const [{ supabase }, lang] = await Promise.all([requireUser(), requestLang()])
+  const t = messages(lang)
+  const invalid = validateTxEdit({ amount: input.amount, occurredOn: input.occurredOn, today: await getToday() }, lang)
   if (invalid) return fail(invalid)
   const { data: tx, error: readErr } = await supabase.from('transactions').select('kind, group_id').eq('id', input.id).single()
-  if (readErr || !tx) return fail('Transaction not found.')
+  if (readErr || !tx) return fail(t.errors.transactionNotFound)
   const patch: Record<string, unknown> = { amount: input.amount, occurred_on: input.occurredOn, note: clean(input.note, 80) || null }
   if (tx.kind === 'deposit' || tx.kind === 'withdrawal') {
     if (input.potId) patch.pot_id = input.potId
@@ -118,7 +122,7 @@ export async function updateTransaction(input: { id: string; amount: number; occ
     patch.category_id = input.categoryId
   }
   const { error } = await supabase.from('transactions').update(patch).eq('id', input.id)
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, t))
   refresh()
   return { ok: true, data: null }
 }
@@ -135,7 +139,7 @@ export async function restoreTransaction(t: { kind: TransactionKind; amount: num
     occurred_on: t.occurred_on,
     note: t.note,
   })
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, await requestT()))
   refresh()
   return { ok: true, data: null }
 }
@@ -149,27 +153,27 @@ export async function saveCategory(input: {
   color: PaletteKey
   description?: string
 }): Promise<Result<{ id: string }>> {
-  const { supabase } = await requireUser()
+  const [{ supabase }, t] = await Promise.all([requireUser(), requestT()])
   const name = clean(input.name, 24)
-  if (!name) return fail('Give your category a name.')
-  if (!ICON_NAMES.includes(input.icon)) return fail('Pick an icon.')
-  if (!PALETTE.includes(input.color)) return fail('Pick a color.')
+  if (!name) return fail(t.errors.categoryName)
+  if (!ICON_NAMES.includes(input.icon)) return fail(t.errors.icon)
+  if (!PALETTE.includes(input.color)) return fail(t.errors.color)
   const row = { name, icon: input.icon, color: input.color, description: input.kind === 'saving' ? clean(input.description, 48) || null : null }
   const q = input.id
     ? supabase.from('categories').update(row).eq('id', input.id).select('id').single()
     : supabase.from('categories').insert({ ...row, kind: input.kind, position: 1000 }).select('id').single()
   const { data, error } = await q
-  if (error) return fail(error.code === '23505' ? `You already have a category called “${name}”.` : dbError(error))
+  if (error) return fail(error.code === '23505' ? t.errors.categoryExists(name) : dbError(error, t))
   refresh()
   return { ok: true, data: { id: data.id } }
 }
 
 export async function deleteCategory(id: string): Promise<Result> {
-  const { supabase } = await requireUser()
+  const [{ supabase }, t] = await Promise.all([requireUser(), requestT()])
   const { data: cat } = await supabase.from('categories').select('role').eq('id', id).single()
-  if (cat?.role) return fail('Moni yem needs this category for tontines.')
+  if (cat?.role) return fail(t.categories.neededForTontines)
   const { error } = await supabase.from('categories').delete().eq('id', id)
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, t))
   refresh()
   return { ok: true, data: null }
 }
@@ -184,12 +188,12 @@ export async function savePot(input: {
   startedOn: string
   goalAmount?: number | null
 }): Promise<Result<{ id: string }>> {
-  const { supabase } = await requireUser()
+  const [{ supabase }, t] = await Promise.all([requireUser(), requestT()])
   const name = clean(input.name, 32)
-  if (!name) return fail('Give your pot a name.')
-  if (!zeroOrMoney(input.initialAmount)) return fail('Starting balance must be 0 or more.')
-  if (input.goalAmount && !amountOk(input.goalAmount)) return fail('Enter a valid goal.')
-  if (!ISO.test(input.startedOn)) return fail('Pick a valid start date.')
+  if (!name) return fail(t.errors.potName)
+  if (!zeroOrMoney(input.initialAmount)) return fail(t.errors.startingBalance)
+  if (input.goalAmount && !amountOk(input.goalAmount)) return fail(t.errors.goal)
+  if (!ISO.test(input.startedOn)) return fail(t.errors.startDate)
   const row = {
     category_id: input.categoryId,
     name,
@@ -202,7 +206,7 @@ export async function savePot(input: {
     ? supabase.from('pots').update(row).eq('id', input.id).select('id').single()
     : supabase.from('pots').insert(row).select('id').single()
   const { data, error } = await q
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, t))
   refresh()
   return { ok: true, data: { id: data.id } }
 }
@@ -210,20 +214,20 @@ export async function savePot(input: {
 export async function deletePot(id: string): Promise<Result> {
   const { supabase } = await requireUser()
   const { error } = await supabase.from('pots').delete().eq('id', id)
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, await requestT()))
   refresh()
   return { ok: true, data: null }
 }
 
 export async function saveStartingBalances(input: { openingCash: number; pots: { id: string; initial: number }[] }): Promise<Result> {
-  const { supabase, userId } = await requireUser()
+  const [{ supabase, userId }, t] = await Promise.all([requireUser(), requestT()])
   const values = [input.openingCash, ...input.pots.map((p) => p.initial)]
-  if (values.some((v) => !zeroOrMoney(v))) return fail('Amounts must be 0 or more, with at most 2 decimals.')
+  if (values.some((v) => !zeroOrMoney(v))) return fail(t.errors.balances)
   const { error } = await supabase.from('profiles').update({ opening_cash: input.openingCash }).eq('id', userId)
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, t))
   for (const p of input.pots) {
     const { error: e } = await supabase.from('pots').update({ initial_amount: p.initial }).eq('id', p.id)
-    if (e) return fail(dbError(e))
+    if (e) return fail(dbError(e, t))
   }
   refresh()
   return { ok: true, data: null }
@@ -240,30 +244,40 @@ export async function updateSettings(patch: {
   contribution_lead_days?: number
   timezone?: string
 }): Promise<Result> {
-  const { supabase, userId } = await requireUser()
-  if (patch.reminder_time && !/^\d{2}:\d{2}$/.test(patch.reminder_time)) return fail('Pick a valid time.')
-  if (patch.contribution_lead_days !== undefined && ![0, 1, 2].includes(patch.contribution_lead_days)) return fail('Invalid reminder lead time.')
+  const [{ supabase, userId }, t] = await Promise.all([requireUser(), requestT()])
+  if (patch.reminder_time && !/^\d{2}:\d{2}$/.test(patch.reminder_time)) return fail(t.errors.time)
+  if (patch.contribution_lead_days !== undefined && ![0, 1, 2].includes(patch.contribution_lead_days)) return fail(t.errors.leadTime)
   if (patch.timezone) {
     try {
       new Intl.DateTimeFormat('en', { timeZone: patch.timezone })
     } catch {
-      return fail('Unknown timezone.')
+      return fail(t.errors.timeZone)
     }
   }
   if (patch.display_name !== undefined) patch.display_name = clean(patch.display_name, 40)
   const { error } = await supabase.from('profiles').update(patch).eq('id', userId)
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, t))
   refresh()
   return { ok: true, data: null }
 }
 
 /** Relabels every amount with another currency; the numbers themselves don't change. */
 export async function changeCurrency(code: string): Promise<Result> {
-  const { supabase, userId } = await requireUser()
-  if (!CURRENCIES.some((c) => c.code === code)) return fail('Unknown currency.')
+  const [{ supabase, userId }, t] = await Promise.all([requireUser(), requestT()])
+  if (!CURRENCIES.some((c) => c.code === code)) return fail(t.errors.currency)
   const { error } = await supabase.from('profiles').update({ currency: code }).eq('id', userId)
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, t))
   refresh()
+  return { ok: true, data: null }
+}
+
+/** Saves the app language on this device (cookie) and on the account (for push reminders); the page reloads after. */
+export async function changeLanguage(lang: string): Promise<Result> {
+  const [{ supabase, userId }, t] = await Promise.all([requireUser(), requestT()])
+  if (!isLang(lang)) return fail(t.errors.language)
+  const { error } = await supabase.from('profiles').update({ language: lang }).eq('id', userId)
+  if (error) return fail(dbError(error, t))
+  ;(await cookies()).set(LANG_COOKIE, lang, { path: '/', maxAge: 60 * 60 * 24 * 365, sameSite: 'lax' })
   return { ok: true, data: null }
 }
 
@@ -277,12 +291,12 @@ function vapidReady() {
 }
 
 export async function savePushSubscription(sub: { endpoint: string; keys: { p256dh: string; auth: string } }): Promise<Result> {
-  const { supabase, userId } = await requireUser()
-  if (!sub?.endpoint?.startsWith('https://') || !sub.keys?.p256dh || !sub.keys?.auth) return fail('Invalid subscription.')
+  const [{ supabase, userId }, t] = await Promise.all([requireUser(), requestT()])
+  if (!sub?.endpoint?.startsWith('https://') || !sub.keys?.p256dh || !sub.keys?.auth) return fail(t.errors.subscription)
   const { error } = await supabase
     .from('push_subscriptions')
     .upsert({ user_id: userId, endpoint: sub.endpoint, p256dh: sub.keys.p256dh, auth: sub.keys.auth }, { onConflict: 'endpoint' })
-  if (error) return fail(dbError(error))
+  if (error) return fail(dbError(error, t))
   return { ok: true, data: null }
 }
 
@@ -293,16 +307,16 @@ export async function removePushSubscription(endpoint: string): Promise<Result> 
 }
 
 export async function sendTestNotification(): Promise<Result<{ sent: number }>> {
-  const { supabase } = await requireUser()
-  if (!vapidReady()) return fail('Push keys are not configured on the server.')
+  const [{ supabase }, t] = await Promise.all([requireUser(), requestT()])
+  if (!vapidReady()) return fail(t.errors.pushNotConfigured)
   const { data } = await supabase.from('push_subscriptions').select('endpoint, p256dh, auth')
-  if (!data?.length) return fail('Turn on notifications on this device first.')
+  if (!data?.length) return fail(t.errors.pushFirst)
   let sent = 0
   for (const s of data) {
     try {
       await webpush.sendNotification(
         { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
-        JSON.stringify({ title: 'Time for a quick check-in?', body: 'This is how your Moni yem reminders will look.', url: '/' }),
+        JSON.stringify({ title: t.notifications.dailyTitle, body: t.notifications.testBody, url: '/' }),
       )
       sent++
     } catch (e) {
@@ -310,5 +324,5 @@ export async function sendTestNotification(): Promise<Result<{ sent: number }>> 
       if (status === 404 || status === 410) await supabase.from('push_subscriptions').delete().eq('endpoint', s.endpoint)
     }
   }
-  return sent ? { ok: true, data: { sent } } : fail('Could not reach this device. Try turning notifications off and on.')
+  return sent ? { ok: true, data: { sent } } : fail(t.errors.pushUnreachable)
 }

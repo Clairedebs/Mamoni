@@ -7,6 +7,7 @@ import { Icon } from './Icon'
 import { useAddSheet } from './AppShell'
 import { Keypad, pressKey, typedLabel } from './Keypad'
 import { useCurrency } from './currency'
+import { useLang, useT } from './i18n'
 import { usePickers } from './Pickers'
 import { useToast } from './Toast'
 import { addTransaction, deleteTransaction } from '@/lib/actions'
@@ -14,7 +15,6 @@ import { dayLabel, fmt, tint } from '@/lib/format'
 import type { Category, Pot, TransactionKind } from '@/lib/types'
 
 type Tab = 'expense' | 'income' | 'saving'
-const LABEL: Record<TransactionKind, string> = { expense: 'expense', income: 'income', deposit: 'deposit', withdrawal: 'withdrawal' }
 
 export type SheetGroup = { id: string; name: string; perPeriod: number; frequency: 'weekly' | 'monthly' }
 
@@ -25,6 +25,9 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
   const router = useRouter()
   const [pending, start] = useTransition()
   const cur = useCurrency()
+  const lang = useLang()
+  const m = useT()
+  const s = m.addSheet
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState<Tab>('expense')
   const [dir, setDir] = useState<'deposit' | 'withdrawal'>('deposit')
@@ -104,8 +107,7 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
       })
       if (!res.ok) return setErr(res.error)
       shut()
-      const what = { expense: 'Expense', income: 'Income', deposit: 'Deposit', withdrawal: 'Withdrawal' }[kind]
-      toast(`${what} of ${fmt(Number(amt))} ${cur.symbol} saved${date !== today ? ` · ${dayLabel(date, today)}` : ''}`, async () => {
+      toast(`${s.saved[kind](`${fmt(Number(amt))} ${cur.symbol}`)}${date !== today ? ` · ${dayLabel(date, today, lang)}` : ''}`, async () => {
         await deleteTransaction(res.data.id)
         router.refresh()
       })
@@ -132,9 +134,9 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
   })
 
   const tabs: [Tab, string][] = [
-    ['expense', 'Expense'],
-    ['income', 'Income'],
-    ['saving', 'Savings'],
+    ['expense', s.tabs.expense],
+    ['income', s.tabs.income],
+    ['saving', s.tabs.saving],
   ]
   const tabIdx = tabs.findIndex(([t]) => t === tab)
 
@@ -144,12 +146,12 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
       <div className={`sheet${open ? ' on' : ''}`} role="dialog" aria-modal="true" aria-labelledby="sheet-title" aria-hidden={!open}>
         <div className="grab" />
         <div className="sheet-h">
-          <h2 id="sheet-title">New transaction</h2>
-          <button ref={closeBtn} className="icon-btn" style={{ boxShadow: 'none', background: 'var(--surface-2)' }} aria-label="Close" onClick={shut}>
+          <h2 id="sheet-title">{s.title}</h2>
+          <button ref={closeBtn} className="icon-btn" style={{ boxShadow: 'none', background: 'var(--surface-2)' }} aria-label={m.common.close} onClick={shut}>
             <Icon name="x" />
           </button>
         </div>
-        <div className="type-seg" role="group" aria-label="Type">
+        <div className="type-seg" role="group" aria-label={s.type}>
           <span className="thumb" style={{ transform: `translateX(${tabIdx * 100}%)` }} />
           {tabs.map(([t, l]) => (
             <button key={t} aria-pressed={tab === t} onClick={() => switchTab(t)}>
@@ -167,17 +169,17 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
             <button
               className={`pill-btn date-pill${date !== today ? ' past' : ''}`}
               aria-haspopup="dialog"
-              aria-label={`Transaction date, ${dayLabel(date, today)}`}
-              onClick={(e) => openDate({ anchor: e.currentTarget, value: date, today, max: today, title: 'Transaction date', quick: true, onPick: setDate })}
+              aria-label={s.dateAria(dayLabel(date, today, lang))}
+              onClick={(e) => openDate({ anchor: e.currentTarget, value: date, today, max: today, title: s.dateTitle, quick: true, onPick: setDate })}
             >
               <Icon name="calendar" />
-              <span>{dayLabel(date, today)}</span>
+              <span>{dayLabel(date, today, lang)}</span>
             </button>
             {tab === 'saving' && pots.length > 0 && (
-              <span className="mini-chips" style={{ flexBasis: 'auto' }} role="group" aria-label="Direction">
+              <span className="mini-chips" style={{ flexBasis: 'auto' }} role="group" aria-label={s.direction}>
                 {(['deposit', 'withdrawal'] as const).map((d) => (
                   <button key={d} className="chipsel" aria-pressed={dir === d} onClick={() => setDir(d)}>
-                    {d === 'deposit' ? 'Deposit' : 'Withdraw'}
+                    {d === 'deposit' ? s.deposit : s.withdraw}
                   </button>
                 ))}
               </span>
@@ -193,15 +195,15 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
 
         {tab === 'saving' && pots.length === 0 ? (
           <div className="empty-card">
-            <b>No savings pots yet</b>
-            <p>Create a pot, like a tontine or a bank account, to start saving into it.</p>
+            <b>{s.noPots}</b>
+            <p>{s.noPotsBody}</p>
             <Link className="btn-sm" style={{ background: 'var(--brand-soft)', color: 'var(--brand-ink)', display: 'inline-flex' }} href="/savings/pots/new" onClick={shut}>
               <Icon name="plus" />
-              New pot
+              {s.newPot}
             </Link>
           </div>
         ) : (
-          <div className="catpick" role="group" aria-label={tab === 'saving' ? 'Pot' : 'Category'}>
+          <div className="catpick" role="group" aria-label={tab === 'saving' ? m.common.pot : m.common.category}>
             {options.map((c) => (
               <button key={c.id} className="cp" aria-pressed={c.id === pick} onClick={() => setPick(c.id)} style={{ color: `var(--pal-${c.color})` }}>
                 <span className="tile" style={tint(c.color)}>
@@ -215,7 +217,7 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
                 <span className="tile">
                   <Icon name="plus" />
                 </span>
-                <span>New</span>
+                <span>{s.newCategory}</span>
               </Link>
             )}
           </div>
@@ -224,7 +226,7 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
         {isTontine && groups.length > 0 && (
           <div className="stack" style={{ gap: 8, marginBottom: 10 }}>
             {groups.length > 1 && (
-              <div className="mini-chips" role="group" aria-label="Tontine group">
+              <div className="mini-chips" role="group" aria-label={s.tontineGroup}>
                 {groups.map((g) => (
                   <button key={g.id} className="chipsel" aria-pressed={groupId === g.id} onClick={() => setGroupId(g.id)}>
                     {g.name}
@@ -233,11 +235,10 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
               </div>
             )}
             {group && (
-              <div className="mini-chips" role="group" aria-label="Amount shortcuts">
+              <div className="mini-chips" role="group" aria-label={s.shortcuts}>
                 {[1, 4].map((n) => (
                   <button key={n} className="chipsel" aria-pressed={amt === String(group.perPeriod * n)} onClick={() => setAmt(String(group.perPeriod * n))}>
-                    {n} {group.frequency === 'weekly' ? 'week' : 'month'}
-                    {n > 1 ? 's' : ''} · {fmt(group.perPeriod * n)}
+                    {s.periods(n, group.frequency === 'weekly')} · {fmt(group.perPeriod * n)}
                   </button>
                 ))}
               </div>
@@ -246,8 +247,8 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
         )}
         <label className="note">
           <Icon name="pencil-line" />
-          <span className="sr">Note</span>
-          <input value={note} onChange={(e) => setNote(e.target.value)} maxLength={80} placeholder="Add a note (optional)" autoComplete="off" />
+          <span className="sr">{m.common.note}</span>
+          <input value={note} onChange={(e) => setNote(e.target.value)} maxLength={80} placeholder={m.common.addNote} autoComplete="off" />
         </label>
         <Keypad onKey={press} decimals={cur.decimals} />
         {err && (
@@ -257,7 +258,7 @@ export function AddSheet({ categories, pots, groups, today }: { categories: Cate
         )}
         <button className="btn block" disabled={!amt || !pick || pending || needsGroup} onClick={save}>
           <Icon name={pending ? 'loader' : 'check'} />
-          {pending ? 'Saving…' : `Save ${LABEL[kind]}`}
+          {pending ? s.saving : s.save[kind]}
         </button>
       </div>
     </>
